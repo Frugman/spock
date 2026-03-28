@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spock - Logic Workspace</title>
-    <meta name="description" content="Espace de travail logique et structuré pour la productivité personnelle (inspiré du Potager).">
+    <title>Spock - Journal Logique</title>
+    <meta name="description" content="Application personnelle de suivi de régime, logique et structurée.">
     <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="spock-theme">
     <div class="glass-container">
+        <!-- Sidebar Navigation -->
         <aside class="sidebar">
             <div class="logo">
                 <span class="logo-icon">🖖</span>
@@ -20,10 +20,24 @@
             </div>
             <nav class="main-nav">
                 <ul>
-                    <li class="active"><a href="#dashboard"><i class="icon">📊</i> Dashboard</a></li>
-                    <li><a href="#logic"><i class="icon">🧠</i> Logique</a></li>
-                    <li><a href="#archives"><i class="icon">📁</i> Archives</a></li>
-                    <li><a href="#settings"><i class="icon">⚙️</i> Paramètres</a></li>
+                    <li class="nav-item active" data-target="dashboard">
+                        <a href="#"><i class="icon">📊</i> Dashboard</a>
+                    </li>
+                    <li class="nav-item" data-target="journal">
+                        <a href="#"><i class="icon">📖</i> Journal</a>
+                    </li>
+                    <li class="nav-item" data-target="weight">
+                        <a href="#"><i class="icon">⚖️</i> Poids</a>
+                    </li>
+                    <li class="nav-item" data-target="meals">
+                        <a href="#"><i class="icon">🍲</i> Plats</a>
+                    </li>
+                    <li class="nav-item" data-target="report">
+                        <a href="#"><i class="icon">📈</i> Report</a>
+                    </li>
+                    <li class="nav-item" data-target="settings">
+                        <a href="#"><i class="icon">⚙️</i> Paramètres</a>
+                    </li>
                 </ul>
             </nav>
             <div class="user-status">
@@ -32,40 +46,88 @@
             </div>
         </aside>
 
+        <!-- Main Content -->
         <main class="content">
             <header class="top-bar">
                 <div class="search-box">
-                    <input type="text" placeholder="Rechercher une donnée..." id="main-search">
+                    <input type="text" placeholder="Rechercher..." id="main-search">
                 </div>
                 <div class="actions">
-                    <button class="btn-primary" id="btn-add">Nouveau</button>
+                    <button class="btn-primary" id="btn-add-entry">+ Nouveau Repas</button>
                 </div>
             </header>
 
-            <section class="dashboard-grid">
-                <!-- Welcome Card -->
-                <div class="card welcome-card">
-                    <h2>Bienvenue dans votre nouvel espace</h2>
-                    <p>Votre environnement technique "Spock" est prêt. Basé sur l'architecture robuste de votre Potager, ce projet est optimisé pour GitHub Pages.</p>
-                </div>
+            <!-- Section: Dashboard -->
+            <section id="view-dashboard" class="view-section active">
+                <div class="dashboard-grid">
+                    <div class="card welcome-card">
+                        <h2>Aujourd'hui</h2>
+                        <p id="today-summary">Chargement des données...</p>
+                    </div>
 
-                <!-- Stats/Modules -->
-                <div class="card module-card">
-                    <h3>Statut Système</h3>
-                    <div class="stat-row">
-                        <span>Intégrité</span>
-                        <div class="progress-bar"><div class="fill" style="width: 100%;"></div></div>
+                    <div class="card stat-card">
+                        <h3>Calories (Quota)</h3>
+                        <div class="stat-row">
+                            <span id="cal-count">0 / 2000 kcal</span>
+                            <div class="progress-bar"><div id="cal-fill" class="fill" style="width: 0%;"></div></div>
+                        </div>
+                    </div>
+
+                    <div class="card stat-card">
+                        <h3>Protéines</h3>
+                        <div class="stat-row">
+                            <span id="prot-count">0 / 120g</span>
+                            <div class="progress-bar"><div id="prot-fill" class="fill" style="width: 0%;"></div></div>
+                        </div>
+                    </div>
+
+                    <div class="card weight-card">
+                        <h3>Dernière Pesée</h3>
+                        <p class="big-stat" id="last-weight">-- kg</p>
+                        <small id="weight-trend">--</small>
+                    </div>
+
+                    <div class="card journal-preview-card">
+                        <h3>Dernière entrée</h3>
+                        <div id="latest-entry-preview" class="empty-state">
+                            Aucun repas enregistré aujourd'hui.
+                        </div>
                     </div>
                 </div>
-
-                <div class="card module-card">
-                    <h3>Dernières Notes</h3>
-                    <ul class="notes-list" id="latest-notes">
-                        <li>Chargement des données...</li>
-                    </ul>
-                </div>
             </section>
+
+            <!-- Section: Journal (Empty for now) -->
+            <section id="view-journal" class="view-section">
+                <h2>Journal Alimentaire</h2>
+                <div id="journal-timeline" class="timeline"></div>
+            </section>
+
+            <!-- Section: Poids (Empty for now) -->
+            <section id="view-weight" class="view-section">
+                <h2>Suivi de Poids</h2>
+            </section>
+
+            <!-- Section: Plats (Empty for now) -->
+            <section id="view-meals" class="view-section">
+                <h2>Plats Fréquents</h2>
+            </section>
+
+            <!-- Section: Report (Empty for now) -->
+            <section id="view-report" class="view-section">
+                <h2>Spock Report</h2>
+            </section>
+
+            <!-- Section: Settings -->
+            <section id="view-settings" class="view-section">
+                <h2>Paramètres</h2>
+            </section>
+
         </main>
+    </div>
+
+    <!-- Modal for new entry (Logic to be added) -->
+    <div id="entry-modal" class="modal">
+        <!-- Contenu du formulaire à venir -->
     </div>
 
     <script src="app.js"></script>
