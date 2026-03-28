@@ -31,7 +31,7 @@
         <main class="content">
             <header class="top-bar">
                 <div class="search-box"><input type="text" placeholder="Rechercher..." id="main-search"></div>
-                <div class="actions"><button class="btn-primary" id="btn-add-entry">+ Nouveau Repas</button></div>
+                <div class="actions"></div>
             </header>
 
             <section id="view-report" class="view-section active">
@@ -46,9 +46,7 @@
         </main>
     </div>
 
-    <div id="entry-modal" class="modal">
-        <div class="modal-content"><p>Ouvrez le Journal pour ajouter un repas complet.</p><button onclick="window.location.href='journal.html'">Aller au Journal</button><button class="btn-close" onclick="document.getElementById('entry-modal').classList.remove('active')">&times;</button></div>
-    </div>
+
 
     <script src="github-api.js"></script>
     <script src="app.js"></script>
