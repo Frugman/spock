@@ -35,7 +35,9 @@ function initNavigation() {
 const AppState = {
     user: {
         name: "Frugman",
-        goal: 2000,
+        goal: 1600,
+        mealGoal: 800,
+        mealCategories: ["Déjeuner", "Dîner"],
         currentWeight: null
     },
     journal: [],
