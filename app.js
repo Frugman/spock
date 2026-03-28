@@ -238,8 +238,8 @@ async function searchOpenFoodFacts(query) {
     offResults.classList.add('active');
 
     try {
-        const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=10`;
-        const response = await fetch(url);
+        const targetUrl = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=10`;
+        const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`);
         const data = await response.json();
 
         offResults.innerHTML = "";
@@ -689,8 +689,8 @@ async function searchExplorerOFF(query) {
     AppState.lastOFFSearchResults = [];
 
     try {
-        const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=20`;
-        const response = await fetch(url);
+        const targetUrl = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=20`;
+        const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`);
         const data = await response.json();
 
         if (data.products && data.products.length > 0) {
