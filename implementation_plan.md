@@ -18,25 +18,31 @@ Créer une application personnelle de suivi de régime, logique et efficace, bas
 - [x] Fonctions de lecture/écriture des fichiers JSON locaux via GitHub (même système que Potager).
 
 ### Phase 2 : Module Journal & Open Food Facts
-- [ ] Formulaire d'entrée de repas (Titre, heure, macros, photo).
-- [ ] Intégration API Open Food Facts avec recherche en temps réel.
-- [ ] Système de Cache (`produits_cache.json`) pour éviter les requêtes inutiles.
-- [ ] Affichage chronologique des entrées du journal.
+- [x] Formulaire d'entrée de repas (Titre, heure, macros, photo).
+- [x] Intégration API Open Food Facts avec recherche en temps réel.
+- [x] Système de Cache (`produits_cache.json`) pour éviter les requêtes inutiles.
+- [x] Affichage chronologique des entrées du journal.
 
 ### Phase 3 : Suivi de Poids & Graphiques
-- [ ] Formulaire de saisie du poids quotidien.
-- [ ] Graphique d'évolution (Chart.js ou Sparklines) montrant la tendance.
+- [x] Formulaire de saisie du poids quotidien.
+- [x] Graphique d'évolution (Chart.js ou Sparklines) montrant la tendance.
 
 ### Phase 4 : Bibliothèque de Plats Fréquents
-- [ ] Liste des plats avec recherche/filtre.
-- [ ] Formulaire d'ajout de plat (Ingrédients, portions, macros).
-- [ ] **Calculateur de portions dynamiques** lors de l'ajout au journal.
-- [ ] Bouton "Sauvegarder en plat fréquent" depuis une entrée du journal.
+- [x] Liste des plats avec recherche/filtre.
+- [x] Formulaire d'ajout de plat (Ingrédients, portions, macros).
+- [x] **Calculateur de portions dynamiques** lors de l'ajout au journal.
+- [x] Bouton "Sauvegarder en plat fréquent" depuis une entrée du journal.
 
 ### Phase 5 : Le "Spock Report" (Analytique)
-- [ ] Algorithme de calcul de moyennes hebdomadaires (Calories, P/L/G).
-- [ ] Dashboard récapitulatif (Top aliments, progression poids).
-- [ ] Système de tri des ingrédients préférés (Fréquence + Récence).
+- [x] Algorithme de calcul de moyennes hebdomadaires (Calories, P/L/G).
+- [x] Dashboard récapitulatif (Top aliments, progression poids).
+- [x] Système de tri des ingrédients préférés (Fréquence + Récence).
+
+### Phase 6 : Explorateur Open Food Facts
+- [x] Nouvelle navigation "OFF Explorer".
+- [x] Recherche avancée de produits avec pagination.
+- [x] Fiche produit détaillée (Macros, Nutriscore, Nova, Additifs).
+- [x] Bouton d'ajout rapide au journal depuis la fiche produit.
 
 ---
-*Statut actuel : Phase 1 terminée. Prêt pour Phase 2 (Module Journal & Open Food Facts).*
+*Statut actuel : Projet Spock V1.1 terminé. Toutes les phases (incluant l'explorateur OFF) sont opérationnelles.*

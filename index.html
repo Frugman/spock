@@ -35,6 +35,9 @@
                     <li class="nav-item" data-target="report">
                         <a href="#"><i class="icon">📈</i> Report</a>
                     </li>
+                    <li class="nav-item" data-target="off-explorer">
+                        <a href="#"><i class="icon">🔍</i> OFF Explorer</a>
+                    </li>
                     <li class="nav-item" data-target="settings">
                         <a href="#"><i class="icon">⚙️</i> Paramètres</a>
                     </li>
@@ -102,22 +105,87 @@
                 <div id="journal-timeline" class="timeline"></div>
             </section>
 
-            <!-- Section: Poids (Empty for now) -->
+            <!-- Section: Poids -->
             <section id="view-weight" class="view-section">
                 <h2>Suivi de Poids</h2>
+                <div class="card" style="max-width: 400px; margin-bottom: 2rem;">
+                    <form id="weight-form">
+                        <div class="form-group">
+                            <label for="weight-value">Poids du jour (kg)</label>
+                            <input type="number" id="weight-value" step="0.1" required placeholder="ex: 75.4">
+                        </div>
+                        <div class="form-actions" style="margin-top: 1rem;">
+                            <button type="submit" class="btn-primary" style="width: 100%;">Enregistrer le Poids</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3>Évolution</h3>
+                    <div style="height: 300px; position: relative;">
+                        <canvas id="weight-chart"></canvas>
+                    </div>
+                </div>
             </section>
 
-            <!-- Section: Plats (Empty for now) -->
+            <!-- Section: Plats -->
             <section id="view-meals" class="view-section">
-                <h2>Plats Fréquents</h2>
+                <header class="view-header">
+                    <h2>Bibliothèque de Plats</h2>
+                    <button class="btn-primary" id="btn-new-meal">+ Créer un Plat</button>
+                </header>
+                
+                <div class="search-box" style="margin: 1.5rem 0; width: 100%;">
+                    <input type="text" id="meals-search" placeholder="Rechercher un plat..." style="width: 100%;">
+                </div>
+
+                <div id="meals-grid" class="dashboard-grid">
+                    <!-- Les plats s'afficheront ici -->
+                </div>
             </section>
 
-            <!-- Section: Report (Empty for now) -->
+            <!-- Section: Report -->
             <section id="view-report" class="view-section">
-                <h2>Spock Report</h2>
+                <h2>Spock Report <small style="font-size: 0.9rem; font-weight: 400; color: var(--text-secondary);">(7 derniers jours)</small></h2>
+                
+                <div class="dashboard-grid" style="margin-top: 2rem;">
+                    <div class="card">
+                        <h3>Moyenne Calories</h3>
+                        <p class="big-stat" id="avg-calories">-- kcal</p>
+                    </div>
+                    <div class="card">
+                        <h3>Moyenne Protéines</h3>
+                        <p class="big-stat" id="avg-proteins">-- g</p>
+                    </div>
+                    <div class="card">
+                        <h3>Aliments les plus fréquents</h3>
+                        <ul id="top-foods" class="notes-list" style="margin-top: 1rem;">
+                            <li>Chargement...</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>Évolution Poids (7j)</h3>
+                        <p class="big-stat" id="weight-diff">-- kg</p>
+                    </div>
+                </div>
             </section>
 
-            <!-- Section: Settings -->
+            <!-- Section: OFF Explorer -->
+            <section id="view-off-explorer" class="view-section">
+                <header class="view-header">
+                    <h2>Explorateur Open Food Facts</h2>
+                </header>
+                
+                <div class="search-box explorer-search" style="margin: 1.5rem 0; width: 100%; display: flex; gap: 10px;">
+                    <input type="text" id="off-explorer-query" placeholder="Chercher un produit, une marque, un code barre..." style="flex: 1;">
+                    <button class="btn-primary" id="btn-search-off">Rechercher</button>
+                </div>
+
+                <div id="explorer-results" class="dashboard-grid">
+                    <!-- Les produits s'afficheront ici -->
+                    <div class="empty-state">Entrez un nom de produit pour commencer l'exploration logitique.</div>
+                </div>
+            </section>
             <section id="view-settings" class="view-section">
                 <h2>Paramètres</h2>
                 <div class="card settings-card">
@@ -144,11 +212,93 @@
         </main>
     </div>
 
-    <!-- Modal for new entry (Logic to be added) -->
+    <!-- Modal for new entry -->
     <div id="entry-modal" class="modal">
-        <!-- Contenu du formulaire à venir -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nouveau Repas</h2>
+                <button class="btn-close" id="btn-close-modal">&times;</button>
+            </div>
+
+            <!-- OFF Search & Favorites -->
+            <div class="modal-tabs">
+                <div class="off-search-container">
+                    <input type="text" id="off-search" placeholder="Scanner ou chercher un produit (Open Food Facts)...">
+                    <ul id="off-results" class="off-results"></ul>
+                </div>
+                <button class="btn-secondary" id="btn-browse-meals" style="margin-bottom: 1.5rem; width: 100%; padding: 10px; border: 1px solid var(--card-border); background: var(--card-bg); color: var(--text-primary); border-radius: 8px; cursor: pointer;">📖 Mes Plats Fréquents</button>
+            </div>
+
+            <div id="meals-selection-list" class="off-results" style="margin-bottom: 1.5rem;">
+                <!-- Les plats fréquents pour sélection rapide -->
+            </div>
+
+            <form id="meal-form">
+                <div class="form-group">
+                    <label for="meal-title">Nom du repas / aliment</label>
+                    <input type="text" id="meal-title" required placeholder="Ex: Salade de thon">
+                </div>
+
+                <div class="quantity-row" style="display: flex; gap: 1rem; margin-bottom: 1.5rem; align-items: end;">
+                    <div class="form-group" style="flex:1;">
+                        <label for="meal-qty">Quantité (g / mL)</label>
+                        <input type="number" id="meal-qty" value="100" step="1">
+                    </div>
+                    <div style="flex:1; padding-bottom: 12px; font-size: 0.8rem; color: var(--text-secondary);">
+                        <i>Les macros ci-dessous s'ajustent selon la quantité.</i>
+                    </div>
+                </div>
+
+                <div class="macro-grid">
+                    <div class="form-group">
+                        <label for="meal-calories">Calories (kcal)</label>
+                        <input type="number" id="meal-calories" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="meal-proteins">Protéines (g)</label>
+                        <input type="number" id="meal-proteins" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="meal-carbs">Glucides (g)</label>
+                        <input type="number" id="meal-carbs" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="meal-fats">Lipides (g)</label>
+                        <input type="number" id="meal-fats" step="0.1" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="meal-time">Heure</label>
+                    <input type="time" id="meal-time" required>
+                </div>
+
+                <!-- Photo Upload -->
+                <div class="image-upload-zone" id="img-zone">
+                    <div id="upload-prompt">
+                        <span>📸 Ajouter une photo</span>
+                        <p><small>(Compressée automatiquement)</small></p>
+                    </div>
+                    <img id="preview-img" src="#" alt="Aperçu">
+                    <input type="file" id="meal-photo" class="hidden-input" accept="image/*">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary" style="width: 100%;">Enregistrer dans le Journal</button>
+                </div>
+            </form>
+        </div>
     </div>
 
+    <!-- Product Detail Panel (Explorer) -->
+    <div id="product-detail-panel" class="product-detail-modal">
+        <button class="btn-close" id="btn-close-detail" style="margin-bottom: 1rem;">&larr; Retour</button>
+        <div id="detail-content">
+            <!-- Rempli en JS -->
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="github-api.js"></script>
     <script src="app.js"></script>
 </body>
