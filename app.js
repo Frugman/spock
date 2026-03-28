@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initNavigation();
     initSettings();
     initMealModal();
+    initFrequentMealModal();
+    initAlimentModal();
     initWeightForm();
     initOFFExplorer();
     initApp();
@@ -54,6 +56,8 @@ function initMealModal() {
     // Open/Close
     if (openBtn) {
         openBtn.addEventListener('click', () => {
+            AppState.editingJournalId = null;
+            document.getElementById('btn-submit-journal').innerText = "Enregistrer dans le Journal";
             modal.classList.add('active');
             // Set default time to now
             const now = new Date();
@@ -184,13 +188,22 @@ function initMealModal() {
             try {
                 const photoFile = photoInput.files[0];
                 let photoBase64 = null;
+                
+                // If editing and no new photo selected, keep old photo
+                if (AppState.editingJournalId && !photoFile) {
+                    const oldEntry = AppState.journal.find(en => en.id == AppState.editingJournalId);
+                    if (oldEntry) photoBase64 = oldEntry.photo;
+                }
+
                 if (photoFile) {
                     photoBase64 = await compressImage(photoFile);
                 }
 
-                const newEntry = {
-                    id: Date.now(),
-                    date: new Date().toISOString().split('T')[0],
+                const entryData = {
+                    id: AppState.editingJournalId || Date.now(),
+                    date: AppState.editingJournalId 
+                        ? AppState.journal.find(e => e.id == AppState.editingJournalId).date 
+                        : new Date().toISOString().split('T')[0],
                     time: document.getElementById('meal-time').value,
                     title: document.getElementById('meal-title').value,
                     quantity: document.getElementById('meal-qty').value,
@@ -201,21 +214,29 @@ function initMealModal() {
                     photo: photoBase64
                 };
 
-                AppState.journal.unshift(newEntry);
+                if (AppState.editingJournalId) {
+                    const idx = AppState.journal.findIndex(e => e.id == AppState.editingJournalId);
+                    if (idx !== -1) AppState.journal[idx] = entryData;
+                } else {
+                    AppState.journal.unshift(entryData);
+                }
                 
                 // Save to GitHub
-                await GitHubAPI.saveFile('journal.json', AppState.journal, "Add new meal entry");
+                await GitHubAPI.saveFile('journal.json', AppState.journal, AppState.editingJournalId ? "Edit meal entry" : "Add new meal entry");
 
                 // Update UI
                 updateDashboard();
                 renderJournalTimeline();
+                renderReport();
                 
                 modal.classList.remove('active');
                 mealForm.reset();
                 AppState.currentMealBaseMacros = null;
+                AppState.editingJournalId = null;
                 previewImg.classList.remove('active');
                 uploadPrompt.style.display = 'block';
                 imgZone.classList.remove('has-image');
+                document.getElementById('btn-submit-journal').innerText = "Enregistrer dans le Journal";
 
                 console.log("Meal saved successfully");
             } catch (error) {
@@ -416,6 +437,24 @@ function initSettings() {
         });
     }
 
+    const resetBtn = document.getElementById('btn-reset-data');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            if (confirm("Voulez-vous vraiment réinitialiser les fichiers locaux ? (Les données resteront sur GitHub)")) {
+                AppState.journal = [];
+                AppState.meals = [];
+                AppState.aliments = [];
+                AppState.weightHistory = [];
+                AppState.offCache = [];
+                updateDashboard();
+                renderJournalTimeline();
+                renderMealsLibrary();
+                renderAlimentsLibrary();
+                alert("Données réinitialisées localement.");
+            }
+        });
+    }
+
     function showStatus(text, type) {
         statusMsg.innerText = text;
         statusMsg.className = `status-msg active ${type}`;
@@ -440,22 +479,25 @@ async function initApp() {
         const todaySummary = document.getElementById('today-summary');
         if (todaySummary) todaySummary.innerText = "Synchronisation en cours...";
         
-        const [journalRes, weightRes, mealsRes, cacheRes] = await Promise.all([
+        const [journalRes, weightRes, mealsRes, cacheRes, alimentsRes] = await Promise.all([
             GitHubAPI.getFile('journal.json').catch(() => ({ content: [] })),
             GitHubAPI.getFile('poids.json').catch(() => ({ content: [] })),
             GitHubAPI.getFile('plats_frequents.json').catch(() => ({ content: [] })),
-            GitHubAPI.getFile('produits_cache.json').catch(() => ({ content: [] }))
+            GitHubAPI.getFile('produits_cache.json').catch(() => ({ content: [] })),
+            GitHubAPI.getFile('aliments_frequents.json').catch(() => ({ content: [] }))
         ]);
 
         AppState.journal = Array.isArray(journalRes.content) ? journalRes.content : [];
         AppState.weightHistory = Array.isArray(weightRes.content) ? weightRes.content : [];
         AppState.meals = Array.isArray(mealsRes.content) ? mealsRes.content : [];
         AppState.offCache = Array.isArray(cacheRes.content) ? cacheRes.content : [];
+        AppState.aliments = Array.isArray(alimentsRes.content) ? alimentsRes.content : [];
 
         updateDashboard();
         renderJournalTimeline();
         renderWeightChart();
         renderMealsLibrary();
+        renderAlimentsLibrary();
         renderReport();
         console.log("App data loaded successfully");
     } catch (error) {
@@ -619,7 +661,11 @@ function renderJournalTimeline() {
         <div class="timeline-entry">
             <div class="entry-header">
                 <span class="entry-title">${entry.title}</span>
-                <span class="entry-time">${entry.date} - ${entry.time}</span>
+                <div style="display:flex; align-items: center; gap: 10px;">
+                    <span class="entry-time">${entry.date} - ${entry.time}</span>
+                    <button onclick="editJournalEntry(${entry.id})" class="btn-icon" style="font-size: 0.9rem;">✏️</button>
+                    <button onclick="deleteJournalEntry(${entry.id})" class="btn-icon" style="font-size: 0.9rem;">🗑️</button>
+                </div>
             </div>
             <div class="entry-content">
                 ${entry.photo ? `<img src="data:image/jpeg;base64,${entry.photo.replace(/\s/g, "")}" class="entry-img">` : '<div class="entry-img" style="display:flex;align-items:center;justify-content:center;color:var(--text-secondary)">🚫</div>'}
@@ -650,11 +696,15 @@ const AppState = {
     },
     journal: [],
     meals: [],
+    aliments: [],
     weightHistory: [],
     offCache: [],
     lastOFFSearchResults: [],
     currentlyViewedProduct: null,
-    currentMealBaseMacros: null
+    currentMealBaseMacros: null,
+    editingJournalId: null,
+    editingMealId: null,
+    editingAlimentId: null
 };
 
 /**
@@ -888,9 +938,6 @@ async function compressImage(file, maxWidth = 800) {
                 canvas.width = width;
                 canvas.height = height;
 
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
-
                 // Use JPEG with 0.7 quality for good balance size/quality
                 const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
                 resolve(dataUrl.split(',')[1]); // Return only the base64 part
@@ -899,4 +946,291 @@ async function compressImage(file, maxWidth = 800) {
         };
         reader.onerror = error => reject(error);
     });
+}
+
+/**
+ * Handle Frequent Meal Modal (Library)
+ */
+function initFrequentMealModal() {
+    const modal = document.getElementById('meal-modal');
+    const openBtn = document.getElementById('btn-new-meal');
+    const closeBtn = document.getElementById('btn-close-meal-modal');
+    const mealForm = document.getElementById('frequent-meal-form');
+
+    if (openBtn) {
+        openBtn.addEventListener('click', () => {
+            AppState.editingMealId = null;
+            document.getElementById('meal-modal-title').innerText = "Nouveau Plat";
+            mealForm.reset();
+            modal.classList.add('active');
+        });
+    }
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+    }
+
+    if (mealForm) {
+        mealForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = mealForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+
+            const mealData = {
+                id: AppState.editingMealId || Date.now(),
+                title: document.getElementById('f-meal-title').value,
+                calories: parseFloat(document.getElementById('f-meal-calories').value),
+                proteins: parseFloat(document.getElementById('f-meal-proteins').value),
+                carbs: parseFloat(document.getElementById('f-meal-carbs').value),
+                fats: parseFloat(document.getElementById('f-meal-fats').value)
+            };
+
+            if (AppState.editingMealId) {
+                const idx = AppState.meals.findIndex(m => m.id === AppState.editingMealId);
+                if (idx !== -1) AppState.meals[idx] = mealData;
+            } else {
+                AppState.meals.push(mealData);
+            }
+
+            try {
+                await GitHubAPI.saveFile('plats_frequents.json', AppState.meals, "Update meals library");
+                renderMealsLibrary();
+                modal.classList.remove('active');
+            } catch (error) {
+                console.error("Save error:", error);
+                alert("Erreur lors de la sauvegarde du plat.");
+            } finally {
+                submitBtn.disabled = false;
+            }
+        });
+    }
+
+    const searchInput = document.getElementById('meals-search');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            renderMealsLibrary(e.target.value.toLowerCase());
+        });
+    }
+}
+
+/**
+ * Handle Aliment Modal
+ */
+function initAlimentModal() {
+    const modal = document.getElementById('aliment-modal');
+    const openBtn = document.getElementById('btn-new-aliment');
+    const closeBtn = document.getElementById('btn-close-aliment-modal');
+    const alimentForm = document.getElementById('aliment-form');
+
+    if (openBtn) {
+        openBtn.addEventListener('click', () => {
+            AppState.editingAlimentId = null;
+            document.getElementById('aliment-modal-title').innerText = "Nouvel Aliment";
+            alimentForm.reset();
+            modal.classList.add('active');
+        });
+    }
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+    }
+
+    if (alimentForm) {
+        alimentForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = alimentForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+
+            const alimentData = {
+                id: AppState.editingAlimentId || Date.now(),
+                title: document.getElementById('a-title').value,
+                calories: parseFloat(document.getElementById('a-calories').value),
+                proteins: parseFloat(document.getElementById('a-proteins').value),
+                carbs: parseFloat(document.getElementById('a-carbs').value),
+                fats: parseFloat(document.getElementById('a-fats').value)
+            };
+
+            if (AppState.editingAlimentId) {
+                const idx = AppState.aliments.findIndex(a => a.id === AppState.editingAlimentId);
+                if (idx !== -1) AppState.aliments[idx] = alimentData;
+            } else {
+                AppState.aliments.push(alimentData);
+            }
+
+            try {
+                await GitHubAPI.saveFile('aliments_frequents.json', AppState.aliments, "Update aliments library");
+                renderAlimentsLibrary();
+                modal.classList.remove('active');
+            } catch (error) {
+                console.error("Save error:", error);
+                alert("Erreur lors de la sauvegarde de l'aliment.");
+            } finally {
+                submitBtn.disabled = false;
+            }
+        });
+    }
+
+    const searchInput = document.getElementById('aliments-search');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            renderAlimentsLibrary(e.target.value.toLowerCase());
+        });
+    }
+}
+
+/**
+ * Render Aliments Library
+ */
+function renderAlimentsLibrary(searchTerm = "") {
+    const container = document.getElementById('aliments-grid');
+    if (!container) return;
+
+    if (AppState.aliments.length === 0) {
+        container.innerHTML = "<div class='empty-state'>Aucun ingrédient enregistré.</div>";
+        return;
+    }
+
+    container.innerHTML = AppState.aliments
+        .filter(a => !searchTerm || a.title.toLowerCase().includes(searchTerm))
+        .map(a => `
+        <div class="card meal-card">
+            <header style="display:flex; justify-content:space-between; align-items: start;">
+                <strong style="color: var(--text-primary); font-size: 1rem;">${a.title}</strong>
+                <div style="display:flex; gap: 5px;">
+                    <button onclick="editAliment(${a.id})" class="btn-icon" title="Modifier">✏️</button>
+                    <button onclick="removeAliment(${a.id})" class="btn-icon" title="Supprimer">🗑️</button>
+                </div>
+            </header>
+            <div class="entry-macros" style="margin-top:0.5rem;">
+                <span class="macro-tag">🔥 <b>${a.calories}</b></span>
+                <span class="macro-tag">🥩 <b>${a.proteins}</b></span>
+            </div>
+            <button onclick="useAlimentInJournal(${a.id})" class="btn-secondary" style="margin-top:1rem; width:100%; font-size: 0.8rem; padding: 8px;">Utiliser</button>
+        </div>
+    `).join('');
+}
+
+window.editAliment = function(id) {
+    const aliment = AppState.aliments.find(a => a.id === id);
+    if (!aliment) return;
+
+    AppState.editingAlimentId = id;
+    document.getElementById('aliment-modal-title').innerText = "Modifier l'Aliment";
+    document.getElementById('a-title').value = aliment.title;
+    document.getElementById('a-calories').value = aliment.calories;
+    document.getElementById('a-proteins').value = aliment.proteins;
+    document.getElementById('a-carbs').value = aliment.carbs;
+    document.getElementById('a-fats').value = aliment.fats;
+    
+    document.getElementById('aliment-modal').classList.add('active');
+};
+
+window.removeAliment = async function(id) {
+    if (!confirm("Supprimer cet aliment ?")) return;
+    AppState.aliments = AppState.aliments.filter(a => a.id != id);
+    await GitHubAPI.saveFile('aliments_frequents.json', AppState.aliments, "Remove aliment");
+    renderAlimentsLibrary();
+};
+
+window.useAlimentInJournal = function(id) {
+    const aliment = AppState.aliments.find(a => a.id === id);
+    if (aliment) {
+        const modal = document.getElementById('entry-modal');
+        modal.classList.add('active');
+        document.getElementById('meal-title').value = aliment.title;
+        document.getElementById('meal-qty').value = 100;
+        document.getElementById('meal-calories').value = aliment.calories;
+        document.getElementById('meal-proteins').value = aliment.proteins;
+        document.getElementById('meal-carbs').value = aliment.carbs;
+        document.getElementById('meal-fats').value = aliment.fats;
+        AppState.currentMealBaseMacros = { ...aliment };
+    }
+};
+
+window.editFrequentMeal = function(id) {
+    const meal = AppState.meals.find(m => m.id === id);
+    if (!meal) return;
+
+    AppState.editingMealId = id;
+    document.getElementById('meal-modal-title').innerText = "Modifier le Plat";
+    document.getElementById('f-meal-title').value = meal.title;
+    document.getElementById('f-meal-calories').value = meal.calories;
+    document.getElementById('f-meal-proteins').value = meal.proteins;
+    document.getElementById('f-meal-carbs').value = meal.carbs;
+    document.getElementById('f-meal-fats').value = meal.fats;
+    
+    document.getElementById('meal-modal').classList.add('active');
+};
+
+/**
+ * Journal Entry CRUD
+ */
+window.editJournalEntry = function(id) {
+    const entry = AppState.journal.find(e => e.id == id);
+    if (!entry) return;
+
+    AppState.editingJournalId = id;
+    const modal = document.getElementById('entry-modal');
+    modal.classList.add('active');
+
+    document.getElementById('meal-title').value = entry.title;
+    document.getElementById('meal-qty').value = entry.quantity || 100;
+    document.getElementById('meal-calories').value = entry.calories;
+    document.getElementById('meal-proteins').value = entry.proteins;
+    document.getElementById('meal-carbs').value = entry.carbs;
+    document.getElementById('meal-fats').value = entry.fats;
+    document.getElementById('meal-time').value = entry.time;
+    document.getElementById('btn-submit-journal').innerText = "Mettre à jour l'entrée";
+
+    if (entry.photo) {
+        const previewImg = document.getElementById('preview-img');
+        previewImg.src = `data:image/jpeg;base64,${entry.photo}`;
+        previewImg.classList.add('active');
+        document.getElementById('upload-prompt').style.display = 'none';
+        document.getElementById('img-zone').classList.add('has-image');
+    }
+};
+
+window.deleteJournalEntry = async function(id) {
+    if (!confirm("Supprimer cette entrée du journal ?")) return;
+    AppState.journal = AppState.journal.filter(e => e.id != id);
+    try {
+        await GitHubAPI.saveFile('journal.json', AppState.journal, "Delete entry from journal");
+        updateDashboard();
+        renderJournalTimeline();
+        renderReport();
+    } catch (error) {
+        console.error("Delete error:", error);
+        alert("Erreur lors de la suppression.");
+    }
+};
+
+// Update existing library render to include Edit
+function renderMealsLibrary(searchTerm = "") {
+    const container = document.getElementById('meals-grid');
+    if (!container) return;
+
+    if (AppState.meals.length === 0) {
+        container.innerHTML = "<div class='empty-state'>Aucun plat fréquent.</div>";
+        return;
+    }
+
+    container.innerHTML = AppState.meals
+        .filter(m => !searchTerm || m.title.toLowerCase().includes(searchTerm))
+        .map(meal => `
+        <div class="card meal-card">
+            <header style="display:flex; justify-content:space-between; align-items: start;">
+                <strong style="color: var(--text-primary); font-size: 1rem;">${meal.title}</strong>
+                <div style="display:flex; gap: 5px;">
+                    <button onclick="editFrequentMeal(${meal.id})" class="btn-icon" title="Modifier">✏️</button>
+                    <button onclick="removeFrequentMeal(${meal.id})" class="btn-icon" title="Supprimer">🗑️</button>
+                </div>
+            </header>
+            <div class="entry-macros" style="margin-top:0.5rem;">
+                <span class="macro-tag">🔥 <b>${meal.calories}</b></span>
+                <span class="macro-tag">🥩 <b>${meal.proteins}</b></span>
+            </div>
+            <button onclick="addMealToJournalFromLibrary(${meal.id})" class="btn-primary" style="margin-top:1rem; width:100%; font-size: 0.8rem; padding: 8px;">Ajouter au Journal</button>
+        </div>
+    `).join('');
 }

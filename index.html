@@ -142,6 +142,19 @@
                 <div id="meals-grid" class="dashboard-grid">
                     <!-- Les plats s'afficheront ici -->
                 </div>
+
+                <div class="view-header" style="margin-top: 3rem;">
+                    <h2>Ingrédients & Aliments</h2>
+                    <button class="btn-primary" id="btn-new-aliment">+ Nouvel Aliment</button>
+                </div>
+                
+                <div class="search-box" style="margin: 1.5rem 0; width: 100%;">
+                    <input type="text" id="aliments-search" placeholder="Rechercher un ingrédient..." style="width: 100%;">
+                </div>
+
+                <div id="aliments-grid" class="dashboard-grid">
+                    <!-- Les aliments s'afficheront ici -->
+                </div>
             </section>
 
             <!-- Section: Report -->
@@ -206,6 +219,13 @@
                         <button class="btn-primary" id="btn-save-settings">Enregistrer la Configuration</button>
                     </div>
                     <div id="settings-status" class="status-msg"></div>
+                </div>
+
+                <div class="card settings-card" style="margin-top: 2rem; border-color: var(--danger-color);">
+                    <h3 style="color: var(--danger-color);">Zone de Danger</h3>
+                    <p>Réinitialiser les fichiers locaux (n'efface pas GitHub).</p>
+                    <button class="btn-secondary" id="btn-reset-data" style="background: rgba(235, 71, 71, 0.1); color: var(--danger-color); border: 1px solid var(--danger-color);">Réinitialiser les données</button>
+                </div>
                 </div>
             </section>
 
@@ -284,7 +304,81 @@
                 </div>
 
                 <div class="form-actions">
-                    <button type="submit" class="btn-primary" style="width: 100%;">Enregistrer dans le Journal</button>
+                    <button type="submit" class="btn-primary" id="btn-submit-journal" style="width: 100%;">Enregistrer dans le Journal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Frequent Meal -->
+    <div id="meal-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="meal-modal-title">Nouveau Plat</h2>
+                <button class="btn-close" id="btn-close-meal-modal">&times;</button>
+            </div>
+            <form id="frequent-meal-form">
+                <div class="form-group">
+                    <label for="f-meal-title">Nom du plat</label>
+                    <input type="text" id="f-meal-title" required placeholder="Ex: Poulet au curry">
+                </div>
+                <div class="macro-grid">
+                    <div class="form-group">
+                        <label for="f-meal-calories">Calories (kcal / 100g)</label>
+                        <input type="number" id="f-meal-calories" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="f-meal-proteins">Protéines (g)</label>
+                        <input type="number" id="f-meal-proteins" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="f-meal-carbs">Glucides (g)</label>
+                        <input type="number" id="f-meal-carbs" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="f-meal-fats">Lipides (g)</label>
+                        <input type="number" id="f-meal-fats" step="0.1" required>
+                    </div>
+                </div>
+                <div class="form-actions" style="margin-top: 2rem;">
+                    <button type="submit" class="btn-primary" style="width: 100%;">Sauvegarder</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Aliment -->
+    <div id="aliment-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="aliment-modal-title">Nouvel Aliment</h2>
+                <button class="btn-close" id="btn-close-aliment-modal">&times;</button>
+            </div>
+            <form id="aliment-form">
+                <div class="form-group">
+                    <label for="a-title">Nom de l'ingrédient</label>
+                    <input type="text" id="a-title" required placeholder="Ex: Riz Basmati">
+                </div>
+                <div class="macro-grid">
+                    <div class="form-group">
+                        <label for="a-calories">Calories (kcal/100g)</label>
+                        <input type="number" id="a-calories" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="a-proteins">Protéines (g)</label>
+                        <input type="number" id="a-proteins" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="a-carbs">Glucides (g)</label>
+                        <input type="number" id="a-carbs" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="a-fats">Lipides (g)</label>
+                        <input type="number" id="a-fats" step="0.1" required>
+                    </div>
+                </div>
+                <div class="form-actions" style="margin-top: 2rem;">
+                    <button type="submit" class="btn-primary" style="width: 100%;">Sauvegarder</button>
                 </div>
             </form>
         </div>
