@@ -524,9 +524,42 @@ function initOFFExplorer() {
 }
 
 async function searchOFF(query) {
-    const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&json=1&page_size=10`;
-    try { const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`); const data = await res.json(); return JSON.parse(data.contents).products || []; }
-    catch(e) { console.error("OFF Error", e); return []; }
+    const userAgent = "Spock - Web - Version 1.2"; // Needed identifying app for OFF
+    const searchUrl = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&json=1&page_size=12`;
+    
+    // 1. Try Direct Fetch first (faster, no proxy overhead)
+    try {
+        const response = await fetch(searchUrl, {
+            method: 'GET',
+            headers: { 'Accept': 'application/json' }
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data.products || [];
+        }
+    } catch (e) {
+        console.warn("Direct OFF search failed (CORS?), using proxy...");
+    }
+
+    // 2. Proxy Fallback (AllOrigins)
+    try {
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(searchUrl)}&ts=${Date.now()}`;
+        const res = await fetch(proxyUrl);
+        const data = await res.json();
+        
+        if (data && data.contents) {
+            if (data.contents.trim().startsWith('{')) {
+                const parsed = JSON.parse(data.contents);
+                return parsed.products || [];
+            } else {
+                console.error("OFF Proxy still returned HTML. Search might be blocked or URL redirected.");
+                return [];
+            }
+        }
+    } catch(e) {
+        console.error("OFF Search Error (Proxy):", e);
+    }
+    return [];
 }
 
 function renderExplorerResults(prods) {
