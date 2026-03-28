@@ -76,7 +76,7 @@
         </main>
     </div>
 
-    <!-- Modal for new entry -->
+    <!-- Modal for new entry (Overhauled: Meal Basket) -->
     <div id="entry-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -84,46 +84,58 @@
                 <button class="btn-close" id="btn-close-modal">&times;</button>
             </div>
 
-            <div class="modal-tabs">
-                <div class="off-search-container">
-                    <input type="text" id="off-search" placeholder="Scanner ou chercher un produit (Open Food Facts)...">
-                    <ul id="off-results" class="off-results"></ul>
+            <div class="meal-meta-row" style="display: flex; gap: 10px; margin-bottom: 1.5rem;">
+                <div class="form-group" style="flex: 1;">
+                    <label>Date</label>
+                    <input type="date" id="meal-date">
                 </div>
-                <button class="btn-secondary" id="btn-browse-meals" style="margin-bottom: 1.5rem; width: 100%; padding: 10px; border: 1px solid var(--card-border); background: var(--card-bg); color: var(--text-primary); border-radius: 8px; cursor: pointer;">📖 Mes Plats Fréquents</button>
+                <div class="form-group" style="flex: 1;">
+                    <label>Type</label>
+                    <select id="meal-type" class="btn-secondary" style="width: 100%; height: 42px;">
+                        <option value="Petit-déjeuner">☕ Petit-déjeuner</option>
+                        <option value="Déjeuner">🍲 Déjeuner</option>
+                        <option value="Dîner">🥗 Dîner</option>
+                        <option value="En-cas">🍎 En-cas</option>
+                    </select>
+                </div>
             </div>
 
-            <div id="meals-selection-list" class="off-results" style="margin-bottom: 1.5rem;"></div>
+            <!-- Basket: Added items list -->
+            <div id="meal-basket-list" class="basket-container" style="margin-bottom: 1.5rem; min-height: 50px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px dashed var(--card-border); padding: 10px;">
+                <div class="empty-state" style="font-size: 0.8rem;">Aucun aliment ajouté.</div>
+            </div>
 
-            <form id="meal-form">
-                <div class="form-group">
-                    <label for="meal-title">Nom du repas / aliment</label>
-                    <input type="text" id="meal-title" required>
+            <!-- Totals display -->
+            <div id="basket-totals" class="detail-macros" style="margin-bottom: 2rem; background: var(--card-bg); padding: 10px; border-radius: 8px;">
+                <div class="detail-macro"><span>Cal</span><b id="total-cal">0</b></div>
+                <div class="detail-macro"><span>Prot</span><b id="total-prot">0g</b></div>
+                <div class="detail-macro"><span>Gluc</span><b id="total-carbs">0g</b></div>
+                <div class="detail-macro"><span>Lip</span><b id="total-fats">0g</b></div>
+            </div>
+
+            <!-- Search & Quick Selection -->
+            <div class="search-section" style="border-top: 1px solid var(--card-border); padding-top: 1.5rem;">
+                <label>Ajouter des aliments</label>
+                <div class="off-search-container">
+                    <input type="text" id="off-search" placeholder="Chercher un produit (Open Food Facts)...">
+                    <ul id="off-results" class="off-results"></ul>
                 </div>
-                <div class="quantity-row" style="display: flex; gap: 1rem; margin-bottom: 1.5rem; align-items: end;">
-                    <div class="form-group" style="flex:1;">
-                        <label for="meal-qty">Quantité (g / mL)</label>
-                        <input type="number" id="meal-qty" value="100" step="1">
-                    </div>
+                
+                <div class="quick-favs" style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button class="btn-secondary" id="btn-fav-meals" style="flex: 1; padding: 10px; font-size: 0.8rem;">🍲 Mes Plats</button>
+                    <button class="btn-secondary" id="btn-fav-aliments" style="flex: 1; padding: 10px; font-size: 0.8rem;">🍎 Mes Aliments</button>
                 </div>
-                <div class="macro-grid">
-                    <div class="form-group"><label for="meal-calories">Calories</label><input type="number" id="meal-calories" step="0.1" required></div>
-                    <div class="form-group"><label for="meal-proteins">Protéines</label><input type="number" id="meal-proteins" step="0.1" required></div>
-                    <div class="form-group"><label for="meal-carbs">Glucides</label><input type="number" id="meal-carbs" step="0.1" required></div>
-                    <div class="form-group"><label for="meal-fats">Lipides</label><input type="number" id="meal-fats" step="0.1" required></div>
-                </div>
-                <div class="form-group">
-                    <label for="meal-time">Heure</label>
-                    <input type="time" id="meal-time" required>
-                </div>
-                <div class="image-upload-zone" id="img-zone">
-                    <div id="upload-prompt">📸 Ajouter une photo</div>
+                <div id="selection-list" class="off-results" style="display: none; margin-top: 10px; max-height: 200px; overflow-y: auto;"></div>
+            </div>
+
+            <div class="form-actions" style="margin-top: 2rem; display: flex; flex-direction: column; gap: 10px;">
+                <div class="image-upload-zone" id="img-zone" style="margin-bottom: 1rem;">
+                    <div id="upload-prompt"><span>📸 Photo du repas</span></div>
                     <img id="preview-img" src="#" alt="Aperçu">
                     <input type="file" id="meal-photo" class="hidden-input" accept="image/*">
                 </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn-primary" id="btn-submit-journal" style="width: 100%;">Enregistrer</button>
-                </div>
-            </form>
+                <button type="button" class="btn-primary" id="btn-save-full-meal" style="width: 100%; padding: 15px; font-size: 1.1rem; box-shadow: 0 4px 15px var(--accent-glow);">Enregistrer le Repas</button>
+            </div>
         </div>
     </div>
 

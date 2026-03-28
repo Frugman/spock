@@ -44,5 +44,13 @@ Créer une application personnelle de suivi de régime, logique et efficace, bas
 - [x] Fiche produit détaillée (Macros, Nutriscore, Nova, Additifs).
 - [x] Bouton d'ajout rapide au journal depuis la fiche produit.
 
+### Phase 7 : Refonte du Formulaire de Repas (Standard Pro)
+- [ ] **Changement de paradigme** : Passage d'une "entrée simple" à un "panier de repas" (Meal Basket).
+- [ ] **Métadonnées de repas** : Ajout du champ Date (date picker) et Type de repas (Midi / Soir / Encas).
+- [ ] **Système de Basket** : Possibilité d'ajouter plusieurs aliments/plats à un seul repas avant validation.
+- [ ] **Bouton Favoris Dédiés** : Accès rapide séparé pour "Mes Plats" et "Mes Aliments".
+- [ ] **Calculateur de repas** : Somme automatique en temps réel des macros de tous les items du panier.
+- [ ] **Affichage structuré** : Mise à jour du Journal pour afficher les repas avec le détail des items (façon Yazio).
+
 ---
-*Statut actuel : Projet Spock V1.1 terminé. Toutes les phases (incluant l'explorateur OFF) sont opérationnelles.*
+*Statut actuel : Projet Spock V1.1 opérationnel. Phase 7 en cours de développement.*
