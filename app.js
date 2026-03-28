@@ -239,8 +239,9 @@ async function searchOpenFoodFacts(query) {
 
     try {
         const targetUrl = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=10`;
-        const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`);
-        const data = await response.json();
+        const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`);
+        const proxyData = await response.json();
+        const data = JSON.parse(proxyData.contents);
 
         offResults.innerHTML = "";
         if (data.products && data.products.length > 0) {
@@ -621,7 +622,7 @@ function renderJournalTimeline() {
                 <span class="entry-time">${entry.date} - ${entry.time}</span>
             </div>
             <div class="entry-content">
-                ${entry.photo ? `<img src="data:image/jpeg;base64,${entry.photo}" class="entry-img">` : '<div class="entry-img" style="display:flex;align-items:center;justify-content:center;color:var(--text-secondary)">🚫</div>'}
+                ${entry.photo ? `<img src="data:image/jpeg;base64,${entry.photo.replace(/\s/g, "")}" class="entry-img">` : '<div class="entry-img" style="display:flex;align-items:center;justify-content:center;color:var(--text-secondary)">🚫</div>'}
                 <div class="entry-details">
                     <div class="entry-macros">
                         <span class="macro-tag">🔥 <b>${entry.calories}</b> kcal</span>
@@ -690,8 +691,9 @@ async function searchExplorerOFF(query) {
 
     try {
         const targetUrl = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=20`;
-        const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`);
-        const data = await response.json();
+        const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`);
+        const proxyData = await response.json();
+        const data = JSON.parse(proxyData.contents);
 
         if (data.products && data.products.length > 0) {
             AppState.lastOFFSearchResults = data.products;
