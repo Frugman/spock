@@ -81,7 +81,7 @@ async function initApp() {
         AppState.offCache = Array.isArray(cacheRes.content) ? cacheRes.content : [];
         AppState.aliments = Array.isArray(alimentsRes.content) ? alimentsRes.content : [];
 
-        // Distribute to UI
+        // Distribute to UI (safely)
         updateDashboard();
         renderJournalTimeline();
         renderWeightChart();
@@ -175,31 +175,32 @@ window.editJournalEntry = function(id) {
     const entry = AppState.journal.find(e => e.id == id);
     if (!entry) return;
 
-    // Check if we are on journal page
-    if (!document.getElementById('entry-modal')) {
+    if (!document.getElementById('meal-form')) {
         window.location.href = `journal.html?edit=${id}`;
         return;
     }
 
     AppState.editingJournalId = id;
     const modal = document.getElementById('entry-modal');
-    modal.classList.add('active');
+    if (modal) modal.classList.add('active');
 
-    document.getElementById('meal-title').value = entry.title;
-    document.getElementById('meal-qty').value = entry.quantity || 100;
-    document.getElementById('meal-calories').value = entry.calories;
-    document.getElementById('meal-proteins').value = entry.proteins;
-    document.getElementById('meal-carbs').value = entry.carbs;
-    document.getElementById('meal-fats').value = entry.fats;
-    document.getElementById('meal-time').value = entry.time;
-    document.getElementById('btn-submit-journal').innerText = "Mettre à jour";
+    if (document.getElementById('meal-title')) document.getElementById('meal-title').value = entry.title;
+    if (document.getElementById('meal-qty')) document.getElementById('meal-qty').value = entry.quantity || 100;
+    if (document.getElementById('meal-calories')) document.getElementById('meal-calories').value = entry.calories;
+    if (document.getElementById('meal-proteins')) document.getElementById('meal-proteins').value = entry.proteins;
+    if (document.getElementById('meal-carbs')) document.getElementById('meal-carbs').value = entry.carbs;
+    if (document.getElementById('meal-fats')) document.getElementById('meal-fats').value = entry.fats;
+    if (document.getElementById('meal-time')) document.getElementById('meal-time').value = entry.time;
+    if (document.getElementById('btn-submit-journal')) document.getElementById('btn-submit-journal').innerText = "Mettre à jour";
 
     if (entry.photo) {
         const previewImg = document.getElementById('preview-img');
-        previewImg.src = `data:image/jpeg;base64,${entry.photo}`;
-        previewImg.classList.add('active');
-        document.getElementById('upload-prompt').style.display = 'none';
-        document.getElementById('img-zone').classList.add('has-image');
+        if (previewImg) {
+            previewImg.src = `data:image/jpeg;base64,${entry.photo}`;
+            previewImg.classList.add('active');
+            if (document.getElementById('upload-prompt')) document.getElementById('upload-prompt').style.display = 'none';
+            if (document.getElementById('img-zone')) document.getElementById('img-zone').classList.add('has-image');
+        }
     }
 };
 
@@ -221,12 +222,13 @@ function initMealModal() {
         openBtn.addEventListener('click', () => {
             if (!modal) { window.location.href = 'journal.html'; return; }
             AppState.editingJournalId = null;
-            form.reset();
-            document.getElementById('meal-time').value = new Date().toTimeString().slice(0, 5);
+            if (form) form.reset();
+            const timeField = document.getElementById('meal-time');
+            if (timeField) timeField.value = new Date().toTimeString().slice(0, 5);
             modal.classList.add('active');
         });
     }
-    if (closeBtn) closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+    if (closeBtn && modal) closeBtn.addEventListener('click', () => modal.classList.remove('active'));
 
     if (form) {
         form.addEventListener('submit', async (e) => {
@@ -279,9 +281,11 @@ function initMealModal() {
                 const reader = new FileReader();
                 reader.onload = (re) => {
                     const preview = document.getElementById('preview-img');
-                    preview.src = re.target.result;
-                    preview.classList.add('active');
-                    document.getElementById('upload-prompt').style.display = 'none';
+                    if (preview) {
+                        preview.src = re.target.result;
+                        preview.classList.add('active');
+                    }
+                    if (document.getElementById('upload-prompt')) document.getElementById('upload-prompt').style.display = 'none';
                     imgZone.classList.add('has-image');
                 };
                 reader.readAsDataURL(file);
@@ -296,10 +300,43 @@ function initMealModal() {
             const query = e.target.value.trim();
             if (query.length < 3) return;
             const results = await searchOFF(query);
-            displayOFFResults(results, 'off-results', selectProduct);
+            const resultsList = document.getElementById('off-results');
+            if (resultsList) {
+                resultsList.innerHTML = "";
+                results.forEach(p => {
+                    const li = document.createElement('li');
+                    li.innerText = p.product_name || "Inconnu";
+                    li.onclick = () => selectProduct(p);
+                    resultsList.appendChild(li);
+                });
+                resultsList.classList.add('active');
+            }
         }, 500));
     }
 }
+
+/**
+ * selectProduct used by OFF Search
+ */
+window.selectProduct = function(p) {
+    const n = p.nutriments || {};
+    if (document.getElementById('meal-title')) document.getElementById('meal-title').value = p.product_name || "";
+    if (document.getElementById('meal-qty')) document.getElementById('meal-qty').value = 100;
+    
+    // Fallbacks for macros
+    const cal = n.calories_100g || n['energy-kcal_100g'] || 0;
+    const prot = n.proteins_100g || 0;
+    const carbs = n.carbohydrates_100g || 0;
+    const fat = n.fat_100g || 0;
+
+    if (document.getElementById('meal-calories')) document.getElementById('meal-calories').value = cal;
+    if (document.getElementById('meal-proteins')) document.getElementById('meal-proteins').value = prot;
+    if (document.getElementById('meal-carbs')) document.getElementById('meal-carbs').value = carbs;
+    if (document.getElementById('meal-fats')) document.getElementById('meal-fats').value = fat;
+    
+    const resultsList = document.getElementById('off-results');
+    if (resultsList) resultsList.classList.remove('active');
+};
 
 /* -------------------------------------------------------------------------- */
 /*                                LIBRARY LOGIC                               */
@@ -350,13 +387,14 @@ window.editFrequentMeal = function(id) {
     const meal = AppState.meals.find(m => m.id === id);
     if (!meal) return;
     AppState.editingMealId = id;
-    document.getElementById('meal-modal-title').innerText = "Modifier le Plat";
-    document.getElementById('f-meal-title').value = meal.title;
-    document.getElementById('f-meal-calories').value = meal.calories;
-    document.getElementById('f-meal-proteins').value = meal.proteins;
-    document.getElementById('f-meal-carbs').value = meal.carbs;
-    document.getElementById('f-meal-fats').value = meal.fats;
-    document.getElementById('meal-modal').classList.add('active');
+    if (document.getElementById('meal-modal-title')) document.getElementById('meal-modal-title').innerText = "Modifier le Plat";
+    if (document.getElementById('f-meal-title')) document.getElementById('f-meal-title').value = meal.title;
+    if (document.getElementById('f-meal-calories')) document.getElementById('f-meal-calories').value = meal.calories;
+    if (document.getElementById('f-meal-proteins')) document.getElementById('f-meal-proteins').value = meal.proteins;
+    if (document.getElementById('f-meal-carbs')) document.getElementById('f-meal-carbs').value = meal.carbs;
+    if (document.getElementById('f-meal-fats')) document.getElementById('f-meal-fats').value = meal.fats;
+    const modal = document.getElementById('meal-modal');
+    if (modal) modal.classList.add('active');
 };
 
 window.removeFrequentMeal = async function(id) {
@@ -367,14 +405,44 @@ window.removeFrequentMeal = async function(id) {
 };
 
 window.addMealToJournalFromLibrary = function(id) {
-    const m = AppState.meals.find(meal => meal.id == id);
-    if (!m) return;
     window.location.href = `journal.html?useMeal=${id}`;
+};
+
+window.editAliment = function(id) {
+    const a = AppState.aliments.find(al => al.id === id);
+    if (!a) return;
+    AppState.editingAlimentId = id;
+    if (document.getElementById('aliment-modal-title')) document.getElementById('aliment-modal-title').innerText = "Modifier l'Aliment";
+    if (document.getElementById('a-title')) document.getElementById('a-title').value = a.title;
+    if (document.getElementById('a-calories')) document.getElementById('a-calories').value = a.calories;
+    if (document.getElementById('a-proteins')) document.getElementById('a-proteins').value = a.proteins;
+    if (document.getElementById('a-carbs')) document.getElementById('a-carbs').value = a.carbs;
+    if (document.getElementById('a-fats')) document.getElementById('a-fats').value = a.fats;
+    const modal = document.getElementById('aliment-modal');
+    if (modal) modal.classList.add('active');
+};
+
+window.removeAliment = async function(id) {
+    if (!confirm("Supprimer cet aliment ?")) return;
+    AppState.aliments = AppState.aliments.filter(a => a.id != id);
+    await GitHubAPI.saveFile('aliments_frequents.json', AppState.aliments, "Remove aliment");
+    renderAlimentsLibrary();
 };
 
 function initFrequentMealModal() {
     const modal = document.getElementById('meal-modal');
+    const openBtn = document.getElementById('btn-new-meal');
     const form = document.getElementById('frequent-meal-form');
+
+    if (openBtn && modal) {
+        openBtn.addEventListener('click', () => {
+            AppState.editingMealId = null;
+            if (document.getElementById('meal-modal-title')) document.getElementById('meal-modal-title').innerText = "Nouveau Plat";
+            if (form) form.reset();
+            modal.classList.add('active');
+        });
+    }
+
     if (form) {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -393,12 +461,12 @@ function initFrequentMealModal() {
                 AppState.meals.push(data);
             }
             await GitHubAPI.saveFile('plats_frequents.json', AppState.meals, "Update Library");
-            modal.classList.remove('active');
+            if (modal) modal.classList.remove('active');
             renderMealsLibrary();
         });
     }
     const closeBtn = document.getElementById('btn-close-meal-modal');
-    if (closeBtn) closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+    if (closeBtn && modal) closeBtn.addEventListener('click', () => modal.classList.remove('active'));
 
     const searchInput = document.getElementById('meals-search');
     if (searchInput) searchInput.addEventListener('input', (e) => renderMealsLibrary(e.target.value.toLowerCase()));
@@ -406,7 +474,18 @@ function initFrequentMealModal() {
 
 function initAlimentModal() {
     const modal = document.getElementById('aliment-modal');
+    const openBtn = document.getElementById('btn-new-aliment');
     const form = document.getElementById('aliment-form');
+
+    if (openBtn && modal) {
+        openBtn.addEventListener('click', () => {
+            AppState.editingAlimentId = null;
+            if (document.getElementById('aliment-modal-title')) document.getElementById('aliment-modal-title').innerText = "Nouvel Aliment";
+            if (form) form.reset();
+            modal.classList.add('active');
+        });
+    }
+
     if (form) {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -425,12 +504,12 @@ function initAlimentModal() {
                 AppState.aliments.push(data);
             }
             await GitHubAPI.saveFile('aliments_frequents.json', AppState.aliments, "Update Aliments");
-            modal.classList.remove('active');
+            if (modal) modal.classList.remove('active');
             renderAlimentsLibrary();
         });
     }
     const closeBtn = document.getElementById('btn-close-aliment-modal');
-    if (closeBtn) closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+    if (closeBtn && modal) closeBtn.addEventListener('click', () => modal.classList.remove('active'));
 
     const searchInput = document.getElementById('aliments-search');
     if (searchInput) searchInput.addEventListener('input', (e) => renderAlimentsLibrary(e.target.value.toLowerCase()));
@@ -445,9 +524,11 @@ function initWeightForm() {
     if (!form) return;
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        const weightField = document.getElementById('weight-value');
+        if (!weightField) return;
         const weight = {
             date: new Date().toISOString().split('T')[0],
-            value: parseFloat(document.getElementById('weight-value').value)
+            value: parseFloat(weightField.value)
         };
         const idx = AppState.weightHistory.findIndex(w => w.date === weight.date);
         if (idx !== -1) AppState.weightHistory[idx] = weight;
@@ -455,6 +536,7 @@ function initWeightForm() {
         await GitHubAPI.saveFile('poids.json', AppState.weightHistory, "Log Weight");
         renderWeightChart();
         updateDashboard();
+        form.reset();
     });
 }
 
@@ -491,10 +573,12 @@ function renderReport() {
     avgCal.innerText = `${Math.round(totCals / dayCount)} kcal/j`;
     
     const topFoods = document.getElementById('top-foods');
-    const counts = {};
-    recent.forEach(e => counts[e.title] = (counts[e.title] || 0) + 1);
-    const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]).slice(0, 5);
-    topFoods.innerHTML = sorted.map(([n, c]) => `<li>${n} <span>x${c}</span></li>`).join('');
+    if (topFoods) {
+        const counts = {};
+        recent.forEach(e => counts[e.title] = (counts[e.title] || 0) + 1);
+        const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]).slice(0, 5);
+        topFoods.innerHTML = sorted.length > 0 ? sorted.map(([n, c]) => `<li>${n} <span>x${c}</span></li>`).join('') : "<li>Aucune donnée récente.</li>";
+    }
 }
 
 /* -------------------------------------------------------------------------- */
@@ -503,31 +587,52 @@ function renderReport() {
 
 function initOFFExplorer() {
     const btn = document.getElementById('btn-search-off');
-    if (btn) {
+    const input = document.getElementById('off-explorer-query');
+    if (btn && input) {
         btn.addEventListener('click', async () => {
-            const query = document.getElementById('off-explorer-query').value.trim();
+            const query = input.value.trim();
+            if (!query) return;
+            btn.disabled = true;
+            btn.innerText = "...";
             const results = await searchOFF(query);
             AppState.lastOFFSearchResults = results;
             renderExplorerResults(results);
+            btn.disabled = false;
+            btn.innerText = "Rechercher";
+        });
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') btn.click();
         });
     }
 }
 
 async function searchOFF(query) {
     const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&json=1&page_size=10`;
-    const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
-    const data = await res.json();
-    return JSON.parse(data.contents).products || [];
+    try {
+        const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
+        const data = await res.json();
+        const parsed = JSON.parse(data.contents);
+        return parsed.products || [];
+    } catch(e) {
+        console.error("OFF Search error", e);
+        return [];
+    }
 }
 
 function renderExplorerResults(prods) {
     const grid = document.getElementById('explorer-results');
     if (!grid) return;
+    if (!prods || prods.length === 0) {
+        grid.innerHTML = "<div class='empty-state'>Aucun produit trouvé.</div>";
+        return;
+    }
     grid.innerHTML = prods.map((p, i) => `
         <div class="card product-card" onclick="showProductDetail(${i})">
-            <img src="${p.image_front_small_url || ''}" class="product-img">
-            <h4>${p.product_name || 'Inconnu'}</h4>
-            <p>${p.brands || ''}</p>
+            <img src="${p.image_front_small_url || 'https://world.openfoodfacts.org/images/icons/dist/packaging.svg'}" class="product-img">
+            <div class="product-info">
+                <h4>${p.product_name || 'Inconnu'}</h4>
+                <p>${p.brands || 'Marque inconnue'}</p>
+            </div>
         </div>
     `).join('');
 }
@@ -538,19 +643,41 @@ window.showProductDetail = function(index) {
     AppState.currentlyViewedProduct = p;
     const panel = document.getElementById('product-detail-panel');
     const content = document.getElementById('detail-content');
-    panel.classList.add('active');
+    if (panel && content) {
+        panel.classList.add('active');
+        const n = p.nutriments || {};
+        content.innerHTML = `
+            <img src="${p.image_front_url || 'https://world.openfoodfacts.org/images/icons/dist/packaging.svg'}" class="detail-img">
+            <h3>${p.product_name || 'Inconnu'}</h3>
+            <p>${p.brands || ''}</p>
+            <div class="detail-macros">
+                <div class="detail-macro"><span>Cal</span><b>${n.calories_100g || n['energy-kcal_100g'] || 0}</b></div>
+                <div class="detail-macro"><span>Prot</span><b>${n.proteins_100g || 0}g</b></div>
+                <div class="detail-macro"><span>Gluc</span><b>${n.carbohydrates_100g || 0}g</b></div>
+                <div class="detail-macro"><span>Lip</span><b>${n.fat_100g || 0}g</b></div>
+            </div>
+            <button onclick="addToOFFCache()" class="btn-primary" style="margin-top:20px; width:100%;">⭐ Ajouter aux Favoris (Cache)</button>
+        `;
+        const closeBtn = document.getElementById('btn-close-detail');
+        if (closeBtn) closeBtn.onclick = () => panel.classList.remove('active');
+    }
+};
+
+window.addToOFFCache = async function() {
+    const p = AppState.currentlyViewedProduct;
+    if (!p) return;
     const n = p.nutriments || {};
-    content.innerHTML = `
-        <h3>${p.product_name}</h3>
-        <p>${p.brands}</p>
-        <div class="detail-macros">
-            <div class="detail-macro"><span>Cal</span><b>${n.calories_100g || 0}</b></div>
-            <div class="detail-macro"><span>Prot</span><b>${n.proteins_100g || 0}g</b></div>
-        </div>
-        <button onclick="addToOFFCache()" class="btn-primary" style="margin-top:20px; width:100%;">Favoris (Cache)</button>
-    `;
-    const closeBtn = document.getElementById('btn-close-detail');
-    if (closeBtn) closeBtn.onclick = () => panel.classList.remove('active');
+    const item = {
+        id: p.id || p._id || Date.now(),
+        title: p.product_name || "Produit",
+        calories: n.calories_100g || n['energy-kcal_100g'] || 0,
+        proteins: n.proteins_100g || 0,
+        carbs: n.carbohydrates_100g || 0,
+        fats: n.fat_100g || 0
+    };
+    AppState.offCache.push(item);
+    await GitHubAPI.saveFile('produits_cache.json', AppState.offCache, "Add to cache");
+    alert("Produit ajouté aux favoris.");
 };
 
 /* -------------------------------------------------------------------------- */
@@ -559,16 +686,35 @@ window.showProductDetail = function(index) {
 
 function initSettings() {
     const saveBtn = document.getElementById('btn-save-settings');
+    const statusMsg = document.getElementById('settings-status');
     if (!saveBtn) return;
-    document.getElementById('gh-user').value = localStorage.getItem('gh_user') || '';
-    document.getElementById('gh-repo').value = localStorage.getItem('gh_repo') || '';
-    document.getElementById('gh-token').value = localStorage.getItem('gh_token') || '';
+    
+    if (document.getElementById('gh-user')) document.getElementById('gh-user').value = localStorage.getItem('gh_user') || '';
+    if (document.getElementById('gh-repo')) document.getElementById('gh-repo').value = localStorage.getItem('gh_repo') || '';
+    if (document.getElementById('gh-token')) document.getElementById('gh-token').value = localStorage.getItem('gh_token') || '';
 
-    saveBtn.addEventListener('click', () => {
-        localStorage.setItem('gh_user', document.getElementById('gh-user').value.trim());
-        localStorage.setItem('gh_repo', document.getElementById('gh-repo').value.trim());
-        localStorage.setItem('gh_token', document.getElementById('gh-token').value.trim());
-        initApp();
+    saveBtn.addEventListener('click', async () => {
+        saveBtn.disabled = true;
+        saveBtn.innerText = "Vérification...";
+        
+        const user = document.getElementById('gh-user').value.trim();
+        const repo = document.getElementById('gh-repo').value.trim();
+        const token = document.getElementById('gh-token').value.trim();
+
+        localStorage.setItem('gh_user', user);
+        localStorage.setItem('gh_repo', repo);
+        localStorage.setItem('gh_token', token);
+
+        // Simple feedback
+        if (statusMsg) {
+            statusMsg.innerText = "Accès enregistrés ! Synchronisation en cours...";
+            statusMsg.classList.add('active', 'success');
+            setTimeout(() => statusMsg.classList.remove('active', 'success'), 3000);
+        }
+        
+        await initApp();
+        saveBtn.disabled = false;
+        saveBtn.innerText = "Enregistrer";
     });
 
     const resetBtn = document.getElementById('btn-reset-data');

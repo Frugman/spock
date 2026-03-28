@@ -724,3 +724,15 @@ input:focus {
 
 .detail-macro span { color: var(--text-secondary); font-size: 0.75rem; display: block; }
 .detail-macro b { font-size: 1.1rem; }
+
+.entry-img-placeholder {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+}
