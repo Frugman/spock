@@ -60,7 +60,7 @@
             <form id="frequent-meal-form">
                 <div class="form-group"><label for="f-meal-title">Nom du plat</label><input type="text" id="f-meal-title" required></div>
                 <div class="macro-grid">
-                    <div class="form-group"><label>Calories</label><input type="number" id="f-meal-calories" step="0.1" required></div>
+                    <div class="form-group"><label>Calories (pour une portion)</label><input type="number" id="f-meal-calories" step="0.1" required></div>
                     <div class="form-group"><label>Protéines</label><input type="number" id="f-meal-proteins" step="0.1" required></div>
                     <div class="form-group"><label>Glucides</label><input type="number" id="f-meal-carbs" step="0.1" required></div>
                     <div class="form-group"><label>Lipides</label><input type="number" id="f-meal-fats" step="0.1" required></div>
@@ -76,7 +76,10 @@
             <form id="aliment-form">
                 <div class="form-group"><label>Nom de l'ingrédient</label><input type="text" id="a-title" required></div>
                 <div class="macro-grid">
-                    <div class="form-group"><label>Calories</label><input type="number" id="a-calories" step="0.1" required></div>
+                    <div class="form-group" style="display: flex; gap: 10px; align-items: flex-end;">
+                        <div style="flex: 2;"><label>Calories</label><input type="number" id="a-calories" step="0.1" required></div>
+                        <div style="flex: 2;"><label>Unité</label><select id="a-unit" class="btn-secondary" style="width: 100%; height: 38px;"><option value="100g">pour 100g</option><option value="unité">par unité</option><option value="verre">par verre</option><option value="cuillère à soupe">par c. à soupe</option></select></div>
+                    </div>
                     <div class="form-group"><label>Protéines</label><input type="number" id="a-proteins" step="0.1" required></div>
                     <div class="form-group"><label>Glucides</label><input type="number" id="a-carbs" step="0.1" required></div>
                     <div class="form-group"><label>Lipides</label><input type="number" id="a-fats" step="0.1" required></div>

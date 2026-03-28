@@ -17,7 +17,7 @@ const AppState = {
     offCache: [],
     lastOFFSearchResults: [],
     currentlyViewedProduct: null,
-    currentMealBaseMacros: null,
+    currentMealBaseMacros: null, // { calories, proteins, carbs, fats, unit: '100g' | 'portion' | 'unité' | ... }
     editingJournalId: null,
     editingMealId: null,
     editingAlimentId: null
@@ -81,7 +81,6 @@ async function initApp() {
         AppState.offCache = Array.isArray(cacheRes.content) ? cacheRes.content : [];
         AppState.aliments = Array.isArray(alimentsRes.content) ? alimentsRes.content : [];
 
-        // Distribute to UI (safely)
         updateDashboard();
         renderJournalTimeline();
         renderWeightChart();
@@ -89,11 +88,19 @@ async function initApp() {
         renderAlimentsLibrary();
         renderReport();
         
+        // Handle URL params for easy adding (e.g. from library)
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('useMeal')) {
+            const m = AppState.meals.find(ml => ml.id == params.get('useMeal'));
+            if (m) setTimeout(() => useFavorite(m, 'portion'), 500);
+        } else if (params.has('useAliment')) {
+            const a = AppState.aliments.find(al => al.id == params.get('useAliment'));
+            if (a) setTimeout(() => useFavorite(a, a.unit || '100g'), 500);
+        }
+
         console.log("System Status: Logic operational.");
     } catch (error) {
         console.error("Critical Sync Error:", error);
-        const summary = document.getElementById('today-summary');
-        if (summary) summary.innerText = "Erreur de synchronisation.";
     }
 }
 
@@ -119,7 +126,7 @@ function updateDashboard() {
 
     const summary = document.getElementById('today-summary');
     if (summary) {
-        summary.innerText = todayEntries.length > 0 ? `${todayEntries.length} repas ce jour.` : "Aucun repas aujourd'hui. Logic requires sustenance.";
+        summary.innerText = todayEntries.length > 0 ? `${todayEntries.length} repas ce jour.` : "Aucun repas aujourd'hui.";
     }
 
     const preview = document.getElementById('latest-entry-preview');
@@ -162,9 +169,10 @@ function renderJournalTimeline() {
                 ${e.photo ? `<img src="data:image/jpeg;base64,${e.photo}" class="entry-img">` : '<div class="entry-img-placeholder">🍽️</div>'}
                 <div class="entry-details">
                     <div class="entry-macros">
-                        <span class="macro-tag">🔥 ${e.calories}</span>
-                        <span class="macro-tag">🥩 ${e.proteins}</span>
+                        <span class="macro-tag">🔥 ${e.calories} kcal</span>
+                        <span class="macro-tag">🥩 ${e.proteins}g Protégines</span>
                     </div>
+                    <div style="font-size:0.8rem; color:var(--text-secondary); margin-top:5px;">Quantité: ${e.quantity} ${e.unit || 'g'}</div>
                 </div>
             </div>
         </div>
@@ -184,13 +192,23 @@ window.editJournalEntry = function(id) {
     const modal = document.getElementById('entry-modal');
     if (modal) modal.classList.add('active');
 
-    if (document.getElementById('meal-title')) document.getElementById('meal-title').value = entry.title;
-    if (document.getElementById('meal-qty')) document.getElementById('meal-qty').value = entry.quantity || 100;
-    if (document.getElementById('meal-calories')) document.getElementById('meal-calories').value = entry.calories;
-    if (document.getElementById('meal-proteins')) document.getElementById('meal-proteins').value = entry.proteins;
-    if (document.getElementById('meal-carbs')) document.getElementById('meal-carbs').value = entry.carbs;
-    if (document.getElementById('meal-fats')) document.getElementById('meal-fats').value = entry.fats;
-    if (document.getElementById('meal-time')) document.getElementById('meal-time').value = entry.time;
+    document.getElementById('meal-title').value = entry.title;
+    document.getElementById('meal-qty').value = entry.quantity || 100;
+    document.getElementById('meal-calories').value = entry.calories;
+    document.getElementById('meal-proteins').value = entry.proteins;
+    document.getElementById('meal-carbs').value = entry.carbs;
+    document.getElementById('meal-fats').value = entry.fats;
+    document.getElementById('meal-time').value = entry.time;
+    
+    // Attempt to restore base macros for recalc
+    AppState.currentMealBaseMacros = {
+        calories: entry.calories / (entry.quantity || 100) * (entry.unit === 'portion' || entry.unit === 'unité' ? 1 : 100),
+        proteins: entry.proteins / (entry.quantity || 100) * (entry.unit === 'portion' || entry.unit === 'unité' ? 1 : 100),
+        carbs: entry.carbs / (entry.quantity || 100) * (entry.unit === 'portion' || entry.unit === 'unité' ? 1 : 100),
+        fats: entry.fats / (entry.quantity || 100) * (entry.unit === 'portion' || entry.unit === 'unité' ? 1 : 100),
+        unit: entry.unit || 'g'
+    };
+
     if (document.getElementById('btn-submit-journal')) document.getElementById('btn-submit-journal').innerText = "Mettre à jour";
 
     if (entry.photo) {
@@ -199,7 +217,6 @@ window.editJournalEntry = function(id) {
             previewImg.src = `data:image/jpeg;base64,${entry.photo}`;
             previewImg.classList.add('active');
             if (document.getElementById('upload-prompt')) document.getElementById('upload-prompt').style.display = 'none';
-            if (document.getElementById('img-zone')) document.getElementById('img-zone').classList.add('has-image');
         }
     }
 };
@@ -222,15 +239,31 @@ function initMealModal() {
         openBtn.addEventListener('click', () => {
             if (!modal) { window.location.href = 'journal.html'; return; }
             AppState.editingJournalId = null;
+            AppState.currentMealBaseMacros = null;
             if (form) form.reset();
             const timeField = document.getElementById('meal-time');
             if (timeField) timeField.value = new Date().toTimeString().slice(0, 5);
             modal.classList.add('active');
+            if (document.getElementById('btn-submit-journal')) document.getElementById('btn-submit-journal').innerText = "Enregistrer dans le Journal";
         });
     }
     if (closeBtn && modal) closeBtn.addEventListener('click', () => modal.classList.remove('active'));
 
     if (form) {
+        const qtyInput = document.getElementById('meal-qty');
+        qtyInput.addEventListener('input', () => {
+            if (AppState.currentMealBaseMacros) {
+                const qty = parseFloat(qtyInput.value) || 0;
+                const base = AppState.currentMealBaseMacros;
+                const divisor = (base.unit === '100g') ? 100 : 1;
+                
+                document.getElementById('meal-calories').value = ((base.calories * qty) / divisor).toFixed(1);
+                document.getElementById('meal-proteins').value = ((base.proteins * qty) / divisor).toFixed(1);
+                document.getElementById('meal-carbs').value = ((base.carbs * qty) / divisor).toFixed(1);
+                document.getElementById('meal-fats').value = ((base.fats * qty) / divisor).toFixed(1);
+            }
+        });
+
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const photoInput = document.getElementById('meal-photo');
@@ -248,7 +281,8 @@ function initMealModal() {
                 date: new Date().toISOString().split('T')[0],
                 time: document.getElementById('meal-time').value,
                 title: document.getElementById('meal-title').value,
-                quantity: document.getElementById('meal-qty').value,
+                quantity: parseFloat(document.getElementById('meal-qty').value),
+                unit: AppState.currentMealBaseMacros ? AppState.currentMealBaseMacros.unit : 'g',
                 calories: parseFloat(document.getElementById('meal-calories').value),
                 proteins: parseFloat(document.getElementById('meal-proteins').value),
                 carbs: parseFloat(document.getElementById('meal-carbs').value),
@@ -286,7 +320,6 @@ function initMealModal() {
                         preview.classList.add('active');
                     }
                     if (document.getElementById('upload-prompt')) document.getElementById('upload-prompt').style.display = 'none';
-                    imgZone.classList.add('has-image');
                 };
                 reader.readAsDataURL(file);
             }
@@ -313,29 +346,64 @@ function initMealModal() {
             }
         }, 500));
     }
+
+    // Quick Select Favorites
+    const browseBtn = document.getElementById('btn-browse-meals');
+    const listFavs = document.getElementById('meals-selection-list');
+    if (browseBtn && listFavs) {
+        browseBtn.addEventListener('click', () => {
+            listFavs.innerHTML = "<h4>Plats & Aliments</h4>" + [...AppState.meals, ...AppState.aliments].map(f => `
+                <div class="fav-item" onclick='useFavorite(${JSON.stringify(f).replace(/'/g, "&apos;")}, "${f.unit || 'portion'}")'>
+                    <strong>${f.title}</strong>
+                    <small>${f.calories} kcal / ${f.unit || 'portion'}</small>
+                </div>
+            `).join('');
+            listFavs.style.display = listFavs.style.display === 'none' ? 'block' : 'none';
+        });
+    }
 }
 
 /**
- * selectProduct used by OFF Search
+ * selectProduct used by OFF Search (Base is ALWAYS 100g)
  */
 window.selectProduct = function(p) {
     const n = p.nutriments || {};
-    if (document.getElementById('meal-title')) document.getElementById('meal-title').value = p.product_name || "";
-    if (document.getElementById('meal-qty')) document.getElementById('meal-qty').value = 100;
-    
-    // Fallbacks for macros
     const cal = n.calories_100g || n['energy-kcal_100g'] || 0;
     const prot = n.proteins_100g || 0;
     const carbs = n.carbohydrates_100g || 0;
     const fat = n.fat_100g || 0;
 
-    if (document.getElementById('meal-calories')) document.getElementById('meal-calories').value = cal;
-    if (document.getElementById('meal-proteins')) document.getElementById('meal-proteins').value = prot;
-    if (document.getElementById('meal-carbs')) document.getElementById('meal-carbs').value = carbs;
-    if (document.getElementById('meal-fats')) document.getElementById('meal-fats').value = fat;
+    AppState.currentMealBaseMacros = { calories: cal, proteins: prot, carbs: carbs, fats: fat, unit: '100g' };
+    
+    document.getElementById('meal-title').value = p.product_name || "";
+    document.getElementById('meal-qty').value = 100;
+    document.getElementById('meal-calories').value = cal;
+    document.getElementById('meal-proteins').value = prot;
+    document.getElementById('meal-carbs').value = carbs;
+    document.getElementById('meal-fats').value = fat;
     
     const resultsList = document.getElementById('off-results');
     if (resultsList) resultsList.classList.remove('active');
+};
+
+/**
+ * useFavorite handles both Plats (Portions) and Aliments (Units)
+ */
+window.useFavorite = function(f, unit) {
+    AppState.currentMealBaseMacros = { ...f, unit: unit };
+    
+    const modal = document.getElementById('entry-modal');
+    if (modal) modal.classList.add('active');
+    
+    document.getElementById('meal-title').value = f.title;
+    document.getElementById('meal-qty').value = 1;
+    document.getElementById('meal-calories').value = f.calories;
+    document.getElementById('meal-proteins').value = f.proteins;
+    document.getElementById('meal-carbs').value = f.carbs;
+    document.getElementById('meal-fats').value = f.fats;
+    
+    const listFavs = document.getElementById('meals-selection-list');
+    if (listFavs) listFavs.style.display = 'none';
 };
 
 /* -------------------------------------------------------------------------- */
@@ -357,7 +425,7 @@ function renderMealsLibrary(searchTerm = "") {
                         <button onclick="removeFrequentMeal(${m.id})" class="btn-icon">🗑️</button>
                     </div>
                 </header>
-                <div class="entry-macros"><span class="macro-tag">🔥 ${m.calories}</span><span class="macro-tag">🥩 ${m.proteins}</span></div>
+                <div class="entry-macros"><span class="macro-tag">🔥 ${m.calories} (Plat)</span></div>
                 <button onclick="addMealToJournalFromLibrary(${m.id})" class="btn-primary" style="margin-top:10px; width:100%;">Ajouter</button>
             </div>
         `).join('');
@@ -378,7 +446,10 @@ function renderAlimentsLibrary(searchTerm = "") {
                         <button onclick="removeAliment(${a.id})" class="btn-icon">🗑️</button>
                     </div>
                 </header>
-                <div class="entry-macros"><span class="macro-tag">🔥 ${a.calories}</span><span class="macro-tag">🥩 ${a.proteins}</span></div>
+                <div class="entry-macros">
+                    <span class="macro-tag">🔥 ${a.calories} / ${a.unit || '100g'}</span>
+                </div>
+                <button onclick="addAlimentToJournalFromLibrary(${a.id})" class="btn-secondary" style="margin-top:10px; width:100%;">Ajouter</button>
             </div>
         `).join('');
 }
@@ -387,14 +458,13 @@ window.editFrequentMeal = function(id) {
     const meal = AppState.meals.find(m => m.id === id);
     if (!meal) return;
     AppState.editingMealId = id;
-    if (document.getElementById('meal-modal-title')) document.getElementById('meal-modal-title').innerText = "Modifier le Plat";
-    if (document.getElementById('f-meal-title')) document.getElementById('f-meal-title').value = meal.title;
-    if (document.getElementById('f-meal-calories')) document.getElementById('f-meal-calories').value = meal.calories;
-    if (document.getElementById('f-meal-proteins')) document.getElementById('f-meal-proteins').value = meal.proteins;
-    if (document.getElementById('f-meal-carbs')) document.getElementById('f-meal-carbs').value = meal.carbs;
-    if (document.getElementById('f-meal-fats')) document.getElementById('f-meal-fats').value = meal.fats;
-    const modal = document.getElementById('meal-modal');
-    if (modal) modal.classList.add('active');
+    document.getElementById('meal-modal-title').innerText = "Modifier le Plat";
+    document.getElementById('f-meal-title').value = meal.title;
+    document.getElementById('f-meal-calories').value = meal.calories;
+    document.getElementById('f-meal-proteins').value = meal.proteins;
+    document.getElementById('f-meal-carbs').value = meal.carbs;
+    document.getElementById('f-meal-fats').value = meal.fats;
+    document.getElementById('meal-modal').classList.add('active');
 };
 
 window.removeFrequentMeal = async function(id) {
@@ -405,21 +475,27 @@ window.removeFrequentMeal = async function(id) {
 };
 
 window.addMealToJournalFromLibrary = function(id) {
-    window.location.href = `journal.html?useMeal=${id}`;
+    const m = AppState.meals.find(ml => ml.id == id);
+    if (!m) return;
+    if (window.location.pathname.includes('journal.html')) {
+        useFavorite(m, 'portion');
+    } else {
+        window.location.href = `journal.html?useMeal=${id}`;
+    }
 };
 
 window.editAliment = function(id) {
     const a = AppState.aliments.find(al => al.id === id);
     if (!a) return;
     AppState.editingAlimentId = id;
-    if (document.getElementById('aliment-modal-title')) document.getElementById('aliment-modal-title').innerText = "Modifier l'Aliment";
-    if (document.getElementById('a-title')) document.getElementById('a-title').value = a.title;
-    if (document.getElementById('a-calories')) document.getElementById('a-calories').value = a.calories;
-    if (document.getElementById('a-proteins')) document.getElementById('a-proteins').value = a.proteins;
-    if (document.getElementById('a-carbs')) document.getElementById('a-carbs').value = a.carbs;
-    if (document.getElementById('a-fats')) document.getElementById('a-fats').value = a.fats;
-    const modal = document.getElementById('aliment-modal');
-    if (modal) modal.classList.add('active');
+    document.getElementById('aliment-modal-title').innerText = "Modifier l'Aliment";
+    document.getElementById('a-title').value = a.title;
+    document.getElementById('a-calories').value = a.calories;
+    document.getElementById('a-unit').value = a.unit || '100g';
+    document.getElementById('a-proteins').value = a.proteins;
+    document.getElementById('a-carbs').value = a.carbs;
+    document.getElementById('a-fats').value = a.fats;
+    document.getElementById('aliment-modal').classList.add('active');
 };
 
 window.removeAliment = async function(id) {
@@ -427,6 +503,16 @@ window.removeAliment = async function(id) {
     AppState.aliments = AppState.aliments.filter(a => a.id != id);
     await GitHubAPI.saveFile('aliments_frequents.json', AppState.aliments, "Remove aliment");
     renderAlimentsLibrary();
+};
+
+window.addAlimentToJournalFromLibrary = function(id) {
+    const a = AppState.aliments.find(al => al.id == id);
+    if (!a) return;
+    if (window.location.pathname.includes('journal.html')) {
+        useFavorite(a, a.unit || '100g');
+    } else {
+        window.location.href = `journal.html?useAliment=${id}`;
+    }
 };
 
 function initFrequentMealModal() {
@@ -437,7 +523,7 @@ function initFrequentMealModal() {
     if (openBtn && modal) {
         openBtn.addEventListener('click', () => {
             AppState.editingMealId = null;
-            if (document.getElementById('meal-modal-title')) document.getElementById('meal-modal-title').innerText = "Nouveau Plat";
+            document.getElementById('meal-modal-title').innerText = "Nouveau Plat";
             if (form) form.reset();
             modal.classList.add('active');
         });
@@ -452,7 +538,8 @@ function initFrequentMealModal() {
                 calories: parseFloat(document.getElementById('f-meal-calories').value),
                 proteins: parseFloat(document.getElementById('f-meal-proteins').value),
                 carbs: parseFloat(document.getElementById('f-meal-carbs').value),
-                fats: parseFloat(document.getElementById('f-meal-fats').value)
+                fats: parseFloat(document.getElementById('f-meal-fats').value),
+                unit: 'portion'
             };
             if (AppState.editingMealId) {
                 const idx = AppState.meals.findIndex(m => m.id === AppState.editingMealId);
@@ -461,7 +548,7 @@ function initFrequentMealModal() {
                 AppState.meals.push(data);
             }
             await GitHubAPI.saveFile('plats_frequents.json', AppState.meals, "Update Library");
-            if (modal) modal.classList.remove('active');
+            modal.classList.remove('active');
             renderMealsLibrary();
         });
     }
@@ -480,7 +567,7 @@ function initAlimentModal() {
     if (openBtn && modal) {
         openBtn.addEventListener('click', () => {
             AppState.editingAlimentId = null;
-            if (document.getElementById('aliment-modal-title')) document.getElementById('aliment-modal-title').innerText = "Nouvel Aliment";
+            document.getElementById('aliment-modal-title').innerText = "Nouvel Aliment";
             if (form) form.reset();
             modal.classList.add('active');
         });
@@ -495,7 +582,8 @@ function initAlimentModal() {
                 calories: parseFloat(document.getElementById('a-calories').value),
                 proteins: parseFloat(document.getElementById('a-proteins').value),
                 carbs: parseFloat(document.getElementById('a-carbs').value),
-                fats: parseFloat(document.getElementById('a-fats').value)
+                fats: parseFloat(document.getElementById('a-fats').value),
+                unit: document.getElementById('a-unit').value
             };
             if (AppState.editingAlimentId) {
                 const idx = AppState.aliments.findIndex(a => a.id === AppState.editingAlimentId);
@@ -504,7 +592,7 @@ function initAlimentModal() {
                 AppState.aliments.push(data);
             }
             await GitHubAPI.saveFile('aliments_frequents.json', AppState.aliments, "Update Aliments");
-            if (modal) modal.classList.remove('active');
+            modal.classList.remove('active');
             renderAlimentsLibrary();
         });
     }
@@ -673,7 +761,8 @@ window.addToOFFCache = async function() {
         calories: n.calories_100g || n['energy-kcal_100g'] || 0,
         proteins: n.proteins_100g || 0,
         carbs: n.carbohydrates_100g || 0,
-        fats: n.fat_100g || 0
+        fats: n.fat_100g || 0,
+        unit: '100g'
     };
     AppState.offCache.push(item);
     await GitHubAPI.saveFile('produits_cache.json', AppState.offCache, "Add to cache");
@@ -705,7 +794,6 @@ function initSettings() {
         localStorage.setItem('gh_repo', repo);
         localStorage.setItem('gh_token', token);
 
-        // Simple feedback
         if (statusMsg) {
             statusMsg.innerText = "Accès enregistrés ! Synchronisation en cours...";
             statusMsg.classList.add('active', 'success');
