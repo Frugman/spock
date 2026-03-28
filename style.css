@@ -237,6 +237,74 @@ body {
     display: block;
 }
 
+/* Forms & Inputs */
+.form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+textarea,
+select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 12px;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.form-actions {
+    margin-top: 30px;
+}
+
+.status-msg {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    display: none;
+}
+
+.status-msg.active {
+    display: block;
+}
+
+.status-msg.success {
+    background: rgba(35, 134, 54, 0.1);
+    color: #3fb950;
+    border-left: 3px solid #3fb950;
+}
+
+.status-msg.error {
+    background: rgba(248, 81, 73, 0.1);
+    color: #f85149;
+    border-left: 3px solid #f85149;
+}
+
+.settings-card {
+    max-width: 500px;
+}
+
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
     body {

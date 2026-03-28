@@ -120,6 +120,25 @@
             <!-- Section: Settings -->
             <section id="view-settings" class="view-section">
                 <h2>Paramètres</h2>
+                <div class="card settings-card">
+                    <p>Configurez ici vos accès GitHub pour la synchronisation automatique.</p>
+                    <div class="form-group">
+                        <label for="gh-user">Pseudo GitHub</label>
+                        <input type="text" id="gh-user" placeholder="ex: Frugman">
+                    </div>
+                    <div class="form-group">
+                        <label for="gh-repo">Nom du dépôt</label>
+                        <input type="text" id="gh-repo" placeholder="ex: spock">
+                    </div>
+                    <div class="form-group">
+                        <label for="gh-token">Token Secret (PAT)</label>
+                        <input type="password" id="gh-token" placeholder="github_pat_...">
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn-primary" id="btn-save-settings">Enregistrer la Configuration</button>
+                    </div>
+                    <div id="settings-status" class="status-msg"></div>
+                </div>
             </section>
 
         </main>
@@ -130,6 +149,7 @@
         <!-- Contenu du formulaire à venir -->
     </div>
 
+    <script src="github-api.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

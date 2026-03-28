@@ -14,8 +14,8 @@ Créer une application personnelle de suivi de régime, logique et efficace, bas
 ### Phase 1 : Socle Technique & Interface (La Coquille)
 - [x] Structure HTML5 sémantique et Navigation.
 - [x] Système de design CSS (Sombre, Moderne, "Spock-ish").
-- [ ] Utilitaires de compression d'images (Logic Canvas).
-- [ ] Fonctions de lecture/écriture des fichiers JSON locaux via GitHub (même système que Potager).
+- [x] Utilitaires de compression d'images (Logic Canvas).
+- [x] Fonctions de lecture/écriture des fichiers JSON locaux via GitHub (même système que Potager).
 
 ### Phase 2 : Module Journal & Open Food Facts
 - [ ] Formulaire d'entrée de repas (Titre, heure, macros, photo).
@@ -39,4 +39,4 @@ Créer une application personnelle de suivi de régime, logique et efficace, bas
 - [ ] Système de tri des ingrédients préférés (Fréquence + Récence).
 
 ---
-*Statut actuel : Phase 1 initialisée (La Coquille).*
+*Statut actuel : Phase 1 terminée. Prêt pour Phase 2 (Module Journal & Open Food Facts).*
