@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plats - Spock</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+    <meta name="theme-color" content="#238636">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="spock-theme">
+    <div class="glass-container">
+        <aside class="sidebar">
+            <div class="logo"><span class="logo-icon">🖖</span><h1 class="logo-text">SPOCK</h1></div>
+            <nav class="main-nav">
+                <ul>
+                    <li class="nav-item"><a href="index.html"><i class="icon">📊</i> Dashboard</a></li>
+                    <li class="nav-item"><a href="journal.html"><i class="icon">📖</i> Journal</a></li>
+                    <li class="nav-item"><a href="poids.html"><i class="icon">⚖️</i> Poids</a></li>
+                    <li class="nav-item active"><a href="plats.html"><i class="icon">🍲</i> Plats</a></li>
+                    <li class="nav-item"><a href="report.html"><i class="icon">📈</i> Report</a></li>
+                    <li class="nav-item"><a href="explorer.html"><i class="icon">🔍</i> OFF Explorer</a></li>
+                    <li class="nav-item"><a href="settings.html"><i class="icon">⚙️</i> Paramètres</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <header class="top-bar">
+                <div class="search-box"><input type="text" placeholder="Rechercher..." id="main-search"></div>
+                <div class="actions"><button class="btn-primary" id="btn-add-entry">+ Nouveau Repas</button></div>
+            </header>
+
+            <section id="view-meals" class="view-section active">
+                <div class="view-header">
+                    <h2>Bibliothèque de Plats</h2>
+                    <button class="btn-primary" id="btn-new-meal">+ Créer un Plat</button>
+                </div>
+                <div class="search-box" style="margin: 1.5rem 0; width: 100%;"><input type="text" id="meals-search" placeholder="Rechercher un plat..." style="width: 100%;"></div>
+                <div id="meals-grid" class="dashboard-grid"></div>
+
+                <div class="view-header" style="margin-top: 3rem;">
+                    <h2>Ingrédients & Aliments</h2>
+                    <button class="btn-primary" id="btn-new-aliment">+ Nouvel Aliment</button>
+                </div>
+                <div class="search-box" style="margin: 1.5rem 0; width: 100%;"><input type="text" id="aliments-search" placeholder="Rechercher un ingrédient..." style="width: 100%;"></div>
+                <div id="aliments-grid" class="dashboard-grid"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals for editing -->
+    <div id="meal-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2 id="meal-modal-title">Nouveau Plat</h2><button class="btn-close" id="btn-close-meal-modal">&times;</button></div>
+            <form id="frequent-meal-form">
+                <div class="form-group"><label for="f-meal-title">Nom du plat</label><input type="text" id="f-meal-title" required></div>
+                <div class="macro-grid">
+                    <div class="form-group"><label>Calories</label><input type="number" id="f-meal-calories" step="0.1" required></div>
+                    <div class="form-group"><label>Protéines</label><input type="number" id="f-meal-proteins" step="0.1" required></div>
+                    <div class="form-group"><label>Glucides</label><input type="number" id="f-meal-carbs" step="0.1" required></div>
+                    <div class="form-group"><label>Lipides</label><input type="number" id="f-meal-fats" step="0.1" required></div>
+                </div>
+                <div class="form-actions"><button type="submit" class="btn-primary" style="width: 100%;">Sauvegarder</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="aliment-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2 id="aliment-modal-title">Nouvel Aliment</h2><button class="btn-close" id="btn-close-aliment-modal">&times;</button></div>
+            <form id="aliment-form">
+                <div class="form-group"><label>Nom de l'ingrédient</label><input type="text" id="a-title" required></div>
+                <div class="macro-grid">
+                    <div class="form-group"><label>Calories</label><input type="number" id="a-calories" step="0.1" required></div>
+                    <div class="form-group"><label>Protéines</label><input type="number" id="a-proteins" step="0.1" required></div>
+                    <div class="form-group"><label>Glucides</label><input type="number" id="a-carbs" step="0.1" required></div>
+                    <div class="form-group"><label>Lipides</label><input type="number" id="a-fats" step="0.1" required></div>
+                </div>
+                <div class="form-actions"><button type="submit" class="btn-primary" style="width: 100%;">Sauvegarder</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="entry-modal" class="modal">
+        <div class="modal-content"><p>Ouvrez le Journal pour ajouter un repas complet.</p><button onclick="window.location.href='journal.html'">Aller au Journal</button><button class="btn-close" onclick="document.getElementById('entry-modal').classList.remove('active')">&times;</button></div>
+    </div>
+
+    <script src="github-api.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

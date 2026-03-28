@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journal - Spock</title>
+    <meta name="description" content="Journal alimentaire logique.">
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- PWA & Favicons -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+    <meta name="theme-color" content="#238636">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="spock-theme">
+    <div class="glass-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="logo-icon">🖖</span>
+                <h1 class="logo-text">SPOCK</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li class="nav-item">
+                        <a href="index.html"><i class="icon">📊</i> Dashboard</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="journal.html"><i class="icon">📖</i> Journal</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="poids.html"><i class="icon">⚖️</i> Poids</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="plats.html"><i class="icon">🍲</i> Plats</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="report.html"><i class="icon">📈</i> Report</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="explorer.html"><i class="icon">🔍</i> OFF Explorer</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="settings.html"><i class="icon">⚙️</i> Paramètres</a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="user-status">
+                <div class="status-indicator online"></div>
+                <span class="user-name">Live Long & Prosper</span>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content">
+            <header class="top-bar">
+                <div class="search-box">
+                    <input type="text" placeholder="Rechercher..." id="main-search">
+                </div>
+                <div class="actions">
+                    <button class="btn-primary" id="btn-add-entry">+ Nouveau Repas</button>
+                </div>
+            </header>
+
+            <section id="view-journal" class="view-section active">
+                <h2>Journal Alimentaire</h2>
+                <div id="journal-timeline" class="timeline"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal for new entry -->
+    <div id="entry-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nouveau Repas</h2>
+                <button class="btn-close" id="btn-close-modal">&times;</button>
+            </div>
+
+            <div class="modal-tabs">
+                <div class="off-search-container">
+                    <input type="text" id="off-search" placeholder="Scanner ou chercher un produit (Open Food Facts)...">
+                    <ul id="off-results" class="off-results"></ul>
+                </div>
+                <button class="btn-secondary" id="btn-browse-meals" style="margin-bottom: 1.5rem; width: 100%; padding: 10px; border: 1px solid var(--card-border); background: var(--card-bg); color: var(--text-primary); border-radius: 8px; cursor: pointer;">📖 Mes Plats Fréquents</button>
+            </div>
+
+            <div id="meals-selection-list" class="off-results" style="margin-bottom: 1.5rem;"></div>
+
+            <form id="meal-form">
+                <div class="form-group">
+                    <label for="meal-title">Nom du repas / aliment</label>
+                    <input type="text" id="meal-title" required>
+                </div>
+                <div class="quantity-row" style="display: flex; gap: 1rem; margin-bottom: 1.5rem; align-items: end;">
+                    <div class="form-group" style="flex:1;">
+                        <label for="meal-qty">Quantité (g / mL)</label>
+                        <input type="number" id="meal-qty" value="100" step="1">
+                    </div>
+                </div>
+                <div class="macro-grid">
+                    <div class="form-group"><label for="meal-calories">Calories</label><input type="number" id="meal-calories" step="0.1" required></div>
+                    <div class="form-group"><label for="meal-proteins">Protéines</label><input type="number" id="meal-proteins" step="0.1" required></div>
+                    <div class="form-group"><label for="meal-carbs">Glucides</label><input type="number" id="meal-carbs" step="0.1" required></div>
+                    <div class="form-group"><label for="meal-fats">Lipides</label><input type="number" id="meal-fats" step="0.1" required></div>
+                </div>
+                <div class="form-group">
+                    <label for="meal-time">Heure</label>
+                    <input type="time" id="meal-time" required>
+                </div>
+                <div class="image-upload-zone" id="img-zone">
+                    <div id="upload-prompt">📸 Ajouter une photo</div>
+                    <img id="preview-img" src="#" alt="Aperçu">
+                    <input type="file" id="meal-photo" class="hidden-input" accept="image/*">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary" id="btn-submit-journal" style="width: 100%;">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="github-api.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
