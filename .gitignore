@@ -1,0 +1,10 @@
+# Sécurité : Clés de Token Git (Ne pas push sur GitHub !)
+cle-github-spock.txt
+*.txt
+
+# Dossiers système et temporaires
+.DS_Store
+Thumbs.db
+node_modules/
+.vscode/
+.gemini/
