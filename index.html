@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spock - Logic Workspace</title>
+    <meta name="description" content="Espace de travail logique et structuré pour la productivité personnelle (inspiré du Potager).">
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body class="spock-theme">
+    <div class="glass-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="logo-icon">🖖</span>
+                <h1 class="logo-text">SPOCK</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li class="active"><a href="#dashboard"><i class="icon">📊</i> Dashboard</a></li>
+                    <li><a href="#logic"><i class="icon">🧠</i> Logique</a></li>
+                    <li><a href="#archives"><i class="icon">📁</i> Archives</a></li>
+                    <li><a href="#settings"><i class="icon">⚙️</i> Paramètres</a></li>
+                </ul>
+            </nav>
+            <div class="user-status">
+                <div class="status-indicator online"></div>
+                <span class="user-name">Live Long & Prosper</span>
+            </div>
+        </aside>
+
+        <main class="content">
+            <header class="top-bar">
+                <div class="search-box">
+                    <input type="text" placeholder="Rechercher une donnée..." id="main-search">
+                </div>
+                <div class="actions">
+                    <button class="btn-primary" id="btn-add">Nouveau</button>
+                </div>
+            </header>
+
+            <section class="dashboard-grid">
+                <!-- Welcome Card -->
+                <div class="card welcome-card">
+                    <h2>Bienvenue dans votre nouvel espace</h2>
+                    <p>Votre environnement technique "Spock" est prêt. Basé sur l'architecture robuste de votre Potager, ce projet est optimisé pour GitHub Pages.</p>
+                </div>
+
+                <!-- Stats/Modules -->
+                <div class="card module-card">
+                    <h3>Statut Système</h3>
+                    <div class="stat-row">
+                        <span>Intégrité</span>
+                        <div class="progress-bar"><div class="fill" style="width: 100%;"></div></div>
+                    </div>
+                </div>
+
+                <div class="card module-card">
+                    <h3>Dernières Notes</h3>
+                    <ul class="notes-list" id="latest-notes">
+                        <li>Chargement des données...</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
