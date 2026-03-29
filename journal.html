@@ -48,7 +48,23 @@
             <div class="form-group"><label>Type</label><select id="meal-type"><option value="Petit-déjeuner">☕ Petit-déjeuner</option><option value="Déjeuner">🍲 Déjeuner</option><option value="Dîner">🥗 Dîner</option><option value="En-cas">🍎 En-cas</option></select></div>
             <div id="meal-basket-list" class="card" style="min-height:50px; border-style:dashed;"><div class="empty-state">Panier vide.</div></div>
             <div id="basket-totals" class="card" style="margin-bottom:20px;"><div class="macro-grid"><div><span>Cal</span><br><b id="total-cal">0</b></div><div><span>Prot</span><br><b id="total-prot">0g</b></div></div></div>
-            <div class="search-box"><label>Ajouter des aliments</label><input type="text" id="off-search" placeholder="Chercher un produit..."><ul id="off-results" class="hidden"></ul></div>
+            <div class="search-box">
+                <label style="font-size:0.75rem; color:var(--accent-color); font-weight:700;">Ajouter l'un de mes ingrédients</label>
+                <input type="text" id="fav-aliments-search" placeholder="Nom de votre ingrédient...">
+                <ul id="fav-aliments-results" class="hidden" style="list-style:none; padding:0; margin-top:10px; max-height:200px; overflow-y:auto; background:rgba(0,0,0,0.3); border-radius:10px;"></ul>
+            </div>
+
+            <div class="search-box">
+                <label style="font-size:0.75rem; color:var(--accent-color); font-weight:700;">Ajouter un repas favori</label>
+                <input type="text" id="fav-meals-search" placeholder="Nom de votre plat favori...">
+                <ul id="fav-meals-results" class="hidden" style="list-style:none; padding:0; margin-top:10px; max-height:200px; overflow-y:auto; background:rgba(0,0,0,0.3); border-radius:10px;"></ul>
+            </div>
+
+            <div class="search-box">
+                <label style="font-size:0.75rem; color:var(--accent-color); font-weight:700;">Ajouter un aliment de la Base</label>
+                <input type="text" id="off-search" placeholder="Nom de l'aliment dans CIQUAL...">
+                <ul id="off-results" class="hidden" style="list-style:none; padding:0; margin-top:10px; max-height:200px; overflow-y:auto; background:rgba(0,0,0,0.3); border-radius:10px;"></ul>
+            </div>
             <button type="button" class="btn-primary" id="btn-save-full-meal">ENREGISTRER</button>
         </div>
     </div>

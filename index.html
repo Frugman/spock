@@ -102,20 +102,21 @@
             </div>
 
             <div class="search-box">
-                <input type="text" id="off-search" placeholder="Rechercher un ingrédient...">
-                <ul id="off-results" class="hidden"
-                    style="list-style:none; padding:0; margin-top:10px; max-height:200px; overflow-y:auto; background:rgba(0,0,0,0.3); border-radius:10px;">
-                </ul>
+                <label style="font-size:0.75rem; color:var(--accent-color); font-weight:700;">Ajouter l'un de mes ingrédients</label>
+                <input type="text" id="fav-aliments-search" placeholder="Nom de votre ingrédient...">
+                <ul id="fav-aliments-results" class="hidden" style="list-style:none; padding:0; margin-top:10px; max-height:200px; overflow-y:auto; background:rgba(0,0,0,0.3); border-radius:10px;"></ul>
             </div>
 
-            <div style="display: flex; gap: 10px; margin-top: 15px;">
-                <button class="btn-primary" id="btn-fav-meals" style="background:var(--card-border);">Plats</button>
-                <button class="btn-primary" id="btn-fav-aliments"
-                    style="background:var(--card-border);">Favoris</button>
+            <div class="search-box">
+                <label style="font-size:0.75rem; color:var(--accent-color); font-weight:700;">Ajouter un repas favori</label>
+                <input type="text" id="fav-meals-search" placeholder="Nom de votre plat favori...">
+                <ul id="fav-meals-results" class="hidden" style="list-style:none; padding:0; margin-top:10px; max-height:200px; overflow-y:auto; background:rgba(0,0,0,0.3); border-radius:10px;"></ul>
             </div>
 
-            <div id="selection-list" class="hidden"
-                style="margin-top:15px; max-height:200px; overflow-y:auto; padding:10px; border:1px solid var(--card-border); border-radius:10px;">
+            <div class="search-box">
+                <label style="font-size:0.75rem; color:var(--accent-color); font-weight:700;">Ajouter un aliment de la Base</label>
+                <input type="text" id="off-search" placeholder="Nom de l'aliment dans CIQUAL...">
+                <ul id="off-results" class="hidden" style="list-style:none; padding:0; margin-top:10px; max-height:200px; overflow-y:auto; background:rgba(0,0,0,0.3); border-radius:10px;"></ul>
             </div>
 
             <button class="btn-primary" id="btn-save-full-meal" style="margin-top:20px;">ENREGISTRER</button>

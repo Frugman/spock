@@ -249,47 +249,76 @@ function initMealModal() {
         renderBasket();
     };
 
-    const btnMeals = document.getElementById('btn-fav-meals');
-    const btnAliments = document.getElementById('btn-fav-aliments');
-    const selectionList = document.getElementById('selection-list');
+    const favInput = document.getElementById('fav-aliments-search');
+    const favResults = document.getElementById('fav-aliments-results');
+    const mealInput = document.getElementById('fav-meals-search');
+    const mealResults = document.getElementById('fav-meals-results');
+    const offInput = document.getElementById('off-search');
+    const offResults = document.getElementById('off-results');
 
-    function showFavOverlay(type) {
-        const items = type === 'meals' ? AppState.meals : AppState.aliments;
-        if (!selectionList) return;
-        selectionList.innerHTML = items.map(it => `
-            <div class="card" onclick='addToBasket(${JSON.stringify(it).replace(/'/g, "&apos;")})' style="margin-bottom:10px; cursor:pointer; padding:12px;">
-                <strong>${it.title}</strong><br>
-                <small>${it.calories} kcal / ${it.unit || 'portion'}</small>
-            </div>
-        `).join('');
-        selectionList.classList.remove('hidden');
+    if (favInput) {
+        favInput.addEventListener('input', (e) => {
+            const query = e.target.value.trim().toLowerCase();
+            if (query.length < 2) { if (favResults) favResults.classList.add('hidden'); return; }
+            const matches = AppState.aliments.filter(it => it.title.toLowerCase().includes(query));
+            if (matches.length > 0 && favResults) {
+                favResults.innerHTML = matches.map(it => `
+                    <li onclick='addToBasket(${JSON.stringify(it).replace(/'/g, "&apos;")}, "fav")' style="padding:12px; border-bottom:1px solid rgba(255,255,255,0.05); cursor:pointer;">
+                        <strong>${it.title}</strong><br>
+                        <small>${it.calories} kcal • ${it.unit || 'portion'}</small>
+                    </li>
+                `).join('');
+                favResults.classList.remove('hidden');
+            } else if (favResults) { favResults.classList.add('hidden'); }
+        });
     }
 
-    if (btnMeals) btnMeals.onclick = () => showFavOverlay('meals');
-    if (btnAliments) btnAliments.onclick = () => showFavOverlay('aliments');
+    if (mealInput) {
+        mealInput.addEventListener('input', (e) => {
+            const query = e.target.value.trim().toLowerCase();
+            if (query.length < 2) { if (mealResults) mealResults.classList.add('hidden'); return; }
+            const matches = AppState.meals.filter(it => it.title.toLowerCase().includes(query));
+            if (matches.length > 0 && mealResults) {
+                mealResults.innerHTML = matches.map(it => `
+                    <li onclick='addToBasket(${JSON.stringify(it).replace(/'/g, "&apos;")}, "meal")' style="padding:12px; border-bottom:1px solid rgba(255,255,255,0.05); cursor:pointer;">
+                        <strong>${it.title}</strong><br>
+                        <small>${it.calories} kcal / portion</small>
+                    </li>
+                `).join('');
+                mealResults.classList.remove('hidden');
+            } else if (mealResults) { mealResults.classList.add('hidden'); }
+        });
+    }
 
-    window.addToBasket = (item) => {
+    window.addToBasket = (item, source = "off") => {
         AppState.currentBasket.push({ ...item, quantity: (item.unit === 'portion' || item.unit === 'unité' ? 1 : 100) });
-        if (selectionList) selectionList.classList.add('hidden');
         renderBasket();
+        if (source === "fav") {
+            if (favInput) favInput.value = "";
+            if (favResults) favResults.classList.add('hidden');
+        } else if (source === "meal") {
+            if (mealInput) mealInput.value = "";
+            if (mealResults) mealResults.classList.add('hidden');
+        } else {
+            if (offInput) offInput.value = "";
+            if (offResults) offResults.classList.add('hidden');
+        }
     };
 
-    const offInput = document.getElementById('off-search');
     if (offInput) {
         offInput.addEventListener('input', debounce(async (e) => {
             const query = e.target.value.trim();
-            if (query.length < 2) return;
+            if (query.length < 2) { offResults.classList.add('hidden'); return; }
             const prods = await searchCIQUAL(query);
-            const resBox = document.getElementById('off-results');
-            if (resBox) {
-                resBox.innerHTML = prods.map(p => {
+            if (offResults) {
+                offResults.innerHTML = prods.map(p => {
                     const item = { ...p, unit: '100g' };
-                    return `<li onclick='addToBasket(${JSON.stringify(item).replace(/'/g, "&apos;")})' style="padding:12px; border-bottom:1px solid rgba(255,255,255,0.05); cursor:pointer;">
+                    return `<li onclick='addToBasket(${JSON.stringify(item).replace(/'/g, "&apos;")}, "off")' style="padding:12px; border-bottom:1px solid rgba(255,255,255,0.05); cursor:pointer;">
                         <strong>${item.title}</strong><br>
                         <small>${item.calories} kcal • Prot: ${item.proteins}g</small>
                     </li>`;
                 }).join('');
-                resBox.classList.remove('hidden');
+                offResults.classList.remove('hidden');
             }
         }, 300));
     }
