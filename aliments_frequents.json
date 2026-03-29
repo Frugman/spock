@@ -129,13 +129,14 @@
     "weight": 5
   },
   {
-    "id": 1774796935653,
+    "id": "1774796935653",
     "title": "Galette Louisiana Spicy Cereal Bio",
     "calories": 181,
     "proteins": 14,
     "carbs": 11,
     "fats": 8,
-    "unit": "1 galette"
+    "unit": "unité",
+    "weight": 80
   },
   {
     "id": 1774797040490,
