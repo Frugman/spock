@@ -38,6 +38,16 @@ function initNavigation() {
 }
 
 async function initApp() {
+    // 1. Load Local CIQUAL Database (Essential for search, regardless of Git)
+    try {
+        const ciqualRes = await fetch('./ciqual.json').then(r => r.json()).catch(() => []);
+        AppState.ciqual = Array.isArray(ciqualRes) ? ciqualRes : [];
+        console.log("🍏 CIQUAL Loaded:", AppState.ciqual.length, "items");
+    } catch (e) {
+        console.error("CIQUAL Fetch Error:", e);
+    }
+
+    // 2. Load GitHub Data (Only if configured)
     if (!GitHubAPI.isConfigured()) return;
     try {
         const [journalRes, weightRes, mealsRes, cacheRes, alimentsRes] = await Promise.all([
@@ -45,8 +55,7 @@ async function initApp() {
             GitHubAPI.getFile('poids.json').catch(() => ({ content: [] })),
             GitHubAPI.getFile('plats_frequents.json').catch(() => ({ content: [] })),
             GitHubAPI.getFile('produits_cache.json').catch(() => ({ content: [] })),
-            GitHubAPI.getFile('aliments_frequents.json').catch(() => ({ content: [] })),
-            fetch('ciqual.json').then(r => r.json()).catch(() => [])
+            GitHubAPI.getFile('aliments_frequents.json').catch(() => ({ content: [] }))
         ]);
 
         AppState.journal = Array.isArray(journalRes.content) ? journalRes.content : [];
@@ -54,7 +63,6 @@ async function initApp() {
         AppState.meals = Array.isArray(mealsRes.content) ? mealsRes.content : [];
         AppState.offCache = Array.isArray(cacheRes.content) ? cacheRes.content : [];
         AppState.aliments = Array.isArray(alimentsRes.content) ? alimentsRes.content : [];
-        AppState.ciqual = Array.isArray(ciqualRes) ? ciqualRes : [];
 
         updateDashboard();
         renderJournalTimeline();
@@ -539,11 +547,18 @@ function initOFFExplorer() {
 async function searchCIQUAL(query) {
     if (!query) return [];
     console.log("Searching CIQUAL for:", query);
-    const q = query.toLowerCase();
-    const results = AppState.ciqual.filter(it => it.title.toLowerCase().includes(q));
+    
+    // Normalization to handle accents (e.g., "pate" matches "Pâté")
+    const normalize = (s) => (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    const q = normalize(query);
+    
+    const results = AppState.ciqual.filter(it => normalize(it.title).includes(q));
+    
     return results.sort((a, b) => {
-        const aStart = a.title.toLowerCase().startsWith(q);
-        const bStart = b.title.toLowerCase().startsWith(q);
+        const aTitle = normalize(a.title);
+        const bTitle = normalize(b.title);
+        const aStart = aTitle.startsWith(q);
+        const bStart = bTitle.startsWith(q);
         if (aStart && !bStart) return -1;
         if (!aStart && bStart) return 1;
         return a.title.length - b.title.length;
