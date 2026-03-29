@@ -58,7 +58,27 @@
                 <div class="stat-row">
                     <span id="prot-count">0 / 120g</span>
                     <div class="progress-bar">
-                        <div id="prot-fill" class="fill"></div>
+                        <div id="prot-fill" class="fill" style="background-color: #f778ba;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Glucides</h3>
+                <div class="stat-row">
+                    <span id="gluc-count">0 / 200g</span>
+                    <div class="progress-bar">
+                        <div id="gluc-fill" class="fill" style="background-color: #4dc3ff;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Lipides</h3>
+                <div class="stat-row">
+                    <span id="lip-count">0 / 60g</span>
+                    <div class="progress-bar">
+                        <div id="lip-fill" class="fill" style="background-color: #ffcc00;"></div>
                     </div>
                 </div>
             </div>
@@ -93,11 +113,22 @@
             <div id="meal-basket-list"></div>
 
             <div class="card" style="margin:20px 0;">
-                <div style="display:flex; justify-content:space-between;">
-                    <span>Total</span><strong id="total-cal">0</strong><span>kcal</span>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:5px;">
+                    <span>🔥 Calories</span><strong id="total-cal">0</strong><span>kcal</span>
                 </div>
-                <div style="display:flex; justify-content:space-between;">
-                    <span>Prot</span><strong id="total-prot">0g</strong>
+                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; text-align:center; font-size:0.85rem;">
+                    <div>
+                        <span style="color:var(--text-secondary);">🥩 Prot</span><br>
+                        <strong id="total-prot">0</strong>g <small id="prot-pct">(0%)</small>
+                    </div>
+                    <div>
+                        <span style="color:var(--text-secondary);">🍞 Gluc</span><br>
+                        <strong id="total-gluc">0</strong>g <small id="gluc-pct">(0%)</small>
+                    </div>
+                    <div>
+                        <span style="color:var(--text-secondary);">🥑 Lipi</span><br>
+                        <strong id="total-lip">0</strong>g <small id="lip-pct">(0%)</small>
+                    </div>
                 </div>
             </div>
 

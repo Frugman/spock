@@ -119,6 +119,24 @@ function updateDashboard() {
         protFill.style.width = `${Math.min((totalProt / AppState.user.protGoal) * 100, 100)}%`;
     }
 
+    const totalGluc = Math.round(todayEntries.reduce((s, e) => s + (e.carbs || 0), 0));
+    const glucFill = document.getElementById('gluc-fill');
+    if (glucFill) {
+        const goal = 240; // Gluc target
+        const countEl = document.getElementById('gluc-count');
+        if (countEl) countEl.innerText = `${totalGluc} / ${goal}g`;
+        glucFill.style.width = `${Math.min((totalGluc / goal) * 100, 100)}%`;
+    }
+
+    const totalLip = Math.round(todayEntries.reduce((s, e) => s + (e.fats || 0), 0));
+    const lipFill = document.getElementById('lip-fill');
+    if (lipFill) {
+        const goal = 70; // Lip target
+        const countEl = document.getElementById('lip-count');
+        if (countEl) countEl.innerText = `${totalLip} / ${goal}g`;
+        lipFill.style.width = `${Math.min((totalLip / goal) * 100, 100)}%`;
+    }
+
     if (AppState.weightHistory.length > 0) {
         const lastW = AppState.weightHistory[AppState.weightHistory.length - 1];
         const el = document.getElementById('last-weight');
@@ -148,23 +166,39 @@ function renderJournalTimeline() {
     container.innerHTML = Object.keys(grouped).sort().reverse().map(date => `
         <div class="day-group">
             <h3 class="day-title">${date === new Date().toISOString().split('T')[0] ? "Aujourd'hui" : date}</h3>
-            ${grouped[date].map(e => `
+            ${grouped[date].map(e => {
+                const totalMacros = (e.proteins || 0) + (e.carbs || 0) + (e.fats || 0) || 1;
+                const pPct = Math.round(((e.proteins || 0) / totalMacros) * 100);
+                const gPct = Math.round(((e.carbs || 0) / totalMacros) * 100);
+                const lPct = Math.round(((e.fats || 0) / totalMacros) * 100);
+
+                return `
                 <div class="timeline-entry">
                     <div class="entry-header">
-                        <strong>${e.type || 'Repas'} : ${e.title || 'Sans titre'}</strong>
-                        <div style="display:flex; gap: 8px;">
+                        <div style="display:flex; flex-direction:column;">
+                            <span style="font-size:0.7rem; color:var(--accent-color); font-weight:700; text-transform:uppercase;">${e.type || 'Repas'}</span>
+                            <strong>${e.title || 'Sans titre'}</strong>
+                        </div>
+                        <div style="display:flex; gap: 8px; align-self: flex-start;">
                             <button onclick="editJournalEntry(${e.id})" class="btn-icon">✏️</button>
                             <button onclick="deleteJournalEntry(${e.id})" class="btn-icon">🗑️</button>
                         </div>
                     </div>
-                    <div class="entry-content">
-                        <div class="entry-macros">
-                            <span class="macro-tag">🔥 ${Math.round(e.calories)} kcal</span>
-                            <span class="macro-tag">🥩 ${Math.round(e.proteins)}g Prot</span>
-                        </div>
+                    
+                    <div class="entry-items" style="margin: 8px 0; padding: 8px; background: rgba(0,0,0,0.2); border-radius: 8px; font-size: 0.8rem; color: var(--text-secondary);">
+                        <ul style="list-style: none; padding-left: 5px;">
+                            ${(e.items || []).map(it => `<li>• ${it.title} <span style="opacity:0.6;">(${it.quantity}${it.unit === '100g' ? 'g' : ''})</span></li>`).join('')}
+                        </ul>
+                    </div>
+
+                    <div class="entry-macros" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;">
+                        <span class="macro-tag" style="background:rgba(255,255,255,0.05); padding:4px 8px; border-radius:6px; font-size:0.75rem;">🔥 ${Math.round(e.calories)} <small>kcal</small></span>
+                        <span class="macro-tag" style="background:rgba(255,165,0,0.1); padding:4px 8px; border-radius:6px; font-size:0.75rem;">🥩 ${Math.round(e.proteins)}g <small>(${pPct}%)</small></span>
+                        <span class="macro-tag" style="background:rgba(0,191,255,0.1); padding:4px 8px; border-radius:6px; font-size:0.75rem;">🍞 ${Math.round(e.carbs || 0)}g <small>(${gPct}%)</small></span>
+                        <span class="macro-tag" style="background:rgba(144,238,144,0.1); padding:4px 8px; border-radius:6px; font-size:0.75rem;">🥑 ${Math.round(e.fats || 0)}g <small>(${lPct}%)</small></span>
                     </div>
                 </div>
-            `).join('')}
+            `;}).join('')}
         </div>
     `).join('');
 }
@@ -210,25 +244,29 @@ function initMealModal() {
         if (!list) return;
 
         let html = "";
-        let totCal = 0, totProt = 0;
+        let totCal = 0, totProt = 0, totCarb = 0, totFat = 0;
 
         AppState.currentBasket.forEach((item, index) => {
             const divisor = (item.unit === '100g') ? 100 : 1;
             const itemCal = (item.calories * item.quantity) / divisor;
             const itemProt = (item.proteins * item.quantity) / divisor;
+            const itemCarb = (item.carbs * item.quantity) / divisor;
+            const itemFat = (item.fats * item.quantity) / divisor;
 
             totCal += itemCal;
             totProt += itemProt;
+            totCarb += itemCarb;
+            totFat += itemFat;
 
             html += `
                 <div class="basket-item" style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:10px; margin-bottom:8px;">
                     <div>
-                        <strong>${item.title}</strong><br>
-                        <small>${Math.round(itemCal)} kcal</small>
+                        <strong style="font-size:0.9rem;">${item.title}</strong><br>
+                        <small>${Math.round(itemCal)} kcal • ${item.quantity}${item.unit === '100g' ? 'g' : ''}</small>
                     </div>
                     <div style="display:flex; align-items:center; gap:10px;">
-                        <input type="number" value="${item.quantity}" onchange="updateBasketQty(${index}, this.value)" style="width:60px; text-align:center;">
-                        <button onclick="removeFromBasket(${index})" style="background:none; border:none; color:var(--danger-color);">🗑️</button>
+                        <input type="number" value="${item.quantity}" onchange="updateBasketQty(${index}, this.value)" style="width:60px; text-align:center; padding:5px; height:32px;">
+                        <button onclick="removeFromBasket(${index})" style="background:none; border:none; color:var(--danger-color); font-size:1.2rem;">🗑️</button>
                     </div>
                 </div>
             `;
@@ -236,7 +274,14 @@ function initMealModal() {
 
         list.innerHTML = html || "<div class='empty-state'>Panier vide</div>";
         document.getElementById('total-cal').innerText = Math.round(totCal);
-        document.getElementById('total-prot').innerText = Math.round(totProt) + "g";
+        document.getElementById('total-prot').innerText = Math.round(totProt);
+        document.getElementById('total-gluc').innerText = Math.round(totCarb);
+        document.getElementById('total-lip').innerText = Math.round(totFat);
+
+        const totalMacros = totProt + totCarb + totFat || 1;
+        document.getElementById('prot-pct').innerText = `(${Math.round((totProt/totalMacros)*100)}%)`;
+        document.getElementById('gluc-pct').innerText = `(${Math.round((totCarb/totalMacros)*100)}%)`;
+        document.getElementById('lip-pct').innerText = `(${Math.round((totFat/totalMacros)*100)}%)`;
     };
 
     window.updateBasketQty = (index, val) => {

@@ -47,7 +47,25 @@
             <div class="form-group"><label>Date</label><input type="date" id="meal-date"></div>
             <div class="form-group"><label>Type</label><select id="meal-type"><option value="Petit-déjeuner">☕ Petit-déjeuner</option><option value="Déjeuner">🍲 Déjeuner</option><option value="Dîner">🥗 Dîner</option><option value="En-cas">🍎 En-cas</option></select></div>
             <div id="meal-basket-list" class="card" style="min-height:50px; border-style:dashed;"><div class="empty-state">Panier vide.</div></div>
-            <div id="basket-totals" class="card" style="margin-bottom:20px;"><div class="macro-grid"><div><span>Cal</span><br><b id="total-cal">0</b></div><div><span>Prot</span><br><b id="total-prot">0g</b></div></div></div>
+            <div id="basket-totals" class="card" style="margin-bottom:20px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:5px;">
+                    <span>🔥 Calories</span><strong id="total-cal">0</strong><span>kcal</span>
+                </div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; text-align:center; font-size:0.85rem;">
+                    <div>
+                        <span style="color:var(--text-secondary);">🥩 Prot</span><br>
+                        <strong id="total-prot">0</strong>g <small id="prot-pct">(0%)</small>
+                    </div>
+                    <div>
+                        <span style="color:var(--text-secondary);">🍞 Gluc</span><br>
+                        <strong id="total-gluc">0</strong>g <small id="gluc-pct">(0%)</small>
+                    </div>
+                    <div>
+                        <span style="color:var(--text-secondary);">🥑 Lipi</span><br>
+                        <strong id="total-lip">0</strong>g <small id="lip-pct">(0%)</small>
+                    </div>
+                </div>
+            </div>
             <div class="search-box">
                 <label style="font-size:0.75rem; color:var(--accent-color); font-weight:700;">Ajouter l'un de mes ingrédients</label>
                 <input type="text" id="fav-aliments-search" placeholder="Nom de votre ingrédient...">
