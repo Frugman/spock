@@ -37,13 +37,14 @@
     "unit": "2 CS"
   },
   {
-    "id": 1774796156988,
+    "id": "1774796156988",
     "title": "Noix de cajou",
-    "calories": 60,
+    "calories": 630,
     "proteins": 2,
     "carbs": 2,
     "fats": 5,
-    "unit": "1 poignée"
+    "unit": "100g",
+    "weight": 0
   },
   {
     "id": 1774796260769,
