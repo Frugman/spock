@@ -316,9 +316,9 @@ function renderJournalTimeline() {
 
                     <div class="entry-macros" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;">
                         <span class="macro-tag" style="background:rgba(255,255,255,0.05); padding:4px 8px; border-radius:6px; font-size:0.75rem;">🔥 ${Math.round(e.calories)} <small>kcal</small></span>
-                        <span class="macro-tag" style="background:rgba(255,165,0,0.1); padding:4px 8px; border-radius:6px; font-size:0.75rem;">🥩 ${Math.round(e.proteins)}g <small>(${pPct}%)</small></span>
-                        <span class="macro-tag" style="background:rgba(0,191,255,0.1); padding:4px 8px; border-radius:6px; font-size:0.75rem;">🍞 ${Math.round(e.carbs || 0)}g <small>(${gPct}%)</small></span>
-                        <span class="macro-tag" style="background:rgba(144,238,144,0.1); padding:4px 8px; border-radius:6px; font-size:0.75rem;">🥑 ${Math.round(e.fats || 0)}g <small>(${lPct}%)</small></span>
+                        <span class="macro-tag" style="background:rgba(255,165,0,0.1); padding:4px 8px; border-radius:6px; font-size:0.75rem;">🥩 Protéines: ${Math.round(e.proteins)}g <small>(${pPct}%)</small></span>
+                        <span class="macro-tag" style="background:rgba(0,191,255,0.1); padding:4px 8px; border-radius:6px; font-size:0.75rem;">🍞 Glucides: ${Math.round(e.carbs || 0)}g <small>(${gPct}%)</small></span>
+                        <span class="macro-tag" style="background:rgba(144,238,144,0.1); padding:4px 8px; border-radius:6px; font-size:0.75rem;">🥑 Lipides: ${Math.round(e.fats || 0)}g <small>(${lPct}%)</small></span>
                     </div>
                 </div>
             `;}).join('')}
@@ -400,8 +400,8 @@ function initMealModal() {
                         </select>
                     </div>
                     <div style="margin-top:10px; font-size:0.85rem; color:var(--text-secondary); display:flex; justify-content:space-between;">
-                        <span>${Math.round(itemCal)} kcal</span>
-                        <span>P:${Math.round(itemProt)}g • G:${Math.round(itemCarb)}g • L:${Math.round(itemFat)}g</span>
+                        <span>${Math.round(itemCal)} Calories (kcal)</span>
+                        <span>Protéines: ${Math.round(itemProt)}g • Glucides: ${Math.round(itemCarb)}g • Lipides: ${Math.round(itemFat)}g</span>
                     </div>
                 </div>
             `;
@@ -500,7 +500,7 @@ function initMealModal() {
                     const item = { ...p, unit: '100g' };
                     return `<li onclick='addToBasket(${JSON.stringify(item).replace(/'/g, "&apos;")}, "off")' style="padding:12px; border-bottom:1px solid rgba(255,255,255,0.05); cursor:pointer;">
                         <strong>${item.title}</strong><br>
-                        <small>${item.calories} kcal • Prot: ${item.proteins}g</small>
+                        <small>${item.calories} kcal • Protéines: ${item.proteins}g</small>
                     </li>`;
                 }).join('');
                 offResults.classList.remove('hidden');
@@ -815,10 +815,10 @@ window.showProductDetail = function(i) {
         content.innerHTML = `
             <h2>${p.title}</h2>
             <div class="macro-grid" style="margin:20px 0;">
-                <div class="card" style="text-align:center;"><strong>Calories</strong><br>${p.calories}</div>
-                <div class="card" style="text-align:center;"><strong>Protéines</strong><br>${p.proteins}g</div>
-                <div class="card" style="text-align:center;"><strong>Glucides</strong><br>${p.carbs}g</div>
-                <div class="card" style="text-align:center;"><strong>Lipides</strong><br>${p.fats}g</div>
+                <div class="card" style="text-align:center;"><strong>Calories (kcal)</strong><br>${p.calories}</div>
+                <div class="card" style="text-align:center;"><strong>Protéines (g)</strong><br>${p.proteins}</div>
+                <div class="card" style="text-align:center;"><strong>Glucides (g)</strong><br>${p.carbs}</div>
+                <div class="card" style="text-align:center;"><strong>Lipides (g)</strong><br>${p.fats}</div>
             </div>
             <button onclick="addToOFFCacheFast(${i})" class="btn-primary">⭐ AJOUTER À MES INGRÉDIENTS</button>
         `;
