@@ -139,12 +139,13 @@
     "weight": 80
   },
   {
-    "id": 1774797040490,
-    "title": "Pâte brisée pur beurre bio",
-    "calories": 160,
-    "proteins": 10,
-    "carbs": 80,
-    "fats": 45,
-    "unit": "1/4"
+    "id": "1774797040490",
+    "title": "Pâte brisée pur beurre bio (1/4)",
+    "calories": 210,
+    "proteins": 3,
+    "carbs": 24,
+    "fats": 11,
+    "unit": "unité",
+    "weight": 60
   }
 ]
