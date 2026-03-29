@@ -20,13 +20,14 @@
     "weight": 0
   },
   {
-    "id": 1774795559134,
+    "id": "1774795559134",
     "title": "Crème de vinaigre balsamique",
-    "calories": 100,
-    "proteins": 1,
-    "carbs": 25,
+    "calories": 211,
+    "proteins": 1.2,
+    "carbs": 49,
     "fats": 0,
-    "unit": "2 CS"
+    "unit": "100g",
+    "weight": 0
   },
   {
     "id": 1774796064767,
