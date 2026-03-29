@@ -50,13 +50,14 @@
     "weight": 0
   },
   {
-    "id": 1774796260769,
+    "id": "1774796260769",
     "title": "Huile d'olive",
-    "calories": 82,
+    "calories": 824,
     "proteins": 0,
     "carbs": 0,
-    "fats": 9,
-    "unit": "1 CS"
+    "fats": 92,
+    "unit": "100g",
+    "weight": 0
   },
   {
     "id": 1774796340927,
