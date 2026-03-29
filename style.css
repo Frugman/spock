@@ -705,44 +705,43 @@ select option {
 }
 
 
-/* Mobile Responsiveness - Forced Priority */
+
+/* Mobile Responsiveness - FINAL STABLE FIX */
 @media (max-width: 768px) {
     body {
-        flex-direction: column !important;
-        overflow-x: hidden !important;
-        height: auto !important;
+        height: 100vh !important;
+        height: -webkit-fill-available !important;
+        overflow: hidden !important;
         display: flex !important;
+        flex-direction: column !important;
     }
 
     .glass-container {
         flex-direction: column !important;
+        height: 100% !important;
         display: flex !important;
-        height: auto !important;
-        min-height: 100vh !important;
+        overflow: hidden !important;
     }
     
     .sidebar {
         width: 100% !important;
-        height: auto !important;
-        padding: 0.5rem 1rem !important;
+        height: 60px !important;
+        padding: 0 1rem !important;
         flex-direction: row !important;
         justify-content: center !important;
         align-items: center !important;
         border-right: none !important;
         border-bottom: 1px solid var(--card-border) !important;
-        position: sticky !important;
-        top: 0 !important;
-        background: rgba(13, 17, 23, 0.95) !important;
-        backdrop-filter: blur(20px) !important;
-        z-index: 1001 !important;
+        background: var(--bg-color) !important;
+        z-index: 100 !important;
+        flex-shrink: 0 !important;
     }
     
     .logo {
         margin-bottom: 0 !important;
-        gap: 0.5rem !important;
     }
     
-    .logo-text {
+    .logo-text, .user-status {
         display: none !important;
     }
 
@@ -751,12 +750,11 @@ select option {
         bottom: 0 !important;
         left: 0 !important;
         width: 100% !important;
-        background: rgba(13, 17, 23, 0.95) !important;
-        backdrop-filter: blur(20px) !important;
-        padding: 8px 0 !important;
+        background: rgba(13, 17, 23, 0.98) !important;
+        padding: 5px 0 !important;
         border-top: 1px solid var(--card-border) !important;
-        z-index: 1000 !important;
-        box-shadow: 0 -5px 20px rgba(0,0,0,0.5) !important;
+        z-index: 9999 !important;
+        box-shadow: 0 -5px 15px rgba(0,0,0,0.5) !important;
     }
     
     .main-nav ul {
@@ -764,7 +762,7 @@ select option {
         justify-content: space-around !important;
         align-items: center !important;
         width: 100% !important;
-        padding: 0 5px !important;
+        padding: 0 2px !important;
     }
     
     .main-nav li {
@@ -775,7 +773,7 @@ select option {
     .main-nav a {
         flex-direction: column !important;
         font-size: 0.6rem !important;
-        padding: 5px 2px !important;
+        padding: 5px 0 !important;
         gap: 2px !important;
         text-align: center !important;
         background: transparent !important;
@@ -789,32 +787,27 @@ select option {
     
     .main-nav .icon {
         font-size: 1.2rem !important;
-        margin-bottom: 2px !important;
-    }
-    
-    .user-status, .top-bar .search-box {
-        display: none !important;
     }
     
     .content {
-        padding: 1rem !important;
-        margin-bottom: 75px !important;
+        flex: 1 !important;
+        overflow-y: auto !important;
+        padding: 1.25rem !important;
+        padding-bottom: 85px !important; /* Space for bottom menu */
         width: 100% !important;
-        flex: none !important;
-        overflow-x: hidden !important;
-        height: auto !important;
+        -webkit-overflow-scrolling: touch !important;
     }
     
     .top-bar {
-        margin-bottom: 1rem !important;
-        flex-direction: column !important;
-        align-items: stretch !important;
-        gap: 0.75rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+
+    .top-bar .search-box {
+        display: none !important;
     }
 
     .dashboard-grid {
         grid-template-columns: 1fr !important;
-        gap: 1rem !important;
     }
 
     .card {
@@ -822,6 +815,7 @@ select option {
         max-width: 100% !important;
     }
 
+    /* Modal adjustments */
     .modal-content {
         width: 95% !important;
         padding: 1.25rem !important;

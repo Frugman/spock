@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Journal - Spock</title>
     <meta name="description" content="Journal alimentaire logique.">
-    <link rel="stylesheet" href="style.css?v=2">
+    <link rel="stylesheet" href="style.css?v=3">
     
     <!-- PWA & Favicons -->
     <link rel="manifest" href="manifest.json">
@@ -30,25 +30,25 @@
             <nav class="main-nav">
                 <ul>
                     <li class="nav-item">
-                        <a href="index.html"><i class="icon">ðŸ“Š</i> Dashboard</a>
+                        <a href="index.html"><i class="icon">Ã°Å¸â€œÅ </i> Dashboard</a>
                     </li>
                     <li class="nav-item active">
-                        <a href="journal.html"><i class="icon">ðŸ“–</i> Journal</a>
+                        <a href="journal.html"><i class="icon">Ã°Å¸â€œâ€“</i> Journal</a>
                     </li>
                     <li class="nav-item">
-                        <a href="poids.html"><i class="icon">âš–ï¸</i> Poids</a>
+                        <a href="poids.html"><i class="icon">Ã¢Å¡â€“Ã¯Â¸Â</i> Poids</a>
                     </li>
                     <li class="nav-item">
-                        <a href="plats.html"><i class="icon">ðŸ²</i> Plats</a>
+                        <a href="plats.html"><i class="icon">Ã°Å¸ÂÂ²</i> Plats</a>
                     </li>
                     <li class="nav-item">
-                        <a href="report.html"><i class="icon">ðŸ“ˆ</i> Report</a>
+                        <a href="report.html"><i class="icon">Ã°Å¸â€œË†</i> Report</a>
                     </li>
                     <li class="nav-item">
-                        <a href="explorer.html"><i class="icon">ðŸ”</i> OFF Explorer</a>
+                        <a href="explorer.html"><i class="icon">Ã°Å¸â€Â</i> BASE</a>
                     </li>
                     <li class="nav-item">
-                        <a href="settings.html"><i class="icon">âš™ï¸</i> ParamÃ¨tres</a>
+                        <a href="settings.html"><i class="icon">Ã¢Å¡â„¢Ã¯Â¸Â</i> ParamÃƒÂ¨tres</a>
                     </li>
                 </ul>
             </nav>
@@ -92,17 +92,17 @@
                 <div class="form-group" style="flex: 1;">
                     <label>Type</label>
                     <select id="meal-type" class="btn-secondary" style="width: 100%; height: 42px;">
-                        <option value="Petit-dÃ©jeuner">â˜• Petit-dÃ©jeuner</option>
-                        <option value="DÃ©jeuner">ðŸ² DÃ©jeuner</option>
-                        <option value="DÃ®ner">ðŸ¥— DÃ®ner</option>
-                        <option value="En-cas">ðŸŽ En-cas</option>
+                        <option value="Petit-dÃƒÂ©jeuner">Ã¢Ëœâ€¢ Petit-dÃƒÂ©jeuner</option>
+                        <option value="DÃƒÂ©jeuner">Ã°Å¸ÂÂ² DÃƒÂ©jeuner</option>
+                        <option value="DÃƒÂ®ner">Ã°Å¸Â¥â€” DÃƒÂ®ner</option>
+                        <option value="En-cas">Ã°Å¸ÂÅ½ En-cas</option>
                     </select>
                 </div>
             </div>
 
             <!-- Basket: Added items list -->
             <div id="meal-basket-list" class="basket-container" style="margin-bottom: 1.5rem; min-height: 50px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px dashed var(--card-border); padding: 10px;">
-                <div class="empty-state" style="font-size: 0.8rem;">Aucun aliment ajoutÃ©.</div>
+                <div class="empty-state" style="font-size: 0.8rem;">Aucun aliment ajoutÃƒÂ©.</div>
             </div>
 
             <!-- Totals display -->
@@ -122,16 +122,16 @@
                 </div>
                 
                 <div class="quick-favs" style="display: flex; gap: 10px; margin-top: 10px;">
-                    <button class="btn-secondary" id="btn-fav-meals" style="flex: 1; padding: 10px; font-size: 0.8rem;">ðŸ² Mes Plats</button>
-                    <button class="btn-secondary" id="btn-fav-aliments" style="flex: 1; padding: 10px; font-size: 0.8rem;">ðŸŽ Mes Aliments</button>
+                    <button class="btn-secondary" id="btn-fav-meals" style="flex: 1; padding: 10px; font-size: 0.8rem;">Ã°Å¸ÂÂ² Mes Plats</button>
+                    <button class="btn-secondary" id="btn-fav-aliments" style="flex: 1; padding: 10px; font-size: 0.8rem;">Ã°Å¸ÂÅ½ Mes Aliments</button>
                 </div>
                 <div id="selection-list" class="off-results" style="display: none; margin-top: 10px; max-height: 200px; overflow-y: auto;"></div>
             </div>
 
             <div class="form-actions" style="margin-top: 2rem; display: flex; flex-direction: column; gap: 10px;">
                 <div class="image-upload-zone" id="img-zone" style="margin-bottom: 1rem;">
-                    <div id="upload-prompt"><span>ðŸ“¸ Photo du repas</span></div>
-                    <img id="preview-img" src="#" alt="AperÃ§u">
+                    <div id="upload-prompt"><span>Ã°Å¸â€œÂ¸ Photo du repas</span></div>
+                    <img id="preview-img" src="#" alt="AperÃƒÂ§u">
                     <input type="file" id="meal-photo" class="hidden-input" accept="image/*">
                 </div>
                 <button type="button" class="btn-primary" id="btn-save-full-meal" style="width: 100%; padding: 15px; font-size: 1.1rem; box-shadow: 0 4px 15px var(--accent-glow);">Enregistrer le Repas</button>

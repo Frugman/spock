@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spock - Journal Logique</title>
-    <meta name="description" content="Application personnelle de suivi de régime, logique et structurée.">
-    <link rel="stylesheet" href="style.css?v=2">
+    <meta name="description" content="Application personnelle de suivi de rÃ©gime, logique et structurÃ©e.">
+    <link rel="stylesheet" href="style.css?v=3">
     
     <!-- PWA & Favicons -->
     <link rel="manifest" href="manifest.json">
@@ -29,25 +29,25 @@
             <nav class="main-nav">
                 <ul>
                     <li class="nav-item active">
-                        <a href="index.html"><i class="icon">📊</i> Dashboard</a>
+                        <a href="index.html"><i class="icon">ðŸ“Š</i> Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a href="journal.html"><i class="icon">📖</i> Journal</a>
+                        <a href="journal.html"><i class="icon">ðŸ“–</i> Journal</a>
                     </li>
                     <li class="nav-item">
-                        <a href="poids.html"><i class="icon">⚖️</i> Poids</a>
+                        <a href="poids.html"><i class="icon">âš–ï¸</i> Poids</a>
                     </li>
                     <li class="nav-item">
-                        <a href="plats.html"><i class="icon">🍲</i> Plats</a>
+                        <a href="plats.html"><i class="icon">ðŸ²</i> Plats</a>
                     </li>
                     <li class="nav-item">
-                        <a href="report.html"><i class="icon">📈</i> Report</a>
+                        <a href="report.html"><i class="icon">ðŸ“ˆ</i> Report</a>
                     </li>
                     <li class="nav-item">
-                        <a href="explorer.html"><i class="icon">🔍</i> OFF Explorer</a>
+                        <a href="explorer.html"><i class="icon">ðŸ”</i> BASE</a>
                     </li>
                     <li class="nav-item">
-                        <a href="settings.html"><i class="icon">⚙️</i> Paramètres</a>
+                        <a href="settings.html"><i class="icon">âš™ï¸</i> ParamÃ¨tres</a>
                     </li>
                 </ul>
             </nav>
@@ -73,7 +73,7 @@
                 <div class="dashboard-grid">
                     <div class="card welcome-card">
                         <h2>Aujourd'hui</h2>
-                        <p id="today-summary">Chargement des données...</p>
+                        <p id="today-summary">Chargement des donnÃ©es...</p>
                     </div>
 
                     <div class="card stat-card">
@@ -85,7 +85,7 @@
                     </div>
 
                     <div class="card stat-card">
-                        <h3>Protéines</h3>
+                        <h3>ProtÃ©ines</h3>
                         <div class="stat-row">
                             <span id="prot-count">0 / 120g</span>
                             <div class="progress-bar"><div id="prot-fill" class="fill" style="width: 0%;"></div></div>
@@ -93,15 +93,15 @@
                     </div>
 
                     <div class="card weight-card">
-                        <h3>Dernière Pesée</h3>
+                        <h3>DerniÃ¨re PesÃ©e</h3>
                         <p class="big-stat" id="last-weight">-- kg</p>
                         <small id="weight-trend">--</small>
                     </div>
 
                     <div class="card journal-preview-card">
-                        <h3>Dernière entrée</h3>
+                        <h3>DerniÃ¨re entrÃ©e</h3>
                         <div id="latest-entry-preview" class="empty-state">
-                            Aucun repas enregistré aujourd'hui.
+                            Aucun repas enregistrÃ© aujourd'hui.
                         </div>
                     </div>
                 </div>
@@ -128,17 +128,17 @@
                 <div class="form-group" style="flex: 1;">
                     <label>Type</label>
                     <select id="meal-type" class="btn-secondary" style="width: 100%; height: 42px;">
-                        <option value="Petit-déjeuner">☕ Petit-déjeuner</option>
-                        <option value="Déjeuner">🍲 Déjeuner</option>
-                        <option value="Dîner">🥗 Dîner</option>
-                        <option value="En-cas">🍎 En-cas</option>
+                        <option value="Petit-dÃ©jeuner">â˜• Petit-dÃ©jeuner</option>
+                        <option value="DÃ©jeuner">ðŸ² DÃ©jeuner</option>
+                        <option value="DÃ®ner">ðŸ¥— DÃ®ner</option>
+                        <option value="En-cas">ðŸŽ En-cas</option>
                     </select>
                 </div>
             </div>
 
             <!-- Basket: Added items list -->
             <div id="meal-basket-list" class="basket-container" style="margin-bottom: 1.5rem; min-height: 50px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px dashed var(--card-border); padding: 10px;">
-                <div class="empty-state" style="font-size: 0.8rem;">Aucun aliment ajouté.</div>
+                <div class="empty-state" style="font-size: 0.8rem;">Aucun aliment ajoutÃ©.</div>
             </div>
 
             <!-- Totals display -->
@@ -158,8 +158,8 @@
                 </div>
                 
                 <div class="quick-favs" style="display: flex; gap: 10px; margin-top: 10px;">
-                    <button class="btn-secondary" id="btn-fav-meals" style="flex: 1; padding: 10px; font-size: 0.8rem;">🍲 Mes Plats</button>
-                    <button class="btn-secondary" id="btn-fav-aliments" style="flex: 1; padding: 10px; font-size: 0.8rem;">🍎 Mes Aliments</button>
+                    <button class="btn-secondary" id="btn-fav-meals" style="flex: 1; padding: 10px; font-size: 0.8rem;">ðŸ² Mes Plats</button>
+                    <button class="btn-secondary" id="btn-fav-aliments" style="flex: 1; padding: 10px; font-size: 0.8rem;">ðŸŽ Mes Aliments</button>
                 </div>
                 <div id="selection-list" class="off-results" style="display: none; margin-top: 10px; max-height: 200px; overflow-y: auto;"></div>
             </div>
@@ -171,14 +171,14 @@
                     <div class="macro-grid" style="margin-bottom: 10px;">
                         <div class="form-group"><label>Cal</label><input type="number" id="manual-cal"></div>
                         <div class="form-group"><label>Prot</label><input type="number" id="manual-prot"></div>
-                        <div class="form-group"><label>Qté (g/u)</label><input type="number" id="manual-qty" value="100"></div>
+                        <div class="form-group"><label>QtÃ© (g/u)</label><input type="number" id="manual-qty" value="100"></div>
                     </div>
                     <button type="button" class="btn-primary" id="btn-add-manual" style="width: 100%;">Ajouter au panier</button>
                 </div>
 
                 <div class="image-upload-zone" id="img-zone" style="margin-bottom: 1rem;">
-                    <div id="upload-prompt"><span>📸 Photo du repas</span></div>
-                    <img id="preview-img" src="#" alt="Aperçu">
+                    <div id="upload-prompt"><span>ðŸ“¸ Photo du repas</span></div>
+                    <img id="preview-img" src="#" alt="AperÃ§u">
                     <input type="file" id="meal-photo" class="hidden-input" accept="image/*">
                 </div>
 
@@ -205,7 +205,7 @@
                         <input type="number" id="f-meal-calories" step="0.1" required>
                     </div>
                     <div class="form-group">
-                        <label for="f-meal-proteins">Protéines (g)</label>
+                        <label for="f-meal-proteins">ProtÃ©ines (g)</label>
                         <input type="number" id="f-meal-proteins" step="0.1" required>
                     </div>
                     <div class="form-group">
@@ -233,7 +233,7 @@
             </div>
             <form id="aliment-form">
                 <div class="form-group">
-                    <label for="a-title">Nom de l'ingrédient</label>
+                    <label for="a-title">Nom de l'ingrÃ©dient</label>
                     <input type="text" id="a-title" required placeholder="Ex: Riz Basmati">
                 </div>
                 <div class="macro-grid">
@@ -243,17 +243,17 @@
                         <input type="number" id="a-calories" step="0.1" required>
                     </div>
                     <div style="flex: 2;">
-                        <label for="a-unit">Unité</label>
+                        <label for="a-unit">UnitÃ©</label>
                         <select id="a-unit" class="btn-secondary" style="width: 100%; height: 42px;">
                             <option value="100g">pour 100g</option>
-                            <option value="unité">par unité</option>
+                            <option value="unitÃ©">par unitÃ©</option>
                             <option value="verre">par verre</option>
-                            <option value="cuillère à soupe">par c. à soupe</option>
+                            <option value="cuillÃ¨re Ã  soupe">par c. Ã  soupe</option>
                         </select>
                     </div>
                 </div>
                     <div class="form-group">
-                        <label for="a-proteins">Protéines (g)</label>
+                        <label for="a-proteins">ProtÃ©ines (g)</label>
                         <input type="number" id="a-proteins" step="0.1" required>
                     </div>
                     <div class="form-group">
