@@ -80,13 +80,14 @@
     "weight": 0
   },
   {
-    "id": 1774796504226,
+    "id": "1774796504226",
     "title": "Pâtes fraîches ricotta épinard",
     "calories": 415,
     "proteins": 17,
     "carbs": 58,
     "fats": 12,
-    "unit": "1/2 sachet"
+    "unit": "unité",
+    "weight": 150
   },
   {
     "id": 1774796567192,
