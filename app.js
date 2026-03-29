@@ -1,5 +1,5 @@
 const AppState = {
-    user: { name: "Frugman", goal: 1600, protGoal: 120 },
+    user: { name: "Frugman", goal: parseInt(localStorage.getItem('target_cal')) || 1600 },
     journal: [],
     meals: [],
     aliments: [],
@@ -228,37 +228,40 @@ function updateDashboard() {
 
     const today = new Date().toISOString().split('T')[0];
     const todayEntries = AppState.journal.filter(e => e.date === today);
-    const totalCals = Math.round(todayEntries.reduce((s, e) => s + (e.calories || 0), 0));
-    const totalProt = todayEntries.reduce((s, e) => s + (e.proteins || 0), 0);
+    const goal = AppState.user.goal;
+    const targets = {
+        prot: Math.round(goal * 0.3 / 4),
+        gluc: Math.round(goal * 0.4 / 4),
+        lip: Math.round(goal * 0.3 / 9)
+    };
+
     const fmt = (v) => Math.round(v * 10) / 10;
 
     const calFill = document.getElementById('cal-fill');
     if (calFill) {
-        document.getElementById('cal-count').innerText = `${totalCals} / ${AppState.user.goal} kcal`;
-        calFill.style.width = `${Math.min((totalCals / AppState.user.goal) * 100, 100)}%`;
+        document.getElementById('cal-count').innerText = `${totalCals} / ${goal} kcal`;
+        calFill.style.width = `${Math.min((totalCals / goal) * 100, 100)}%`;
     }
     const protFill = document.getElementById('prot-fill');
     if (protFill) {
-        document.getElementById('prot-count').innerText = `${fmt(totalProt)} / ${AppState.user.protGoal}g`;
-        protFill.style.width = `${Math.min((totalProt / AppState.user.protGoal) * 100, 100)}%`;
+        document.getElementById('prot-count').innerText = `${fmt(totalProt)} / ${targets.prot}g`;
+        protFill.style.width = `${Math.min((totalProt / targets.prot) * 100, 100)}%`;
     }
 
     const totalGluc = todayEntries.reduce((s, e) => s + (e.carbs || 0), 0);
     const glucFill = document.getElementById('gluc-fill');
     if (glucFill) {
-        const goal = 240; // Gluc target
         const countEl = document.getElementById('gluc-count');
-        if (countEl) countEl.innerText = `${fmt(totalGluc)} / ${goal}g`;
-        glucFill.style.width = `${Math.min((totalGluc / goal) * 100, 100)}%`;
+        if (countEl) countEl.innerText = `${fmt(totalGluc)} / ${targets.gluc}g`;
+        glucFill.style.width = `${Math.min((totalGluc / targets.gluc) * 100, 100)}%`;
     }
 
     const totalLip = todayEntries.reduce((s, e) => s + (e.fats || 0), 0);
     const lipFill = document.getElementById('lip-fill');
     if (lipFill) {
-        const goal = 70; // Lip target
         const countEl = document.getElementById('lip-count');
-        if (countEl) countEl.innerText = `${fmt(totalLip)} / ${goal}g`;
-        lipFill.style.width = `${Math.min((totalLip / goal) * 100, 100)}%`;
+        if (countEl) countEl.innerText = `${fmt(totalLip)} / ${targets.lip}g`;
+        lipFill.style.width = `${Math.min((totalLip / targets.lip) * 100, 100)}%`;
     }
 
     if (AppState.weightHistory.length > 0) {
