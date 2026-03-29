@@ -10,13 +10,14 @@
     "weight": 210
   },
   {
-    "id": 1774795424074,
+    "id": "1774795424074",
     "title": "Crème liquide 4%",
-    "calories": 140,
-    "proteins": 3,
+    "calories": 71,
+    "proteins": 2.8,
     "carbs": 6,
     "fats": 4,
-    "unit": "20cl"
+    "unit": "100g",
+    "weight": 0
   },
   {
     "id": 1774795559134,
