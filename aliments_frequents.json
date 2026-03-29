@@ -167,5 +167,15 @@
     "fats": 27,
     "unit": "100g",
     "weight": 0
+  },
+  {
+    "id": 1774816365563,
+    "title": "Tranche végétale Lentilles corail Fleury Michon",
+    "calories": 42,
+    "proteins": 2.4,
+    "carbs": 3.2,
+    "fats": 1.9,
+    "unit": "unité",
+    "weight": 30
   }
 ]
