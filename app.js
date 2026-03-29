@@ -593,7 +593,49 @@ function initSettings() {
 function renderReport() {
     const ctx = document.getElementById('caloriesChart');
     if (!ctx) return;
-    // ... logic for calories chart ...
+    
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    const recentEntries = AppState.journal.filter(e => e.date >= thirtyDaysAgo);
+    
+    // Group by date
+    const dailyCals = {};
+    recentEntries.forEach(e => {
+        dailyCals[e.date] = (dailyCals[e.date] || 0) + (e.calories || 0);
+    });
+    
+    const labels = Object.keys(dailyCals).sort();
+    const data = labels.map(l => dailyCals[l]);
+    
+    if (window.caloriesChartInstance) window.caloriesChartInstance.destroy();
+    window.caloriesChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [{
+                label: 'Calories',
+                data,
+                backgroundColor: 'rgba(35, 134, 54, 0.5)',
+                borderColor: '#238636',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true, ticks: { color: '#848d97' } },
+                x: { ticks: { color: '#848d97' } }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    const avg = document.getElementById('avg-calories'); 
+    if (avg) {
+        const days = labels.length || 1;
+        const total = data.reduce((s,v) => s+v, 0);
+        avg.innerText = `${Math.round(total / days)} kcal/j`;
+    }
 }
 
 function debounce(f, w) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => f(...a), w); }; }
