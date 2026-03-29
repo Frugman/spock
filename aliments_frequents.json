@@ -157,5 +157,15 @@
     "fats": 46,
     "unit": "100g",
     "weight": 0
+  },
+  {
+    "id": 1774816264949,
+    "title": "Houmous",
+    "calories": 318,
+    "proteins": 6.8,
+    "carbs": 8.9,
+    "fats": 27,
+    "unit": "100g",
+    "weight": 0
   }
 ]
