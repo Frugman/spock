@@ -1,6 +1,8 @@
 # Sécurité : Clés de Token Git (Ne pas push sur GitHub !)
 cle-github-spock.txt
 *.txt
+*.py
+ciqual2025/
 
 # Dossiers système et temporaires
 .DS_Store

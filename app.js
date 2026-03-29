@@ -8,6 +8,7 @@ const AppState = {
     journal: [],
     meals: [],
     aliments: [],
+    ciqual: [], // Local database
     weightHistory: [],
     offCache: [],
     lastOFFSearchResults: [],
@@ -44,7 +45,8 @@ async function initApp() {
             GitHubAPI.getFile('poids.json').catch(() => ({ content: [] })),
             GitHubAPI.getFile('plats_frequents.json').catch(() => ({ content: [] })),
             GitHubAPI.getFile('produits_cache.json').catch(() => ({ content: [] })),
-            GitHubAPI.getFile('aliments_frequents.json').catch(() => ({ content: [] }))
+            GitHubAPI.getFile('aliments_frequents.json').catch(() => ({ content: [] })),
+            fetch('ciqual.json').then(r => r.json()).catch(() => [])
         ]);
 
         AppState.journal = Array.isArray(journalRes.content) ? journalRes.content : [];
@@ -52,6 +54,7 @@ async function initApp() {
         AppState.meals = Array.isArray(mealsRes.content) ? mealsRes.content : [];
         AppState.offCache = Array.isArray(cacheRes.content) ? cacheRes.content : [];
         AppState.aliments = Array.isArray(alimentsRes.content) ? alimentsRes.content : [];
+        AppState.ciqual = Array.isArray(ciqualRes) ? ciqualRes : [];
 
         updateDashboard();
         renderJournalTimeline();
@@ -273,28 +276,23 @@ function initMealModal() {
         if (offResults) offResults.classList.remove('active');
     };
 
-    // OFF Search
+    // Local CIQUAL Search
     const offInput = document.getElementById('off-search');
     if (offInput) {
         offInput.addEventListener('input', debounce(async (e) => {
             const query = e.target.value.trim();
-            if (query.length < 3) return;
-            const prods = await searchOFF(query);
+            if (query.length < 2) return;
+            const prods = await searchCIQUAL(query);
             const resBox = document.getElementById('off-results');
             resBox.innerHTML = prods.map(p => {
-                const n = p.nutriments || {};
-                const item = {
-                    title: p.product_name || "Produit",
-                    calories: n.calories_100g || n['energy-kcal_100g'] || 0,
-                    proteins: n.proteins_100g || 0,
-                    carbs: n.carbohydrates_100g || 0,
-                    fats: n.fat_100g || 0,
-                    unit: '100g'
-                };
-                return `<li onclick='addToBasket(${JSON.stringify(item).replace(/'/g, "&apos;")})'>${item.title}</li>`;
+                const item = { ...p, unit: '100g' };
+                return `<li onclick='addToBasket(${JSON.stringify(item).replace(/'/g, "&apos;")})' style="padding:10px; border-bottom:1px solid rgba(255,255,255,0.1); cursor:pointer;">
+                    <strong>${item.title}</strong><br>
+                    <small style="color:var(--text-secondary);">${item.calories} kcal • P:${item.proteins}g G:${item.carbs}g L:${item.fats}g</small>
+                </li>`;
             }).join('');
             resBox.classList.add('active');
-        }, 500));
+        }, 300));
     }
 
     // Photo Handling
@@ -523,43 +521,33 @@ function initOFFExplorer() {
     }
 }
 
-async function searchOFF(query) {
-    const userAgent = "Spock - Web - Version 1.2"; // Needed identifying app for OFF
-    const searchUrl = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&json=1&page_size=12`;
-    
-    // 1. Try Direct Fetch first (faster, no proxy overhead)
-    try {
-        const response = await fetch(searchUrl, {
-            method: 'GET',
-            headers: { 'Accept': 'application/json' }
-        });
-        if (response.ok) {
-            const data = await response.json();
-            return data.products || [];
-        }
-    } catch (e) {
-        console.warn("Direct OFF search failed (CORS?), using proxy...");
+function initOFFExplorer() {
+    const btn = document.getElementById('btn-search-off');
+    const input = document.getElementById('off-explorer-query');
+    if (btn && input) {
+        btn.onclick = async () => {
+            const query = input.value.trim(); if (!query) return;
+            btn.disabled = true; btn.innerText = "...";
+            const res = await searchCIQUAL(query); AppState.lastOFFSearchResults = res;
+            renderExplorerResults(res); btn.disabled = false; btn.innerText = "Rechercher";
+        };
+        input.onkeypress = (e) => { if (e.key === 'Enter') btn.click(); };
+        input.oninput = debounce(() => btn.click(), 500); // Live search
     }
+}
 
-    // 2. Proxy Fallback (AllOrigins)
-    try {
-        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(searchUrl)}&ts=${Date.now()}`;
-        const res = await fetch(proxyUrl);
-        const data = await res.json();
-        
-        if (data && data.contents) {
-            if (data.contents.trim().startsWith('{')) {
-                const parsed = JSON.parse(data.contents);
-                return parsed.products || [];
-            } else {
-                console.error("OFF Proxy still returned HTML. Search might be blocked or URL redirected.");
-                return [];
-            }
-        }
-    } catch(e) {
-        console.error("OFF Search Error (Proxy):", e);
-    }
-    return [];
+async function searchCIQUAL(query) {
+    if (!query) return [];
+    console.log("Searching CIQUAL for:", query);
+    const q = query.toLowerCase();
+    const results = AppState.ciqual.filter(it => it.title.toLowerCase().includes(q));
+    return results.sort((a, b) => {
+        const aStart = a.title.toLowerCase().startsWith(q);
+        const bStart = b.title.toLowerCase().startsWith(q);
+        if (aStart && !bStart) return -1;
+        if (!aStart && bStart) return 1;
+        return a.title.length - b.title.length;
+    }).slice(0, 50);
 }
 
 function renderExplorerResults(prods) {
@@ -567,8 +555,13 @@ function renderExplorerResults(prods) {
     if (!grid) return;
     grid.innerHTML = (prods || []).map((p, i) => `
         <div class="card product-card" onclick="showProductDetail(${i})">
-            <img src="${p.image_front_small_url || 'https://world.openfoodfacts.org/images/icons/dist/packaging.svg'}" class="product-img">
-            <div class="product-info"><h4>${p.product_name || 'Inconnu'}</h4><p>${p.brands || ''}</p></div>
+            <div class="product-info">
+                <h4>${p.title}</h4>
+                <div class="macro-tag" style="margin-top:5px;">🔥 ${p.calories} kcal / 100g</div>
+                <div style="font-size:0.75rem; color:var(--text-secondary); margin-top:5px;">
+                    P: ${p.proteins}g | G: ${p.carbs}g | L: ${p.fats}g
+                </div>
+            </div>
         </div>
     `).join('');
 }
@@ -579,17 +572,16 @@ window.showProductDetail = function(i) {
     const content = document.getElementById('detail-content');
     if (panel && content) {
         panel.classList.add('active');
-        const n = p.nutriments || {};
         content.innerHTML = `
-            <img src="${p.image_front_url || ''}" class="detail-img">
-            <h3>${p.product_name}</h3>
+            <h3>${p.title}</h3>
+            <p style="color:var(--text-secondary); margin-bottom:15px;">Valeurs nutritionnelles moyennes pour 100g</p>
             <div class="detail-macros">
-                <div class="detail-macro"><span>Cal</span><b>${n.calories_100g || 0}</b></div>
-                <div class="detail-macro"><span>Prot</span><b>${n.proteins_100g || 0}g</b></div>
-                <div class="detail-macro"><span>Gluc</span><b>${n.carbohydrates_100g || 0}g</b></div>
-                <div class="detail-macro"><span>Lip</span><b>${n.fat_100g || 0}g</b></div>
+                <div class="detail-macro"><span>Cal</span><b>${p.calories}</b></div>
+                <div class="detail-macro"><span>Prot</span><b>${p.proteins}g</b></div>
+                <div class="detail-macro"><span>Gluc</span><b>${p.carbs}g</b></div>
+                <div class="detail-macro"><span>Lip</span><b>${p.fats}g</b></div>
             </div>
-            <button onclick="addToOFFCacheFast(${i})" class="btn-primary" style="width:100%;">⭐ Ajouter aux Favoris</button>
+            <button onclick="addToOFFCacheFast(${i})" class="btn-primary" style="width:100%; margin-top:20px;">⭐ Ajouter aux Favoris</button>
         `;
         document.getElementById('btn-close-detail').onclick = () => panel.classList.remove('active');
     }
@@ -597,10 +589,9 @@ window.showProductDetail = function(i) {
 
 window.addToOFFCacheFast = async function(i) {
     const p = AppState.lastOFFSearchResults[i]; if (!p) return;
-    const n = p.nutriments || {};
-    AppState.offCache.push({ id: Date.now(), title: p.product_name, calories: n.calories_100g || 0, proteins: n.proteins_100g || 0, carbs: n.carbohydrates_100g || 0, fats: n.fat_100g || 0, unit: '100g' });
-    await GitHubAPI.saveFile('produits_cache.json', AppState.offCache, "Cache OFF");
-    alert("Ajouté !");
+    AppState.aliments.push({ ...p, id: Date.now(), unit: '100g' });
+    await GitHubAPI.saveFile('aliments_frequents.json', AppState.aliments, "Cache CIQUAL");
+    alert("Ajouté à la bibliothèque !");
 };
 
 /* -------------------------------------------------------------------------- */
