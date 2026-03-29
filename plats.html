@@ -43,6 +43,20 @@
             <form id="frequent-meal-form">
                 <div class="form-group"><label>Nom</label><input type="text" id="f-meal-title" required></div>
                 <div class="macro-grid">
+                    <div class="form-group">
+                        <label>Unité de référence</label>
+                        <select id="f-meal-unit" onchange="toggleMealWeightInput()">
+                            <option value="unité">Portion / Unité (Défaut)</option>
+                            <option value="100g">100g</option>
+                            <option value="g">L'unité est 1g</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="f-meal-weight-group" style="display:none;">
+                        <label>Poids du plat/portion (g)</label>
+                        <input type="number" id="f-meal-weight" placeholder="Poids en g">
+                    </div>
+                </div>
+                <div class="macro-grid">
                     <div class="form-group"><label>Cal</label><input type="number" id="f-meal-calories" required></div>
                     <div class="form-group"><label>Prot</label><input type="number" id="f-meal-proteins" required></div>
                     <div class="form-group"><label>Gluc</label><input type="number" id="f-meal-carbs" required></div>
@@ -63,8 +77,22 @@
             <form id="aliment-form">
                 <div class="form-group"><label>Nom</label><input type="text" id="a-title" required></div>
                 <div class="macro-grid">
-                    <div class="form-group"><label>Unité (ex: 100g, portion)</label><input type="text" id="a-unit" placeholder="100g"></div>
-                    <div class="form-group"><label>Poids/unité (g)</label><input type="number" id="a-weight" placeholder="0"></div>
+                    <div class="form-group">
+                        <label>Unité de référence</label>
+                        <select id="a-unit" onchange="toggleWeightInput()">
+                            <option value="100g">100g (Défaut)</option>
+                            <option value="unité">Portion / Unité</option>
+                            <option value="g">L'unité est 1g</option>
+                            <option value="cs">Cuillère à Soupe (CS)</option>
+                            <option value="cc">Cuillère à Café (cc)</option>
+                            <option value="verre">Verre</option>
+                            <option value="bol">Bol</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="a-weight-group" style="display:none;">
+                        <label>Poids du plat/portion (g)</label>
+                        <input type="number" id="a-weight" placeholder="Poids en g">
+                    </div>
                 </div>
                 <div class="macro-grid">
                     <div class="form-group"><label>Cal</label><input type="number" id="a-calories" required></div>

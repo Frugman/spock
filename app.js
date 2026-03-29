@@ -44,6 +44,9 @@ window.editFrequentMeal = function(id) {
     document.getElementById('f-meal-proteins').value = meal.proteins || 0;
     document.getElementById('f-meal-carbs').value = meal.carbs || 0;
     document.getElementById('f-meal-fats').value = meal.fats || 0;
+    document.getElementById('f-meal-unit').value = meal.unit || 'unité';
+    document.getElementById('f-meal-weight').value = meal.weight || 0;
+    toggleMealWeightInput();
     modal.classList.add('active');
 };
 
@@ -61,7 +64,20 @@ window.editAliment = function(id) {
     document.getElementById('a-fats').value = ali.fats || 0;
     document.getElementById('a-unit').value = ali.unit || '100g';
     document.getElementById('a-weight').value = ali.weight || 0;
+    toggleWeightInput();
     modal.classList.add('active');
+};
+
+window.toggleWeightInput = function() {
+    const unit = document.getElementById('a-unit').value;
+    const group = document.getElementById('a-weight-group');
+    if (group) group.style.display = (unit === 'unité' || unit === 'portion') ? 'block' : 'none';
+};
+
+window.toggleMealWeightInput = function() {
+    const unit = document.getElementById('f-meal-unit').value;
+    const group = document.getElementById('f-meal-weight-group');
+    if (group) group.style.display = (unit === 'unité' || unit === 'portion') ? 'block' : 'none';
 };
 
 window.removeFrequentMeal = async function(id) {
@@ -366,14 +382,26 @@ function initMealModal() {
             totFat += itemFat;
 
             html += `
-                <div class="basket-item" style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:10px; margin-bottom:8px;">
-                    <div style="flex:1;">
-                        <strong style="font-size:0.9rem;">${item.title}</strong><br>
-                        <small style="color:var(--text-secondary);">${Math.round(itemCal)} kcal • ${item.quantity} ${item.unit || ''}</small>
+                <div class="basket-item" style="display:flex; flex-direction:column; background:rgba(255,255,255,0.05); padding:12px; border-radius:12px; margin-bottom:10px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <strong style="font-size:1rem; color:var(--accent-color);">${item.title}</strong>
+                        <button onclick="removeFromBasket(${index})" style="background:none; border:none; color:var(--danger-color); font-size:1.2rem; cursor:pointer;">🗑️</button>
                     </div>
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <input type="number" value="${item.quantity}" onchange="updateBasketQty(${index}, this.value)" style="width:60px; text-align:center; padding:5px; height:32px;">
-                        <button onclick="removeFromBasket(${index})" style="background:none; border:none; color:var(--danger-color); font-size:1.2rem;">🗑️</button>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <input type="number" value="${item.quantity}" onchange="updateBasketQty(${index}, this.value)" style="flex:1; text-align:center; padding:8px; height:40px; border-radius:8px;">
+                        <select onchange="updateBasketUnit(${index}, this.value)" style="flex:2; height:40px; border-radius:8px; padding:0 8px;">
+                            <option value="g" ${item.unit === 'g' ? 'selected' : ''}>grammes (g)</option>
+                            <option value="100g" ${item.unit === '100g' ? 'selected' : ''}>x 100g</option>
+                            <option value="unité" ${item.unit === 'unité' || item.unit === 'portion' ? 'selected' : ''}>portion / unité</option>
+                            <option value="cs" ${item.unit === 'cs' ? 'selected' : ''}>cuillère à soupe (CS)</option>
+                            <option value="cc" ${item.unit === 'cc' ? 'selected' : ''}>cuillère à café (cc)</option>
+                            <option value="verre" ${item.unit === 'verre' ? 'selected' : ''}>verre</option>
+                            <option value="bol" ${item.unit === 'bol' ? 'selected' : ''}>bol</option>
+                        </select>
+                    </div>
+                    <div style="margin-top:10px; font-size:0.85rem; color:var(--text-secondary); display:flex; justify-content:space-between;">
+                        <span>${Math.round(itemCal)} kcal</span>
+                        <span>P:${Math.round(itemProt)}g • G:${Math.round(itemCarb)}g • L:${Math.round(itemFat)}g</span>
                     </div>
                 </div>
             `;
@@ -391,8 +419,13 @@ function initMealModal() {
         document.getElementById('lip-pct').innerText = `(${Math.round((totFat/totalMacros)*100)}%)`;
     };
 
-    window.updateBasketQty = (index, val) => {
-        AppState.currentBasket[index].quantity = parseFloat(val) || 0;
+    window.updateBasketQty = function(idx, val) {
+        AppState.currentBasket[idx].quantity = parseFloat(val) || 0;
+        renderBasket();
+    };
+
+    window.updateBasketUnit = function(idx, unit) {
+        AppState.currentBasket[idx].unit = unit;
         renderBasket();
     };
 
@@ -621,7 +654,13 @@ function initFrequentMealModal() {
     const form = document.getElementById('frequent-meal-form');
     const openBtn = document.getElementById('btn-add-meal');
 
-    if (openBtn) openBtn.onclick = () => { AppState.editingMealId = null; form.reset(); modal.classList.add('active'); };
+    if (openBtn) openBtn.onclick = () => { 
+        AppState.editingMealId = null; 
+        if (form) form.reset(); 
+        document.getElementById('f-meal-unit').value = 'unité';
+        toggleMealWeightInput();
+        modal.classList.add('active'); 
+    };
     if (form) form.onsubmit = async (e) => {
         e.preventDefault();
         const data = { 
@@ -631,7 +670,8 @@ function initFrequentMealModal() {
             proteins: parseFloat(document.getElementById('f-meal-proteins').value), 
             carbs: parseFloat(document.getElementById('f-meal-carbs').value), 
             fats: parseFloat(document.getElementById('f-meal-fats').value), 
-            unit: 'portion' 
+            unit: document.getElementById('f-meal-unit').value,
+            weight: parseFloat(document.getElementById('f-meal-weight').value) || 0
         };
         if (AppState.editingMealId) { const idx = AppState.meals.findIndex(m => m.id == AppState.editingMealId); if (idx !== -1) AppState.meals[idx] = data; }
         else AppState.meals.push(data);
@@ -647,7 +687,13 @@ function initAlimentModal() {
     const form = document.getElementById('aliment-form');
     const openBtn = document.getElementById('btn-add-aliment');
 
-    if (openBtn) openBtn.onclick = () => { AppState.editingAlimentId = null; if (form) form.reset(); modal.classList.add('active'); };
+    if (openBtn) openBtn.onclick = () => { 
+        AppState.editingAlimentId = null; 
+        if (form) form.reset(); 
+        document.getElementById('a-unit').value = '100g';
+        toggleWeightInput();
+        modal.classList.add('active'); 
+    };
     if (form) form.onsubmit = async (e) => {
         e.preventDefault();
         const data = { 
