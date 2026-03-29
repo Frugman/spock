@@ -90,13 +90,14 @@
     "weight": 150
   },
   {
-    "id": 1774796567192,
+    "id": "1774796567192",
     "title": "Mozzarella",
     "calories": 300,
     "proteins": 15,
     "carbs": 1,
     "fats": 25,
-    "unit": "1 boule"
+    "unit": "unité",
+    "weight": 125
   },
   {
     "id": 1774796636278,
