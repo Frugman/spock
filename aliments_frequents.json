@@ -70,13 +70,14 @@
     "weight": 230
   },
   {
-    "id": 1774796425428,
+    "id": "1774796425428",
     "title": "Riz noir mélangé",
     "calories": 355,
-    "proteins": 7,
+    "proteins": 7.2,
     "carbs": 73,
     "fats": 3,
-    "unit": "100g"
+    "unit": "100g",
+    "weight": 0
   },
   {
     "id": 1774796504226,
