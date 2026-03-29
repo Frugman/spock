@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -13,6 +14,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <header>
         <h1>SPOCK</h1>
@@ -23,6 +25,19 @@
 
     <div class="container">
         <section id="view-dashboard" class="view-section active">
+            
+            <!-- Plate Reminder (Vegetarian) -->
+            <div class="card plate-reminder" style="position:relative; overflow:hidden; padding: 40px 20px;">
+                <h3 style="text-align:center; margin-bottom: 25px; color:var(--accent-color);">ASSOUSETTE IDÉALE</h3>
+                <div style="position:relative; width:180px; height:180px; margin:0 auto;">
+                    <img src="plate.png" alt="Assiette Végétarienne" style="width:100%; height:100%; border-radius:50%; object-fit:cover; border:4px solid var(--card-border);">
+                    <!-- Percentage Labels -->
+                    <span class="plate-card-label" style="top:-15px; left:50%; transform:translateX(-50%); border-color:var(--accent-color);">🍞 40% Glucides</span>
+                    <span class="plate-card-label" style="bottom:10px; right:-60px; border-color:var(--accent-color);">🥚 30% Protéines</span>
+                    <span class="plate-card-label" style="bottom:10px; left:-60px; border-color:var(--accent-color);">🥑 30% Lipides</span>
+                </div>
+            </div>
+
             <div class="card">
                 <h2>Aujourd'hui</h2>
                 <p id="today-summary">Initialisation...</p>
@@ -32,7 +47,9 @@
                 <h3>Calories</h3>
                 <div class="stat-row">
                     <span id="cal-count">0 / 1600 kcal</span>
-                    <div class="progress-bar"><div id="cal-fill" class="fill"></div></div>
+                    <div class="progress-bar">
+                        <div id="cal-fill" class="fill"></div>
+                    </div>
                 </div>
             </div>
 
@@ -40,7 +57,9 @@
                 <h3>Protéines</h3>
                 <div class="stat-row">
                     <span id="prot-count">0 / 120g</span>
-                    <div class="progress-bar"><div id="prot-fill" class="fill"></div></div>
+                    <div class="progress-bar">
+                        <div id="prot-fill" class="fill"></div>
+                    </div>
                 </div>
             </div>
 
@@ -56,7 +75,8 @@
         <div class="modal-content">
             <div class="modal-header" style="display:flex; justify-content:space-between; margin-bottom:20px;">
                 <h2>Nouveau Repas</h2>
-                <button id="btn-close-modal" style="background:none; border:none; color:white; font-size:24px;">&times;</button>
+                <button id="btn-close-modal"
+                    style="background:none; border:none; color:white; font-size:24px;">&times;</button>
             </div>
 
             <div class="form-group"><label>Date</label><input type="date" id="meal-date"></div>
@@ -71,7 +91,7 @@
             </div>
 
             <div id="meal-basket-list"></div>
-            
+
             <div class="card" style="margin:20px 0;">
                 <div style="display:flex; justify-content:space-between;">
                     <span>Total</span><strong id="total-cal">0</strong><span>kcal</span>
@@ -83,31 +103,51 @@
 
             <div class="search-box">
                 <input type="text" id="off-search" placeholder="Rechercher un ingrédient...">
-                <ul id="off-results" class="hidden" style="list-style:none; padding:0; margin-top:10px; max-height:200px; overflow-y:auto; background:rgba(0,0,0,0.3); border-radius:10px;"></ul>
-            </div>
-            
-            <div style="display: flex; gap: 10px; margin-top: 15px;">
-                <button class="btn-primary" id="btn-fav-meals" style="background:var(--card-border);">Plats</button>
-                <button class="btn-primary" id="btn-fav-aliments" style="background:var(--card-border);">Favoris</button>
+                <ul id="off-results" class="hidden"
+                    style="list-style:none; padding:0; margin-top:10px; max-height:200px; overflow-y:auto; background:rgba(0,0,0,0.3); border-radius:10px;">
+                </ul>
             </div>
 
-            <div id="selection-list" class="hidden" style="margin-top:15px; max-height:200px; overflow-y:auto; padding:10px; border:1px solid var(--card-border); border-radius:10px;"></div>
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button class="btn-primary" id="btn-fav-meals" style="background:var(--card-border);">Plats</button>
+                <button class="btn-primary" id="btn-fav-aliments"
+                    style="background:var(--card-border);">Favoris</button>
+            </div>
+
+            <div id="selection-list" class="hidden"
+                style="margin-top:15px; max-height:200px; overflow-y:auto; padding:10px; border:1px solid var(--card-border); border-radius:10px;">
+            </div>
 
             <button class="btn-primary" id="btn-save-full-meal" style="margin-top:20px;">ENREGISTRER</button>
         </div>
     </div>
 
     <nav class="nav-bar">
-        <a href="index.html" class="nav-item"><div class="nav-icon">📊</div><span>Dash</span></a>
-        <a href="journal.html" class="nav-item"><div class="nav-icon">📖</div><span>Journal</span></a>
-        <a href="poids.html" class="nav-item"><div class="nav-icon">⚖️</div><span>Poids</span></a>
-        <a href="plats.html" class="nav-item"><div class="nav-icon">🍲</div><span>Plats</span></a>
-        <a href="report.html" class="nav-item"><div class="nav-icon">📈</div><span>Report</span></a>
-        <a href="explorer.html" class="nav-item"><div class="nav-icon">🔍</div><span>BASE</span></a>
-        <a href="settings.html" class="nav-item"><div class="nav-icon">⚙️</div><span>Param</span></a>
+        <a href="index.html" class="nav-item">
+            <div class="nav-icon">📊</div><span>Dash</span>
+        </a>
+        <a href="journal.html" class="nav-item">
+            <div class="nav-icon">📖</div><span>Journal</span>
+        </a>
+        <a href="poids.html" class="nav-item">
+            <div class="nav-icon">⚖️</div><span>Poids</span>
+        </a>
+        <a href="plats.html" class="nav-item">
+            <div class="nav-icon">🍲</div><span>Plats</span>
+        </a>
+        <a href="report.html" class="nav-item">
+            <div class="nav-icon">📈</div><span>Report</span>
+        </a>
+        <a href="explorer.html" class="nav-item">
+            <div class="nav-icon">🔍</div><span>BASE</span>
+        </a>
+        <a href="settings.html" class="nav-item">
+            <div class="nav-icon">⚙️</div><span>Param</span>
+        </a>
     </nav>
 
     <script src="github-api.js"></script>
     <script src="app.js"></script>
 </body>
+
 </html>
