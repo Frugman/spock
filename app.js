@@ -1,8 +1,3 @@
-/**
- * SPOCK - Logic Layer
- * V1.3 - Professional Meal Form & Bug Fixes
- */
-
 const AppState = {
     user: { name: "Frugman", goal: 1600, protGoal: 120 },
     journal: [],
@@ -16,6 +11,71 @@ const AppState = {
     editingJournalId: null,
     editingMealId: null,
     editingAlimentId: null
+};
+
+/* -------------------------------------------------------------------------- */
+/*                                GLOBAL ACTIONS                               */
+/* -------------------------------------------------------------------------- */
+
+window.editJournalEntry = function(id) {
+    console.log("✏️ Editing Journal Entry:", id);
+    const entry = AppState.journal.find(e => e.id == id);
+    if (!entry) return;
+    AppState.editingJournalId = id;
+    AppState.currentBasket = [...(entry.items || [])];
+    const modal = document.getElementById('entry-modal');
+    if (modal) {
+        document.getElementById('meal-date').value = entry.date;
+        document.getElementById('meal-type').value = entry.type;
+        renderBasket();
+        modal.classList.add('active');
+    }
+};
+
+window.editFrequentMeal = function(id) {
+    console.log("✏️ Editing Frequent Meal:", id);
+    const meal = AppState.meals.find(m => m.id == id);
+    if (!meal) return;
+    const modal = document.getElementById('meal-modal');
+    if (!modal) return;
+    AppState.editingMealId = id;
+    document.getElementById('f-meal-title').value = meal.title || "";
+    document.getElementById('f-meal-calories').value = meal.calories || 0;
+    document.getElementById('f-meal-proteins').value = meal.proteins || 0;
+    document.getElementById('f-meal-carbs').value = meal.carbs || 0;
+    document.getElementById('f-meal-fats').value = meal.fats || 0;
+    modal.classList.add('active');
+};
+
+window.editAliment = function(id) {
+    console.log("✏️ Editing Aliment:", id);
+    const ali = AppState.aliments.find(a => a.id == id);
+    if (!ali) return;
+    const modal = document.getElementById('aliment-modal');
+    if (!modal) return;
+    AppState.editingAlimentId = id;
+    document.getElementById('a-title').value = ali.title || "";
+    document.getElementById('a-calories').value = ali.calories || 0;
+    document.getElementById('a-proteins').value = ali.proteins || 0;
+    document.getElementById('a-carbs').value = ali.carbs || 0;
+    document.getElementById('a-fats').value = ali.fats || 0;
+    document.getElementById('a-unit').value = ali.unit || '100g';
+    document.getElementById('a-weight').value = ali.weight || 0;
+    modal.classList.add('active');
+};
+
+window.removeFrequentMeal = async function(id) {
+    if (!confirm("Supprimer ce plat favori ?")) return;
+    AppState.meals = AppState.meals.filter(m => m.id != id);
+    await GitHubAPI.saveFile('plats_frequents.json', AppState.meals, null, "Remove Meal");
+    renderMealsLibrary();
+};
+
+window.removeAliment = async function(id) {
+    if (!confirm("Supprimer cet ingrédient favori ?")) return;
+    AppState.aliments = AppState.aliments.filter(a => a.id != id);
+    await GitHubAPI.saveFile('aliments_frequents.json', AppState.aliments, null, "Remove Aliment");
+    renderAlimentsLibrary();
 };
 
 const UnitConversions = {
@@ -227,8 +287,8 @@ function renderJournalTimeline() {
                             <strong>${e.title || 'Sans titre'}</strong>
                         </div>
                         <div style="display:flex; gap: 8px; align-self: flex-start;">
-                            <button onclick="editJournalEntry(${e.id})" class="btn-icon">✏️</button>
-                            <button onclick="deleteJournalEntry(${e.id})" class="btn-icon">🗑️</button>
+                            <button onclick="editJournalEntry('${e.id}')" class="btn-icon">✏️</button>
+                            <button onclick="deleteJournalEntry('${e.id}')" class="btn-icon">🗑️</button>
                         </div>
                     </div>
                     
@@ -256,22 +316,6 @@ window.deleteJournalEntry = async function(id) {
     await GitHubAPI.saveFile('journal.json', AppState.journal, null, "Delete meal");
     renderJournalTimeline();
     updateDashboard();
-};
-
-window.editJournalEntry = function(id) {
-    const entry = AppState.journal.find(e => e.id == id);
-    if (!entry) return;
-
-    AppState.editingJournalId = id;
-    AppState.currentBasket = [...(entry.items || [])];
-    
-    const modal = document.getElementById('entry-modal');
-    if (modal) {
-        document.getElementById('meal-date').value = entry.date;
-        document.getElementById('meal-type').value = entry.type;
-        renderBasket();
-        modal.classList.add('active');
-    }
 };
 
 /* -------------------------------------------------------------------------- */
@@ -491,34 +535,15 @@ function renderMealsLibrary(searchTerm = "") {
             <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
                 <strong>${m.title}</strong>
                 <div>
-                    <button onclick="editFrequentMeal(${m.id})" class="btn-icon">✏️</button>
-                    <button onclick="removeFrequentMeal(${m.id})" class="btn-icon">🗑️</button>
+                    <button onclick="editFrequentMeal('${m.id}')" class="btn-icon">✏️</button>
+                    <button onclick="removeFrequentMeal('${m.id}')" class="btn-icon">🗑️</button>
                 </div>
             </div>
             <div style="color:var(--accent-color); font-weight:700;">${m.calories} kcal / portion</div>
-            <button onclick="addMealToJournalLibrary(${m.id})" class="btn-primary" style="margin-top:10px; height:40px;">Ajouter</button>
+            <button onclick="addMealToJournalLibrary('${m.id}')" class="btn-primary" style="margin-top:10px; height:40px;">Ajouter</button>
         </div>
     `).join('');
 }
-
-window.editFrequentMeal = function(id) {
-    const meal = AppState.meals.find(m => m.id == id);
-    if (!meal) return;
-    AppState.editingMealId = id;
-    document.getElementById('f-meal-title').value = meal.title;
-    document.getElementById('f-meal-calories').value = meal.calories;
-    document.getElementById('f-meal-proteins').value = meal.proteins || 0;
-    document.getElementById('f-meal-carbs').value = meal.carbs || 0;
-    document.getElementById('f-meal-fats').value = meal.fats || 0;
-    document.getElementById('meal-modal').classList.add('active');
-};
-
-window.removeFrequentMeal = async function(id) {
-    if (!confirm("Supprimer ce plat favori ?")) return;
-    AppState.meals = AppState.meals.filter(m => m.id != id);
-    await GitHubAPI.saveFile('plats_frequents.json', AppState.meals, null, "Remove Meal");
-    renderMealsLibrary();
-};
 
 window.addMealToJournalLibrary = async function(id) {
     const meal = AppState.meals.find(m => m.id == id);
@@ -556,36 +581,15 @@ function renderAlimentsLibrary(searchTerm = "") {
             <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
                 <strong>${a.title}</strong>
                 <div>
-                    <button onclick="editAliment(${a.id})" class="btn-icon">✏️</button>
-                    <button onclick="removeAliment(${a.id})" class="btn-icon">🗑️</button>
+                    <button onclick="editAliment('${a.id}')" class="btn-icon">✏️</button>
+                    <button onclick="removeAliment('${a.id}')" class="btn-icon">🗑️</button>
                 </div>
             </div>
             <div style="color:var(--text-secondary);">${a.calories} kcal / ${a.unit || '100g'} ${a.weight ? '('+a.weight+'g)' : ''}</div>
-            <button onclick="addAlimentToJournalLibrary(${a.id})" class="btn-primary" style="margin-top:10px; height:40px; background:var(--card-border);">Ajouter</button>
+            <button onclick="addAlimentToJournalLibrary('${a.id}')" class="btn-primary" style="margin-top:10px; height:40px; background:var(--card-border);">Ajouter</button>
         </div>
     `).join('');
 }
-
-window.editAliment = function(id) {
-    const ali = AppState.aliments.find(a => a.id == id);
-    if (!ali) return;
-    AppState.editingAlimentId = id;
-    document.getElementById('a-title').value = ali.title;
-    document.getElementById('a-calories').value = ali.calories;
-    document.getElementById('a-proteins').value = ali.proteins || 0;
-    document.getElementById('a-carbs').value = ali.carbs || 0;
-    document.getElementById('a-fats').value = ali.fats || 0;
-    document.getElementById('a-unit').value = ali.unit || '100g';
-    document.getElementById('a-weight').value = ali.weight || 0;
-    document.getElementById('aliment-modal').classList.add('active');
-};
-
-window.removeAliment = async function(id) {
-    if (!confirm("Supprimer cet ingrédient favori ?")) return;
-    AppState.aliments = AppState.aliments.filter(a => a.id != id);
-    await GitHubAPI.saveFile('aliments_frequents.json', AppState.aliments, null, "Remove Aliment");
-    renderAlimentsLibrary();
-};
 
 window.addAlimentToJournalLibrary = async function(id) {
     const ali = AppState.aliments.find(a => a.id == id);
@@ -629,7 +633,7 @@ function initFrequentMealModal() {
             fats: parseFloat(document.getElementById('f-meal-fats').value), 
             unit: 'portion' 
         };
-        if (AppState.editingMealId) { const idx = AppState.meals.findIndex(m => m.id === AppState.editingMealId); if (idx !== -1) AppState.meals[idx] = data; }
+        if (AppState.editingMealId) { const idx = AppState.meals.findIndex(m => m.id == AppState.editingMealId); if (idx !== -1) AppState.meals[idx] = data; }
         else AppState.meals.push(data);
         await GitHubAPI.saveFile('plats_frequents.json', AppState.meals, null, "Update Meals");
         modal.classList.remove('active'); renderMealsLibrary();
@@ -656,7 +660,7 @@ function initAlimentModal() {
             unit: document.getElementById('a-unit').value,
             weight: parseFloat(document.getElementById('a-weight').value) || 0
         };
-        if (AppState.editingAlimentId) { const idx = AppState.aliments.findIndex(a => a.id === AppState.editingAlimentId); if (idx !== -1) AppState.aliments[idx] = data; }
+        if (AppState.editingAlimentId) { const idx = AppState.aliments.findIndex(a => a.id == AppState.editingAlimentId); if (idx !== -1) AppState.aliments[idx] = data; }
         else AppState.aliments.push(data);
         await GitHubAPI.saveFile('aliments_frequents.json', AppState.aliments, null, "Update Aliments");
         modal.classList.remove('active'); renderAlimentsLibrary();
