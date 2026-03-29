@@ -60,13 +60,14 @@
     "weight": 0
   },
   {
-    "id": 1774796340927,
+    "id": "1774796340927",
     "title": "Lentilles préparées",
     "calories": 214,
     "proteins": 15,
     "carbs": 32,
-    "fats": 2,
-    "unit": "1/2 boîte"
+    "fats": 1.2,
+    "unit": "unité",
+    "weight": 230
   },
   {
     "id": 1774796425428,
