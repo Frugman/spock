@@ -26,5 +26,6 @@ V1.2 - Pro Meal Form & Local Database
 - [x] Optimisation du repository (Ignorer les XML source volumineux)
 
 ## 🔜 Prochaines étapes
+- [ ] Gestion des correspondances d'unités (ex: 1 avocat, 1 oeuf, 1 pomme) pour éviter la pesée systématique.
 - [ ] Support du scan de code-barres (probablement via caméra en JS)
 - [ ] Export PDF du rapport hebdo
