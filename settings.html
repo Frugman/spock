@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paramètres - Spock</title>
-    <link rel="stylesheet" href="style.css">
+    <title>ParamÃ¨tres - Spock</title>
+    <link rel="stylesheet" href="style.css?v=2">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png">
@@ -14,16 +14,16 @@
 <body class="spock-theme">
     <div class="glass-container">
         <aside class="sidebar">
-            <div class="logo"><span class="logo-icon">🖖</span><h1 class="logo-text">SPOCK</h1></div>
+            <div class="logo"><span class="logo-icon">ðŸ––</span><h1 class="logo-text">SPOCK</h1></div>
             <nav class="main-nav">
                 <ul>
-                    <li class="nav-item"><a href="index.html"><i class="icon">📊</i> Dashboard</a></li>
-                    <li class="nav-item"><a href="journal.html"><i class="icon">📖</i> Journal</a></li>
-                    <li class="nav-item"><a href="poids.html"><i class="icon">⚖️</i> Poids</a></li>
-                    <li class="nav-item"><a href="plats.html"><i class="icon">🍲</i> Plats</a></li>
-                    <li class="nav-item"><a href="report.html"><i class="icon">📈</i> Report</a></li>
-                    <li class="nav-item"><a href="explorer.html"><i class="icon">🔍</i> OFF Explorer</a></li>
-                    <li class="nav-item active"><a href="settings.html"><i class="icon">⚙️</i> Paramètres</a></li>
+                    <li class="nav-item"><a href="index.html"><i class="icon">ðŸ“Š</i> Dashboard</a></li>
+                    <li class="nav-item"><a href="journal.html"><i class="icon">ðŸ“–</i> Journal</a></li>
+                    <li class="nav-item"><a href="poids.html"><i class="icon">âš–ï¸</i> Poids</a></li>
+                    <li class="nav-item"><a href="plats.html"><i class="icon">ðŸ²</i> Plats</a></li>
+                    <li class="nav-item"><a href="report.html"><i class="icon">ðŸ“ˆ</i> Report</a></li>
+                    <li class="nav-item"><a href="explorer.html"><i class="icon">ðŸ”</i> OFF Explorer</a></li>
+                    <li class="nav-item active"><a href="settings.html"><i class="icon">âš™ï¸</i> ParamÃ¨tres</a></li>
                 </ul>
             </nav>
         </aside>
@@ -35,19 +35,19 @@
             </header>
 
             <section id="view-settings" class="view-section active">
-                <h2>Paramètres</h2>
+                <h2>ParamÃ¨tres</h2>
                 <div class="card settings-card">
-                    <p>Configurez ici vos accès GitHub.</p>
+                    <p>Configurez ici vos accÃ¨s GitHub.</p>
                     <div class="form-group"><label>Pseudo GitHub</label><input type="text" id="gh-user"></div>
-                    <div class="form-group"><label>Nom du dépôt</label><input type="text" id="gh-repo"></div>
+                    <div class="form-group"><label>Nom du dÃ©pÃ´t</label><input type="text" id="gh-repo"></div>
                     <div class="form-group"><label>Token Secret (PAT)</label><input type="password" id="gh-token"></div>
                     <div class="form-actions"><button class="btn-primary" id="btn-save-settings">Enregistrer</button></div>
                     <div id="settings-status" class="status-msg"></div>
                 </div>
                 <div class="card settings-card" style="margin-top: 2rem; border-color: var(--danger-color);">
                     <h3 style="color: var(--danger-color);">Zone de Danger</h3>
-                    <p>Réinitialiser les fichiers locaux.</p>
-                    <button class="btn-secondary" id="btn-reset-data">Réinitialiser les données</button>
+                    <p>RÃ©initialiser les fichiers locaux.</p>
+                    <button class="btn-secondary" id="btn-reset-data">RÃ©initialiser les donnÃ©es</button>
                 </div>
             </section>
         </main>
