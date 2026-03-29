@@ -1,5 +1,73 @@
 [
   {
+    "id": 1774812682699,
+    "date": "2026-03-29",
+    "type": "Déjeuner",
+    "title": "Noix de cajou + 5 items",
+    "items": [
+      {
+        "id": 1774796156988,
+        "title": "Noix de cajou",
+        "calories": 60,
+        "proteins": 2,
+        "carbs": 2,
+        "fats": 5,
+        "unit": "1 poignée",
+        "quantity": 1
+      },
+      {
+        "title": "Pomme de terre, sans peau, rôtie/cuite au four",
+        "calories": 91.9,
+        "proteins": 1.96,
+        "carbs": 20.1,
+        "fats": 0.1,
+        "unit": "100g",
+        "quantity": 160
+      },
+      {
+        "id": 1774796935653,
+        "title": "Galette Louisiana Spicy Cereal Bio",
+        "calories": 181,
+        "proteins": 14,
+        "carbs": 11,
+        "fats": 8,
+        "unit": "1 galette",
+        "quantity": 1
+      },
+      {
+        "title": "Radis rouge, cru",
+        "calories": 11,
+        "proteins": 0.94,
+        "carbs": 1.53,
+        "fats": 0.5,
+        "unit": "100g",
+        "quantity": 100
+      },
+      {
+        "title": "Barre glacée chocolatée",
+        "calories": 354,
+        "proteins": 4.79,
+        "carbs": 37,
+        "fats": 20.5,
+        "unit": "100g",
+        "quantity": 50
+      },
+      {
+        "title": "Cookie au chocolat, préemballé",
+        "calories": 493,
+        "proteins": 6.44,
+        "carbs": 61,
+        "fats": 23.8,
+        "unit": "100g",
+        "quantity": 50
+      }
+    ],
+    "calories": 822.54,
+    "proteins": 25.691,
+    "carbs": 95.69,
+    "fats": 35.81
+  },
+  {
     "id": 1774798895434,
     "date": "2026-03-29",
     "type": "Dîner",
