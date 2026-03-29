@@ -235,11 +235,16 @@ function updateDashboard() {
         lip: Math.round(goal * 0.3 / 9)
     };
 
+    const totalCals = todayEntries.reduce((s, e) => s + (e.calories || 0), 0);
+    const totalProt = todayEntries.reduce((s, e) => s + (e.proteins || 0), 0);
+    const totalGluc = todayEntries.reduce((s, e) => s + (e.carbs || 0), 0);
+    const totalLip = todayEntries.reduce((s, e) => s + (e.fats || 0), 0);
+
     const fmt = (v) => Math.round(v * 10) / 10;
 
     const calFill = document.getElementById('cal-fill');
     if (calFill) {
-        document.getElementById('cal-count').innerText = `${totalCals} / ${goal} kcal`;
+        document.getElementById('cal-count').innerText = `${Math.round(totalCals)} / ${goal} kcal`;
         calFill.style.width = `${Math.min((totalCals / goal) * 100, 100)}%`;
     }
     const protFill = document.getElementById('prot-fill');
@@ -248,7 +253,6 @@ function updateDashboard() {
         protFill.style.width = `${Math.min((totalProt / targets.prot) * 100, 100)}%`;
     }
 
-    const totalGluc = todayEntries.reduce((s, e) => s + (e.carbs || 0), 0);
     const glucFill = document.getElementById('gluc-fill');
     if (glucFill) {
         const countEl = document.getElementById('gluc-count');
@@ -256,7 +260,6 @@ function updateDashboard() {
         glucFill.style.width = `${Math.min((totalGluc / targets.gluc) * 100, 100)}%`;
     }
 
-    const totalLip = todayEntries.reduce((s, e) => s + (e.fats || 0), 0);
     const lipFill = document.getElementById('lip-fill');
     if (lipFill) {
         const countEl = document.getElementById('lip-count');
