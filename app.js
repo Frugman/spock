@@ -13,7 +13,9 @@ const AppState = {
     offCache: [],
     lastOFFSearchResults: [],
     currentBasket: [], // [{ title, calories, proteins, carbs, fats, quantity, unit }]
-    editingJournalId: null
+    editingJournalId: null,
+    editingMealId: null,
+    editingAlimentId: null
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -209,6 +211,22 @@ window.deleteJournalEntry = async function(id) {
     await GitHubAPI.saveFile('journal.json', AppState.journal, null, "Delete meal");
     renderJournalTimeline();
     updateDashboard();
+};
+
+window.editJournalEntry = function(id) {
+    const entry = AppState.journal.find(e => e.id == id);
+    if (!entry) return;
+
+    AppState.editingJournalId = id;
+    AppState.currentBasket = [...(entry.items || [])];
+    
+    const modal = document.getElementById('entry-modal');
+    if (modal) {
+        document.getElementById('meal-date').value = entry.date;
+        document.getElementById('meal-type').value = entry.type;
+        renderBasket();
+        modal.classList.add('active');
+    }
 };
 
 /* -------------------------------------------------------------------------- */
@@ -438,6 +456,48 @@ function renderMealsLibrary(searchTerm = "") {
     `).join('');
 }
 
+window.editFrequentMeal = function(id) {
+    const meal = AppState.meals.find(m => m.id == id);
+    if (!meal) return;
+    AppState.editingMealId = id;
+    document.getElementById('f-meal-title').value = meal.title;
+    document.getElementById('f-meal-calories').value = meal.calories;
+    document.getElementById('f-meal-proteins').value = meal.proteins || 0;
+    document.getElementById('f-meal-carbs').value = meal.carbs || 0;
+    document.getElementById('f-meal-fats').value = meal.fats || 0;
+    document.getElementById('meal-modal').classList.add('active');
+};
+
+window.removeFrequentMeal = async function(id) {
+    if (!confirm("Supprimer ce plat favori ?")) return;
+    AppState.meals = AppState.meals.filter(m => m.id != id);
+    await GitHubAPI.saveFile('plats_frequents.json', AppState.meals, null, "Remove Meal");
+    renderMealsLibrary();
+};
+
+window.addMealToJournalLibrary = async function(id) {
+    const meal = AppState.meals.find(m => m.id == id);
+    if (!meal) return;
+    
+    const entry = {
+        id: Date.now(),
+        date: new Date().toISOString().split('T')[0],
+        type: "Déjeuner",
+        title: meal.title,
+        items: [{...meal, quantity: 1, unit: 'portion'}],
+        calories: meal.calories,
+        proteins: meal.proteins || 0,
+        carbs: meal.carbs || 0,
+        fats: meal.fats || 0
+    };
+    
+    AppState.journal.unshift(entry);
+    await GitHubAPI.saveFile('journal.json', AppState.journal, null, "Add meal from library");
+    renderJournalTimeline();
+    updateDashboard();
+    alert("Plat ajouté au journal !");
+};
+
 function renderAlimentsLibrary(searchTerm = "") {
     const list = document.getElementById('aliments-list');
     if (!list) return;
@@ -459,6 +519,50 @@ function renderAlimentsLibrary(searchTerm = "") {
         </div>
     `).join('');
 }
+
+window.editAliment = function(id) {
+    const ali = AppState.aliments.find(a => a.id == id);
+    if (!ali) return;
+    AppState.editingAlimentId = id;
+    document.getElementById('a-title').value = ali.title;
+    document.getElementById('a-calories').value = ali.calories;
+    document.getElementById('a-proteins').value = ali.proteins || 0;
+    document.getElementById('a-carbs').value = ali.carbs || 0;
+    document.getElementById('a-fats').value = ali.fats || 0;
+    document.getElementById('a-unit').value = ali.unit || '100g';
+    document.getElementById('aliment-modal').classList.add('active');
+};
+
+window.removeAliment = async function(id) {
+    if (!confirm("Supprimer cet ingrédient favori ?")) return;
+    AppState.aliments = AppState.aliments.filter(a => a.id != id);
+    await GitHubAPI.saveFile('aliments_frequents.json', AppState.aliments, null, "Remove Aliment");
+    renderAlimentsLibrary();
+};
+
+window.addAlimentToJournalLibrary = async function(id) {
+    const ali = AppState.aliments.find(a => a.id == id);
+    if (!ali) return;
+    
+    const qty = (ali.unit === 'portion' || ali.unit === 'unité' ? 1 : 100);
+    const entry = {
+        id: Date.now(),
+        date: new Date().toISOString().split('T')[0],
+        type: "En-cas",
+        title: ali.title,
+        items: [{...ali, quantity: qty, unit: ali.unit || '100g'}],
+        calories: ali.calories * (qty / (ali.unit === '100g' ? 100 : 1)),
+        proteins: (ali.proteins || 0) * (qty / (ali.unit === '100g' ? 100 : 1)),
+        carbs: (ali.carbs || 0) * (qty / (ali.unit === '100g' ? 100 : 1)),
+        fats: (ali.fats || 0) * (qty / (ali.unit === '100g' ? 100 : 1))
+    };
+    
+    AppState.journal.unshift(entry);
+    await GitHubAPI.saveFile('journal.json', AppState.journal, null, "Add aliment from library");
+    renderJournalTimeline();
+    updateDashboard();
+    alert("Ingrédient ajouté au journal !");
+};
 
 function initFrequentMealModal() {
     const modal = document.getElementById('meal-modal');
