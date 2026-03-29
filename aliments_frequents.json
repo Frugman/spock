@@ -43,5 +43,14 @@
     "carbs": 2,
     "fats": 5,
     "unit": "1 poignée"
+  },
+  {
+    "id": 1774796260769,
+    "title": "Huile d'olive",
+    "calories": 82,
+    "proteins": 0,
+    "carbs": 0,
+    "fats": 9,
+    "unit": "1 CS"
   }
 ]
