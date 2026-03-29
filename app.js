@@ -229,7 +229,8 @@ function updateDashboard() {
     const today = new Date().toISOString().split('T')[0];
     const todayEntries = AppState.journal.filter(e => e.date === today);
     const totalCals = Math.round(todayEntries.reduce((s, e) => s + (e.calories || 0), 0));
-    const totalProt = Math.round(todayEntries.reduce((s, e) => s + (e.proteins || 0), 0));
+    const totalProt = todayEntries.reduce((s, e) => s + (e.proteins || 0), 0);
+    const fmt = (v) => Math.round(v * 10) / 10;
 
     const calFill = document.getElementById('cal-fill');
     if (calFill) {
@@ -238,25 +239,25 @@ function updateDashboard() {
     }
     const protFill = document.getElementById('prot-fill');
     if (protFill) {
-        document.getElementById('prot-count').innerText = `${totalProt} / ${AppState.user.protGoal}g`;
+        document.getElementById('prot-count').innerText = `${fmt(totalProt)} / ${AppState.user.protGoal}g`;
         protFill.style.width = `${Math.min((totalProt / AppState.user.protGoal) * 100, 100)}%`;
     }
 
-    const totalGluc = Math.round(todayEntries.reduce((s, e) => s + (e.carbs || 0), 0));
+    const totalGluc = todayEntries.reduce((s, e) => s + (e.carbs || 0), 0);
     const glucFill = document.getElementById('gluc-fill');
     if (glucFill) {
         const goal = 240; // Gluc target
         const countEl = document.getElementById('gluc-count');
-        if (countEl) countEl.innerText = `${totalGluc} / ${goal}g`;
+        if (countEl) countEl.innerText = `${fmt(totalGluc)} / ${goal}g`;
         glucFill.style.width = `${Math.min((totalGluc / goal) * 100, 100)}%`;
     }
 
-    const totalLip = Math.round(todayEntries.reduce((s, e) => s + (e.fats || 0), 0));
+    const totalLip = todayEntries.reduce((s, e) => s + (e.fats || 0), 0);
     const lipFill = document.getElementById('lip-fill');
     if (lipFill) {
         const goal = 70; // Lip target
         const countEl = document.getElementById('lip-count');
-        if (countEl) countEl.innerText = `${totalLip} / ${goal}g`;
+        if (countEl) countEl.innerText = `${fmt(totalLip)} / ${goal}g`;
         lipFill.style.width = `${Math.min((totalLip / goal) * 100, 100)}%`;
     }
 
@@ -316,9 +317,9 @@ function renderJournalTimeline() {
 
                     <div class="entry-macros" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;">
                         <span class="macro-tag" style="background:rgba(255,255,255,0.05); padding:4px 8px; border-radius:6px; font-size:0.75rem;">🔥 ${Math.round(e.calories)} <small>kcal</small></span>
-                        <span class="macro-tag" style="background:rgba(255,165,0,0.1); padding:4px 8px; border-radius:6px; font-size:0.75rem;">🥩 Protéines: ${Math.round(e.proteins)}g <small>(${pPct}%)</small></span>
-                        <span class="macro-tag" style="background:rgba(0,191,255,0.1); padding:4px 8px; border-radius:6px; font-size:0.75rem;">🍞 Glucides: ${Math.round(e.carbs || 0)}g <small>(${gPct}%)</small></span>
-                        <span class="macro-tag" style="background:rgba(144,238,144,0.1); padding:4px 8px; border-radius:6px; font-size:0.75rem;">🥑 Lipides: ${Math.round(e.fats || 0)}g <small>(${lPct}%)</small></span>
+                        <span class="macro-tag" style="background:rgba(255,165,0,0.1); padding:4px 8px; border-radius:6px; font-size:0.75rem;">🥩 Protéines: ${Math.round((e.proteins || 0) * 10) / 10}g <small>(${pPct}%)</small></span>
+                        <span class="macro-tag" style="background:rgba(0,191,255,0.1); padding:4px 8px; border-radius:6px; font-size:0.75rem;">🍞 Glucides: ${Math.round((e.carbs || 0) * 10) / 10}g <small>(${gPct}%)</small></span>
+                        <span class="macro-tag" style="background:rgba(144,238,144,0.1); padding:4px 8px; border-radius:6px; font-size:0.75rem;">🥑 Lipides: ${Math.round((e.fats || 0) * 10) / 10}g <small>(${lPct}%)</small></span>
                     </div>
                 </div>
             `;}).join('')}
@@ -403,7 +404,7 @@ function initMealModal() {
                     </div>
                     <div style="margin-top:10px; font-size:0.85rem; color:var(--text-secondary); display:flex; justify-content:space-between;">
                         <span>${Math.round(itemCal)} Calories (kcal)</span>
-                        <span>Protéines: ${Math.round(itemProt)}g • Glucides: ${Math.round(itemCarb)}g • Lipides: ${Math.round(itemFat)}g</span>
+                        <span>Protéines: ${Math.round(itemProt * 10) / 10}g • Glucides: ${Math.round(itemCarb * 10) / 10}g • Lipides: ${Math.round(itemFat * 10) / 10}g</span>
                     </div>
                 </div>
             `;
@@ -411,9 +412,9 @@ function initMealModal() {
 
         list.innerHTML = html || "<div class='empty-state'>Panier vide</div>";
         document.getElementById('total-cal').innerText = Math.round(totCal);
-        document.getElementById('total-prot').innerText = Math.round(totProt);
-        document.getElementById('total-gluc').innerText = Math.round(totCarb);
-        document.getElementById('total-lip').innerText = Math.round(totFat);
+        document.getElementById('total-prot').innerText = Math.round(totProt * 10) / 10;
+        document.getElementById('total-gluc').innerText = Math.round(totCarb * 10) / 10;
+        document.getElementById('total-lip').innerText = Math.round(totFat * 10) / 10;
 
         const totalMacros = totProt + totCarb + totFat || 1;
         document.getElementById('prot-pct').innerText = `(${Math.round((totProt/totalMacros)*100)}%)`;
