@@ -1,95 +1,60 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plats - Spock</title>
-    <link rel="stylesheet" href="style.css?v=3">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Spock - Mes Plats</title>
+    <link rel="stylesheet" href="spock.css">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon.png">
-    <link rel="apple-touch-icon" href="icon.png">
-    <meta name="theme-color" content="#238636">
+    <meta name="theme-color" content="#0d1117">
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="spock-theme">
-    <div class="glass-container">
-        <aside class="sidebar">
-            <div class=\logo\><h1 class=\logo-text\>SPOCK</h1></div>
-            <nav class="main-nav">
-                <ul>
-                    <li class="nav-item"><a href="index.html"><i class="icon">ðŸ“Š</i> Dashboard</a></li>
-                    <li class="nav-item"><a href="journal.html"><i class="icon">ðŸ“–</i> Journal</a></li>
-                    <li class="nav-item"><a href="poids.html"><i class="icon">âš–ï¸</i> Poids</a></li>
-                    <li class="nav-item active"><a href="plats.html"><i class="icon">ðŸ²</i> Plats</a></li>
-                    <li class="nav-item"><a href="report.html"><i class="icon">ðŸ“ˆ</i> Report</a></li>
-                    <li class="nav-item"><a href="explorer.html"><i class="icon">ðŸ”</i> BASE</a></li>
-                    <li class="nav-item"><a href="settings.html"><i class="icon">âš™ï¸</i> ParamÃ¨tres</a></li>
-                </ul>
-            </nav>
-        </aside>
+<body>
+    <header>
+        <h1>PLATS</h1>
+        <div class="actions">
+            <button class="btn-primary" id="btn-add-meal" style="width: auto; padding: 10px 15px;">+ Plat</button>
+        </div>
+    </header>
 
-        <main class="content">
-            <header class="top-bar">
-                <div class="search-box"><input type="text" placeholder="Rechercher..." id="main-search"></div>
-                <div class="actions"></div>
-            </header>
-
-            <section id="view-meals" class="view-section active">
-                <div class="view-header">
-                    <h2>BibliothÃ¨que de Plats</h2>
-                    <button class="btn-primary" id="btn-new-meal">+ CrÃ©er un Plat</button>
-                </div>
-                <div class="search-box" style="margin: 1.5rem 0; width: 100%;"><input type="text" id="meals-search" placeholder="Rechercher un plat..." style="width: 100%;"></div>
-                <div id="meals-grid" class="dashboard-grid"></div>
-
-                <div class="view-header" style="margin-top: 3rem;">
-                    <h2>IngrÃ©dients & Aliments</h2>
-                    <button class="btn-primary" id="btn-new-aliment">+ Nouvel Aliment</button>
-                </div>
-                <div class="search-box" style="margin: 1.5rem 0; width: 100%;"><input type="text" id="aliments-search" placeholder="Rechercher un ingrÃ©dient..." style="width: 100%;"></div>
-                <div id="aliments-grid" class="dashboard-grid"></div>
-            </section>
-        </main>
+    <div class="container">
+        <section id="view-plats" class="view-section active">
+            <div id="meals-list" class="grid-2" style="display: grid; grid-template-columns: 1fr; gap: 15px;"></div>
+        </section>
     </div>
 
-    <!-- Modals for editing -->
+    <nav class="nav-bar">
+        <a href="index.html" class="nav-item"><div class="nav-icon">📊</div><span>Dash</span></a>
+        <a href="journal.html" class="nav-item"><div class="nav-icon">📖</div><span>Journal</span></a>
+        <a href="poids.html" class="nav-item"><div class="nav-icon">⚖️</div><span>Poids</span></a>
+        <a href="plats.html" class="nav-item active"><div class="nav-icon">🍲</div><span>Plats</span></a>
+        <a href="report.html" class="nav-item"><div class="nav-icon">📈</div><span>Report</span></a>
+        <a href="explorer.html" class="nav-item"><div class="nav-icon">🔍</div><span>BASE</span></a>
+        <a href="settings.html" class="nav-item"><div class="nav-icon">⚙️</div><span>Param</span></a>
+    </nav>
+
+    <!-- Modal for new meal -->
     <div id="meal-modal" class="modal">
         <div class="modal-content">
-            <div class="modal-header"><h2 id="meal-modal-title">Nouveau Plat</h2><button class="btn-close" id="btn-close-meal-modal">&times;</button></div>
+            <div class="modal-header" style="display:flex; justify-content:space-between; margin-bottom:20px;">
+                <h2>Nouveau Plat</h2>
+                <button class="btn-close" id="btn-close-meal-modal" style="background:none; border:none; color:white; font-size:24px;">&times;</button>
+            </div>
             <form id="frequent-meal-form">
-                <div class="form-group"><label for="f-meal-title">Nom du plat</label><input type="text" id="f-meal-title" required></div>
+                <div class="form-group"><label>Nom du plat</label><input type="text" id="f-meal-title" required></div>
                 <div class="macro-grid">
-                    <div class="form-group"><label>Calories (pour une portion)</label><input type="number" id="f-meal-calories" step="0.1" required></div>
-                    <div class="form-group"><label>ProtÃ©ines</label><input type="number" id="f-meal-proteins" step="0.1" required></div>
-                    <div class="form-group"><label>Glucides</label><input type="number" id="f-meal-carbs" step="0.1" required></div>
-                    <div class="form-group"><label>Lipides</label><input type="number" id="f-meal-fats" step="0.1" required></div>
+                    <div class="form-group"><label>Calories</label><input type="number" id="f-meal-calories" required></div>
+                    <div class="form-group"><label>Protéines</label><input type="number" id="f-meal-proteins" required></div>
+                    <div class="form-group"><label>Glucides</label><input type="number" id="f-meal-carbs" required></div>
+                    <div class="form-group"><label>Lipides</label><input type="number" id="f-meal-fats" required></div>
                 </div>
-                <div class="form-actions"><button type="submit" class="btn-primary" style="width: 100%;">Sauvegarder</button></div>
+                <button type="submit" class="btn-primary" style="margin-top: 10px;">SAUVEGARDER</button>
             </form>
         </div>
     </div>
-
-    <div id="aliment-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header"><h2 id="aliment-modal-title">Nouvel Aliment</h2><button class="btn-close" id="btn-close-aliment-modal">&times;</button></div>
-            <form id="aliment-form">
-                <div class="form-group"><label>Nom de l'ingrÃ©dient</label><input type="text" id="a-title" required></div>
-                <div class="macro-grid">
-                    <div class="form-group" style="display: flex; gap: 10px; align-items: flex-end;">
-                        <div style="flex: 2;"><label>Calories</label><input type="number" id="a-calories" step="0.1" required></div>
-                        <div style="flex: 2;"><label>UnitÃ©</label><select id="a-unit" class="btn-secondary" style="width: 100%; height: 38px;"><option value="100g">pour 100g</option><option value="unitÃ©">par unitÃ©</option><option value="verre">par verre</option><option value="cuillÃ¨re Ã  soupe">par c. Ã  soupe</option></select></div>
-                    </div>
-                    <div class="form-group"><label>ProtÃ©ines</label><input type="number" id="a-proteins" step="0.1" required></div>
-                    <div class="form-group"><label>Glucides</label><input type="number" id="a-carbs" step="0.1" required></div>
-                    <div class="form-group"><label>Lipides</label><input type="number" id="a-fats" step="0.1" required></div>
-                </div>
-                <div class="form-actions"><button type="submit" class="btn-primary" style="width: 100%;">Sauvegarder</button></div>
-            </form>
-        </div>
-    </div>
-
-
 
     <script src="github-api.js"></script>
     <script src="app.js"></script>

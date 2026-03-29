@@ -1,58 +1,48 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BASE - Spock</title>
-    <link rel="stylesheet" href="style.css?v=3">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Spock - BASE</title>
+    <link rel="stylesheet" href="spock.css">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon.png">
-    <link rel="apple-touch-icon" href="icon.png">
+    <meta name="theme-color" content="#0d1117">
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="spock-theme">
-    <div class="glass-container">
-        <aside class="sidebar">
-            <div class=" logo\><h1 class=\logo-text\>SPOCK</h1></div>
-            <nav class="main-nav">
-                <ul>
-                    <li class="nav-item"><a href="index.html"><i class="icon">ðŸ“Š</i> Dashboard</a></li>
-                    <li class="nav-item"><a href="journal.html"><i class="icon">ðŸ“–</i> Journal</a></li>
-                    <li class="nav-item"><a href="poids.html"><i class="icon">âš–ï¸</i> Poids</a></li>
-                    <li class="nav-item"><a href="plats.html"><i class="icon">ðŸ²</i> Plats</a></li>
-                    <li class="nav-item"><a href="report.html"><i class="icon">ðŸ“ˆ</i> Report</a></li>
-                    <li class="nav-item active"><a href="explorer.html"><i class="icon">ðŸ”</i> Explorateur CIQUAL</a></li>
-                    <li class="nav-item"><a href="settings.html"><i class="icon">âš™ï¸</i> ParamÃ¨tres</a></li>
-                </ul>
-            </nav>
-        </aside>
+<body>
+    <header>
+        <h1>BASE</h1>
+    </header>
 
-        <main class="content">
-            <header class="top-bar">
-                <div class="search-box"><input type="text" placeholder="Rechercher..." id="main-search"></div>
-                <div class="actions"></div>
-            </header>
-
-            <section id="view-off-explorer" class="view-section active">
-                <header class="view-header"><h2>Explorateur CIQUAL (Base Officielle)</h2></header>
-                <div class="search-box explorer-search" style="margin: 1.5rem 0; width: 100%; display: flex; gap: 10px;">
-                    <input type="text" id="off-explorer-query" placeholder="Nom du produit..." style="flex: 1;">
-                    <button class="btn-primary" id="btn-search-off">Rechercher</button>
-                </div>
-                <div id="explorer-results" class="dashboard-grid">
-                    <div class="empty-state">Cherchez un produit pour commencer.</div>
-                </div>
-            </section>
-        </main>
+    <div class="container">
+        <section id="view-explorer" class="view-section active">
+            <div class="search-box">
+                <input type="text" id="off-explorer-search" placeholder="Rechercher dans Open Food Facts...">
+            </div>
+            <div id="off-explorer-results" class="grid-2" style="display: grid; grid-template-columns: 1fr; gap: 15px;"></div>
+        </section>
     </div>
 
-    <div id="product-detail-panel" class="product-detail-modal">
-        <button class="btn-close" id="btn-close-detail" style="margin-bottom: 1rem;">&larr; Retour</button>
-        <div id="detail-content"></div>
+    <nav class="nav-bar">
+        <a href="index.html" class="nav-item"><div class="nav-icon">📊</div><span>Dash</span></a>
+        <a href="journal.html" class="nav-item"><div class="nav-icon">📖</div><span>Journal</span></a>
+        <a href="poids.html" class="nav-item"><div class="nav-icon">⚖️</div><span>Poids</span></a>
+        <a href="plats.html" class="nav-item"><div class="nav-icon">🍲</div><span>Plats</span></a>
+        <a href="report.html" class="nav-item"><div class="nav-icon">📈</div><span>Report</span></a>
+        <a href="explorer.html" class="nav-item active"><div class="nav-icon">🔍</div><span>BASE</span></a>
+        <a href="settings.html" class="nav-item"><div class="nav-icon">⚙️</div><span>Param</span></a>
+    </nav>
+
+    <!-- Product Detail Modal -->
+    <div id="product-detail-panel" class="modal">
+        <div class="modal-content">
+            <button class="btn-primary" id="btn-close-detail" style="margin-bottom: 20px; width:auto;">&larr; Retour</button>
+            <div id="detail-content"></div>
+        </div>
     </div>
-
-
 
     <script src="github-api.js"></script>
     <script src="app.js"></script>

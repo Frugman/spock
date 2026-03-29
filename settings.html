@@ -1,59 +1,48 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ParamÃ¨tres - Spock</title>
-    <link rel="stylesheet" href="style.css?v=3">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Spock - Paramètres</title>
+    <link rel="stylesheet" href="spock.css">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon.png">
-    <link rel="apple-touch-icon" href="icon.png">
+    <meta name="theme-color" content="#0d1117">
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="spock-theme">
-    <div class="glass-container">
-        <aside class="sidebar">
-            <div class=\logo\><h1 class=\logo-text\>SPOCK</h1></div>
-            <nav class="main-nav">
-                <ul>
-                    <li class="nav-item"><a href="index.html"><i class="icon">ðŸ“Š</i> Dashboard</a></li>
-                    <li class="nav-item"><a href="journal.html"><i class="icon">ðŸ“–</i> Journal</a></li>
-                    <li class="nav-item"><a href="poids.html"><i class="icon">âš–ï¸</i> Poids</a></li>
-                    <li class="nav-item"><a href="plats.html"><i class="icon">ðŸ²</i> Plats</a></li>
-                    <li class="nav-item"><a href="report.html"><i class="icon">ðŸ“ˆ</i> Report</a></li>
-                    <li class="nav-item"><a href="explorer.html"><i class="icon">ðŸ”</i> BASE</a></li>
-                    <li class="nav-item active"><a href="settings.html"><i class="icon">âš™ï¸</i> ParamÃ¨tres</a></li>
-                </ul>
-            </nav>
-        </aside>
+<body>
+    <header>
+        <h1>PARAMS</h1>
+    </header>
 
-        <main class="content">
-            <header class="top-bar">
-                <div class="search-box"><input type="text" placeholder="Rechercher..." id="main-search"></div>
-                <div class="actions"></div>
-            </header>
-
-            <section id="view-settings" class="view-section active">
-                <h2>ParamÃ¨tres</h2>
-                <div class="card settings-card">
-                    <p>Configurez ici vos accÃ¨s GitHub.</p>
-                    <div class="form-group"><label>Pseudo GitHub</label><input type="text" id="gh-user"></div>
-                    <div class="form-group"><label>Nom du dÃ©pÃ´t</label><input type="text" id="gh-repo"></div>
-                    <div class="form-group"><label>Token Secret (PAT)</label><input type="password" id="gh-token"></div>
-                    <div class="form-actions"><button class="btn-primary" id="btn-save-settings">Enregistrer</button></div>
-                    <div id="settings-status" class="status-msg"></div>
-                </div>
-                <div class="card settings-card" style="margin-top: 2rem; border-color: var(--danger-color);">
-                    <h3 style="color: var(--danger-color);">Zone de Danger</h3>
-                    <p>RÃ©initialiser les fichiers locaux.</p>
-                    <button class="btn-secondary" id="btn-reset-data">RÃ©initialiser les donnÃ©es</button>
-                </div>
-            </section>
-        </main>
+    <div class="container">
+        <section id="view-settings" class="view-section active">
+            <div class="card">
+                <h3>GitHub Configuration</h3>
+                <div class="form-group"><label>Username</label><input type="text" id="gh-user"></div>
+                <div class="form-group"><label>Repository</label><input type="text" id="gh-repo"></div>
+                <div class="form-group"><label>Token</label><input type="password" id="gh-token"></div>
+                <button class="btn-primary" id="btn-save-settings">SAUVEGARDER</button>
+            </div>
+            <div class="card">
+                <h3>Objectifs</h3>
+                <div class="form-group"><label>Quota Calories</label><input type="number" id="target-cal"></div>
+                <div class="form-group"><label>Quota Protéines</label><input type="number" id="target-prot"></div>
+            </div>
+        </section>
     </div>
 
-
+    <nav class="nav-bar">
+        <a href="index.html" class="nav-item"><div class="nav-icon">📊</div><span>Dash</span></a>
+        <a href="journal.html" class="nav-item"><div class="nav-icon">📖</div><span>Journal</span></a>
+        <a href="poids.html" class="nav-item"><div class="nav-icon">⚖️</div><span>Poids</span></a>
+        <a href="plats.html" class="nav-item"><div class="nav-icon">🍲</div><span>Plats</span></a>
+        <a href="report.html" class="nav-item"><div class="nav-icon">📈</div><span>Report</span></a>
+        <a href="explorer.html" class="nav-item"><div class="nav-icon">🔍</div><span>BASE</span></a>
+        <a href="settings.html" class="nav-item active"><div class="nav-icon">⚙️</div><span>Param</span></a>
+    </nav>
 
     <script src="github-api.js"></script>
     <script src="app.js"></script>
