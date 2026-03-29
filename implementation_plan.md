@@ -23,9 +23,16 @@ V1.2 - Pro Meal Form & Local Database
 - [x] Recherche instantanée en local (Offline-first, Zero latence)
 - [x] Support des accents et normalisation (Recherche premium)
 - [x] Nettoyage de la UI (Explorateur CIQUAL au lieu de OFF)
-- [x] Optimisation du repository (Ignorer les XML source volumineux)
+
+## 💎 Phase 9 : UX & Précision (Unités & Macros)
+- [x] Simplification des Unités : Menus déroulants normalisés
+- [x] Correspondances automatiques (g, ml, cl, CS, cc, Verre, Bol)
+- [x] Masquage dynamique des champs techniques (Poids/unité)
+- [x] Précision des Macros : Support d'une décimale (0.1g)
+- [x] Standardisation des labels (Noms complets + Unités kcal/g) partout
 
 ## 🔜 Prochaines étapes
-- [ ] Gestion des correspondances d'unités (ex: 1 avocat, 1 oeuf, 1 pomme) pour éviter la pesée systématique.
-- [ ] Support du scan de code-barres (probablement via caméra en JS)
-- [ ] Export PDF du rapport hebdo
+- [ ] **Scan Code-barres** : Intégration caméra pour scanner les produits OFF directement.
+- [ ] **Rapports avancés** : Export PDF ou vue détaillée hebdo/mensuelle.
+- [ ] **Gestion des icônes** : Icônes d'aliments personnalisées pour le panier.
+- [ ] **Importation CIQUAL++** : Ajout de filtres par catégories dans la base CIQUAL.
