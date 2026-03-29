@@ -119,13 +119,14 @@
     "unit": "100g"
   },
   {
-    "id": 1774796841608,
-    "title": "Olives vertes",
-    "calories": 30,
-    "proteins": 1,
-    "carbs": 0,
-    "fats": 1,
-    "unit": "10"
+    "id": "1774796841608",
+    "title": "Olives vertes (1)",
+    "calories": 7,
+    "proteins": 0.1,
+    "carbs": 0.1,
+    "fats": 0.7,
+    "unit": "unité",
+    "weight": 5
   },
   {
     "id": 1774796935653,
