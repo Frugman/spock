@@ -88,5 +88,14 @@
     "carbs": 1,
     "fats": 25,
     "unit": "1 boule"
+  },
+  {
+    "id": 1774796636278,
+    "title": "Bûche de chèvre",
+    "calories": 279,
+    "proteins": 17,
+    "carbs": 1,
+    "fats": 23,
+    "unit": "1/4 de bûche"
   }
 ]
