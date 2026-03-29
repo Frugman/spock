@@ -79,5 +79,14 @@
     "carbs": 58,
     "fats": 12,
     "unit": "1/2 sachet"
+  },
+  {
+    "id": 1774796567192,
+    "title": "Mozzarella",
+    "calories": 300,
+    "proteins": 15,
+    "carbs": 1,
+    "fats": 25,
+    "unit": "1 boule"
   }
 ]
