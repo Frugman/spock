@@ -3,7 +3,7 @@
     "id": 1774798895434,
     "date": "2026-03-29",
     "type": "Dîner",
-    "title": "Lentilles préparées + 1 items",
+    "title": "Lentilles préparées + 2 items",
     "items": [
       {
         "id": 1774796340927,
@@ -24,11 +24,20 @@
         "fats": 8,
         "unit": "1 galette",
         "quantity": 1
+      },
+      {
+        "title": "Banane, chair sans peau, crue",
+        "calories": 87.6,
+        "proteins": 1.06,
+        "carbs": 19.7,
+        "fats": 0.5,
+        "unit": "100g",
+        "quantity": 100
       }
     ],
-    "calories": 395,
-    "proteins": 29,
-    "carbs": 43,
-    "fats": 10
+    "calories": 482.6,
+    "proteins": 30.06,
+    "carbs": 62.7,
+    "fats": 10.5
   }
 ]
