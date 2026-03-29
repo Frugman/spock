@@ -14,23 +14,27 @@
 </head>
 <body>
     <header>
-        <h1>PARAMS</h1>
+        <h1>PARAM</h1>
     </header>
 
     <div class="container">
         <section id="view-settings" class="view-section active">
-            <div class="card">
-                <h3>GitHub Configuration</h3>
-                <div class="form-group"><label>Username</label><input type="text" id="gh-user"></div>
-                <div class="form-group"><label>Repository</label><input type="text" id="gh-repo"></div>
-                <div class="form-group"><label>Token</label><input type="password" id="gh-token"></div>
-                <button class="btn-primary" id="btn-save-settings">SAUVEGARDER</button>
-                <div id="settings-status" style="margin-top: 10px; font-size: 0.9rem; text-align: center;"></div>
+            <div class="card" style="margin-bottom:20px;">
+                <h3>GitHub Sync</h3>
+                <div class="form-group"><label>User</label><input type="text" id="gh-user" placeholder="Frugman"></div>
+                <div class="form-group"><label>Repo</label><input type="text" id="gh-repo" placeholder="spock"></div>
+                <div class="form-group"><label>Token</label><input type="password" id="gh-token" placeholder="ghp_..."></div>
+                <button class="btn-primary" id="btn-save-settings">SYNCHRONISER</button>
+                <div id="settings-status" style="margin-top: 10px; font-size: 0.9rem; text-align: center; color:var(--accent-color);"></div>
             </div>
+
             <div class="card">
                 <h3>Objectifs</h3>
-                <div class="form-group"><label>Quota Calories</label><input type="number" id="target-cal"></div>
-                <div class="form-group"><label>Quota Protéines</label><input type="number" id="target-prot"></div>
+                <div class="form-group">
+                    <label>Calories journalières</label>
+                    <input type="number" id="target-cal" placeholder="1600">
+                </div>
+                <button class="btn-primary" id="btn-save-objectifs" style="background:var(--card-border);">METTRE À JOUR</button>
             </div>
         </section>
     </div>

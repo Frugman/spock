@@ -4,17 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Spock - Dashboard</title>
-    <meta name="description" content="Application de suivi nutritionnel logicielle.">
     <link rel="stylesheet" href="spock.css">
-    
-    <!-- PWA & Favicons -->
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png">
     <meta name="theme-color" content="#0d1117">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -28,18 +22,17 @@
     </header>
 
     <div class="container">
-        <!-- Section: Dashboard -->
         <section id="view-dashboard" class="view-section active">
             <div class="card">
                 <h2>Aujourd'hui</h2>
-                <p id="today-summary">Chargement...</p>
+                <p id="today-summary">Initialisation...</p>
             </div>
 
             <div class="card">
-                <h3>Calories (Quota)</h3>
+                <h3>Calories</h3>
                 <div class="stat-row">
                     <span id="cal-count">0 / 1600 kcal</span>
-                    <div class="progress-bar"><div id="cal-fill" class="fill" style="width: 0%;"></div></div>
+                    <div class="progress-bar"><div id="cal-fill" class="fill"></div></div>
                 </div>
             </div>
 
@@ -47,47 +40,26 @@
                 <h3>Protéines</h3>
                 <div class="stat-row">
                     <span id="prot-count">0 / 120g</span>
-                    <div class="progress-bar"><div id="prot-fill" class="fill" style="width: 0%;"></div></div>
+                    <div class="progress-bar"><div id="prot-fill" class="fill"></div></div>
                 </div>
             </div>
 
             <div class="card">
-                <h3>Dernière Pesée</h3>
-                <p class="big-stat" id="last-weight">-- kg</p>
-                <small id="weight-trend">--</small>
-            </div>
-
-            <div class="card">
-                <h3>Dernière entrée</h3>
-                <div id="latest-entry-preview" class="empty-state">
-                    Aucune entrée aujourd'hui.
-                </div>
+                <h3>Pesée</h3>
+                <p class="big-stat" id="last-weight">70.0 kg</p>
             </div>
         </section>
     </div>
-
-    <nav class="nav-bar">
-        <a href="index.html" class="nav-item active"><div class="nav-icon">📊</div><span>Dash</span></a>
-        <a href="journal.html" class="nav-item"><div class="nav-icon">📖</div><span>Journal</span></a>
-        <a href="poids.html" class="nav-item"><div class="nav-icon">⚖️</div><span>Poids</span></a>
-        <a href="plats.html" class="nav-item"><div class="nav-icon">🍲</div><span>Plats</span></a>
-        <a href="report.html" class="nav-item"><div class="nav-icon">📈</div><span>Report</span></a>
-        <a href="explorer.html" class="nav-item"><div class="nav-icon">🔍</div><span>BASE</span></a>
-        <a href="settings.html" class="nav-item"><div class="nav-icon">⚙️</div><span>Param</span></a>
-    </nav>
 
     <!-- Modal for new entry -->
     <div id="entry-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header" style="display:flex; justify-content:space-between; margin-bottom:20px;">
                 <h2>Nouveau Repas</h2>
-                <button class="btn-close" id="btn-close-modal" style="background:none; border:none; color:white; font-size:24px;">&times;</button>
+                <button id="btn-close-modal" style="background:none; border:none; color:white; font-size:24px;">&times;</button>
             </div>
 
-            <div class="form-group">
-                <label>Date</label>
-                <input type="date" id="meal-date">
-            </div>
+            <div class="form-group"><label>Date</label><input type="date" id="meal-date"></div>
             <div class="form-group">
                 <label>Type</label>
                 <select id="meal-type">
@@ -98,34 +70,43 @@
                 </select>
             </div>
 
-            <div id="meal-basket-list" class="card" style="min-height: 50px; border-style: dashed;">
-                <div class="empty-state" style="font-size: 0.8rem;">Panier vide.</div>
-            </div>
-
-            <div id="basket-totals" class="card" style="margin-bottom: 20px;">
-                <div class="macro-grid">
-                    <div><span>Cal</span><br><b id="total-cal">0</b></div>
-                    <div><span>Prot</span><br><b id="total-prot">0g</b></div>
+            <div id="meal-basket-list"></div>
+            
+            <div class="card" style="margin:20px 0;">
+                <div style="display:flex; justify-content:space-between;">
+                    <span>Total</span><strong id="total-cal">0</strong><span>kcal</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span>Prot</span><strong id="total-prot">0g</strong>
                 </div>
             </div>
 
             <div class="search-box">
-                <label>Ajouter des aliments</label>
-                <input type="text" id="off-search" placeholder="Chercher un produit...">
-                <ul id="off-results" class="hidden" style="background:var(--card-bg); list-style:none; padding:10px; border-radius:8px; margin-top:5px; max-height:200px; overflow-y:auto;"></ul>
+                <input type="text" id="off-search" placeholder="Rechercher un ingrédient...">
+                <ul id="off-results" class="hidden" style="list-style:none; padding:0; margin-top:10px; max-height:200px; overflow-y:auto; background:rgba(0,0,0,0.3); border-radius:10px;"></ul>
             </div>
             
-            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                <button class="btn-secondary" id="btn-fav-meals" style="flex:1; padding:10px; border-radius:8px;">🍲 Plats</button>
-                <button class="btn-secondary" id="btn-fav-aliments" style="flex:1; padding:10px; border-radius:8px;">🍎 Aliments</button>
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button class="btn-primary" id="btn-fav-meals" style="background:var(--card-border);">Plats</button>
+                <button class="btn-primary" id="btn-fav-aliments" style="background:var(--card-border);">Favoris</button>
             </div>
-            <div id="selection-list" class="hidden"></div>
 
-            <button type="button" class="btn-primary" id="btn-save-full-meal">ENREGISTRER</button>
+            <div id="selection-list" class="hidden" style="margin-top:15px; max-height:200px; overflow-y:auto; padding:10px; border:1px solid var(--card-border); border-radius:10px;"></div>
+
+            <button class="btn-primary" id="btn-save-full-meal" style="margin-top:20px;">ENREGISTRER</button>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <nav class="nav-bar">
+        <a href="index.html" class="nav-item"><div class="nav-icon">📊</div><span>Dash</span></a>
+        <a href="journal.html" class="nav-item"><div class="nav-icon">📖</div><span>Journal</span></a>
+        <a href="poids.html" class="nav-item"><div class="nav-icon">⚖️</div><span>Poids</span></a>
+        <a href="plats.html" class="nav-item"><div class="nav-icon">🍲</div><span>Plats</span></a>
+        <a href="report.html" class="nav-item"><div class="nav-icon">📈</div><span>Report</span></a>
+        <a href="explorer.html" class="nav-item"><div class="nav-icon">🔍</div><span>BASE</span></a>
+        <a href="settings.html" class="nav-item"><div class="nav-icon">⚙️</div><span>Param</span></a>
+    </nav>
+
     <script src="github-api.js"></script>
     <script src="app.js"></script>
 </body>

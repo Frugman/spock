@@ -19,13 +19,21 @@
 
     <div class="container">
         <section id="view-weight" class="view-section active">
-            <div class="card">
+            <div class="card" style="margin-bottom:20px;">
+                <h3>Diagramme</h3>
+                <div style="height:200px; padding:10px;">
+                    <canvas id="weightChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom:20px;">
                 <h3>Nouvelle Pesée</h3>
-                <div class="form-group" style="display:flex; gap:10px;">
+                <div class="form-group" style="display:flex; gap:10px; margin-top:10px;">
                     <input type="number" id="new-weight" step="0.1" placeholder="75.0">
                     <button class="btn-primary" id="btn-save-weight" style="width:auto;">OK</button>
                 </div>
             </div>
+
             <div class="card">
                 <h3>Historique</h3>
                 <div id="weight-list"></div>
@@ -43,6 +51,7 @@
         <a href="settings.html" class="nav-item"><div class="nav-icon">⚙️</div><span>Param</span></a>
     </nav>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="github-api.js"></script>
     <script src="app.js"></script>
 </body>

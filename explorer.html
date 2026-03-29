@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Spock - BASE</title>
+    <title>Spock - Base CIQUAL</title>
     <link rel="stylesheet" href="spock.css">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon.png">
@@ -20,10 +20,21 @@
     <div class="container">
         <section id="view-explorer" class="view-section active">
             <div class="search-box">
-                <input type="text" id="off-explorer-search" placeholder="Rechercher dans Open Food Facts...">
+                <input type="text" id="off-explorer-search" placeholder="Rechercher dans la base CIQUAL 2025...">
             </div>
-            <div id="off-explorer-results" class="grid-2" style="display: grid; grid-template-columns: 1fr; gap: 15px;"></div>
+            <div id="off-explorer-results" style="margin-top:20px;"></div>
         </section>
+    </div>
+
+    <!-- Detail Panel (Fixed/Modal) -->
+    <div id="product-detail-panel" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Détail Aliment</h2>
+                <button id="btn-close-detail" style="background:none; border:none; color:white; font-size:24px;">&times;</button>
+            </div>
+            <div id="detail-content"></div>
+        </div>
     </div>
 
     <nav class="nav-bar">
@@ -35,14 +46,6 @@
         <a href="explorer.html" class="nav-item active"><div class="nav-icon">🔍</div><span>BASE</span></a>
         <a href="settings.html" class="nav-item"><div class="nav-icon">⚙️</div><span>Param</span></a>
     </nav>
-
-    <!-- Product Detail Modal -->
-    <div id="product-detail-panel" class="modal">
-        <div class="modal-content">
-            <button class="btn-primary" id="btn-close-detail" style="margin-bottom: 20px; width:auto;">&larr; Retour</button>
-            <div id="detail-content"></div>
-        </div>
-    </div>
 
     <script src="github-api.js"></script>
     <script src="app.js"></script>

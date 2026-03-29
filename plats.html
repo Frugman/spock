@@ -14,16 +14,64 @@
 </head>
 <body>
     <header>
-        <h1>PLATS</h1>
-        <div class="actions">
-            <button class="btn-primary" id="btn-add-meal" style="width: auto; padding: 10px 15px;">+ Plat</button>
-        </div>
+        <h1>BIBLIO</h1>
     </header>
 
     <div class="container">
         <section id="view-plats" class="view-section active">
-            <div id="meals-list" class="grid-2" style="display: grid; grid-template-columns: 1fr; gap: 15px;"></div>
+            <div class="section-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h3>Mes Plats</h3>
+                <button class="btn-primary" id="btn-add-meal" style="width: auto; padding: 5px 12px; font-size:0.8rem;">+ PLAT</button>
+            </div>
+            <div id="meals-list"></div>
+
+            <div class="section-header" style="display:flex; justify-content:space-between; align-items:center; margin:30px 0 15px;">
+                <h3>Mes Ingrédients</h3>
+                <button class="btn-primary" id="btn-add-aliment" style="width: auto; padding: 5px 12px; font-size:0.8rem; background:var(--card-border);">+ INGR.</button>
+            </div>
+            <div id="aliments-list"></div>
         </section>
+    </div>
+
+    <!-- Modal for new meal -->
+    <div id="meal-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nouveau Plat</h2>
+                <button id="btn-close-meal-modal" style="background:none; border:none; color:white; font-size:24px;">&times;</button>
+            </div>
+            <form id="frequent-meal-form">
+                <div class="form-group"><label>Nom</label><input type="text" id="f-meal-title" required></div>
+                <div class="macro-grid">
+                    <div class="form-group"><label>Cal</label><input type="number" id="f-meal-calories" required></div>
+                    <div class="form-group"><label>Prot</label><input type="number" id="f-meal-proteins" required></div>
+                    <div class="form-group"><label>Gluc</label><input type="number" id="f-meal-carbs" required></div>
+                    <div class="form-group"><label>Lip</label><input type="number" id="f-meal-fats" required></div>
+                </div>
+                <button type="submit" class="btn-primary" style="margin-top: 15px;">SAUVEGARDER</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for new aliment -->
+    <div id="aliment-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nouvel Ingrédient</h2>
+                <button id="btn-close-aliment-modal" style="background:none; border:none; color:white; font-size:24px;">&times;</button>
+            </div>
+            <form id="aliment-form">
+                <div class="form-group"><label>Nom</label><input type="text" id="a-title" required></div>
+                <div class="form-group"><label>Unité (ex: 100g, portion)</label><input type="text" id="a-unit" placeholder="100g"></div>
+                <div class="macro-grid">
+                    <div class="form-group"><label>Cal</label><input type="number" id="a-calories" required></div>
+                    <div class="form-group"><label>Prot</label><input type="number" id="a-proteins" required></div>
+                    <div class="form-group"><label>Gluc</label><input type="number" id="a-carbs" required></div>
+                    <div class="form-group"><label>Lip</label><input type="number" id="a-fats" required></div>
+                </div>
+                <button type="submit" class="btn-primary" style="margin-top: 15px;">SAUVEGARDER</button>
+            </form>
+        </div>
     </div>
 
     <nav class="nav-bar">
@@ -35,26 +83,6 @@
         <a href="explorer.html" class="nav-item"><div class="nav-icon">🔍</div><span>BASE</span></a>
         <a href="settings.html" class="nav-item"><div class="nav-icon">⚙️</div><span>Param</span></a>
     </nav>
-
-    <!-- Modal for new meal -->
-    <div id="meal-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header" style="display:flex; justify-content:space-between; margin-bottom:20px;">
-                <h2>Nouveau Plat</h2>
-                <button class="btn-close" id="btn-close-meal-modal" style="background:none; border:none; color:white; font-size:24px;">&times;</button>
-            </div>
-            <form id="frequent-meal-form">
-                <div class="form-group"><label>Nom du plat</label><input type="text" id="f-meal-title" required></div>
-                <div class="macro-grid">
-                    <div class="form-group"><label>Calories</label><input type="number" id="f-meal-calories" required></div>
-                    <div class="form-group"><label>Protéines</label><input type="number" id="f-meal-proteins" required></div>
-                    <div class="form-group"><label>Glucides</label><input type="number" id="f-meal-carbs" required></div>
-                    <div class="form-group"><label>Lipides</label><input type="number" id="f-meal-fats" required></div>
-                </div>
-                <button type="submit" class="btn-primary" style="margin-top: 10px;">SAUVEGARDER</button>
-            </form>
-        </div>
-    </div>
 
     <script src="github-api.js"></script>
     <script src="app.js"></script>
