@@ -124,5 +124,14 @@
     "carbs": 11,
     "fats": 8,
     "unit": "1 galette"
+  },
+  {
+    "id": 1774797040490,
+    "title": "Pâte brisée pur beurre bio",
+    "calories": 160,
+    "proteins": 10,
+    "carbs": 80,
+    "fats": 45,
+    "unit": "1/4"
   }
 ]
