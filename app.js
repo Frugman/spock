@@ -390,11 +390,11 @@ function initMealModal() {
                     <div style="display:flex; gap:10px; align-items:center;">
                         <input type="number" value="${item.quantity}" onchange="updateBasketQty(${index}, this.value)" style="flex:1; text-align:center; padding:8px; height:40px; border-radius:8px;">
                         <select onchange="updateBasketUnit(${index}, this.value)" style="flex:2; height:40px; border-radius:8px; padding:0 8px;">
-                            <option value="g" ${item.unit === 'g' ? 'selected' : ''}>grammes (g)</option>
+                            <option value="g" ${item.unit === 'g' ? 'selected' : ''}>Gramme (g)</option>
                             <option value="100g" ${item.unit === '100g' ? 'selected' : ''}>x 100g</option>
                             <option value="ml" ${item.unit === 'ml' ? 'selected' : ''}>millilitres (ml)</option>
                             <option value="cl" ${item.unit === 'cl' ? 'selected' : ''}>centilitres (cl)</option>
-                            <option value="unité" ${item.unit === 'unité' || item.unit === 'portion' ? 'selected' : ''}>portion / unité</option>
+                            <option value="unité" ${item.unit === 'unité' || item.unit === 'portion' ? 'selected' : ''}>Portion</option>
                             <option value="cs" ${item.unit === 'cs' ? 'selected' : ''}>cuillère à soupe (CS)</option>
                             <option value="cc" ${item.unit === 'cc' ? 'selected' : ''}>cuillère à café (cc)</option>
                             <option value="verre" ${item.unit === 'verre' ? 'selected' : ''}>verre</option>
