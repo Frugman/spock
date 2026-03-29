@@ -1,6 +1,6 @@
 [
   {
-    "id": 1774812682699,
+    "id": "1774812682699",
     "date": "2026-03-29",
     "type": "Déjeuner",
     "title": "Noix de cajou + 5 items",
@@ -12,8 +12,8 @@
         "proteins": 2,
         "carbs": 2,
         "fats": 5,
-        "unit": "1 poignée",
-        "quantity": 1
+        "unit": "unité",
+        "quantity": 2
       },
       {
         "title": "Pomme de terre, sans peau, rôtie/cuite au four",
@@ -31,7 +31,7 @@
         "proteins": 14,
         "carbs": 11,
         "fats": 8,
-        "unit": "1 galette",
+        "unit": "unité",
         "quantity": 1
       },
       {
@@ -62,10 +62,10 @@
         "quantity": 50
       }
     ],
-    "calories": 822.54,
-    "proteins": 25.691,
-    "carbs": 95.69,
-    "fats": 35.81
+    "calories": 882.54,
+    "proteins": 27.691,
+    "carbs": 97.69,
+    "fats": 40.81
   },
   {
     "id": 1774798895434,
