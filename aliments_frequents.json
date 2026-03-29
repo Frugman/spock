@@ -30,13 +30,14 @@
     "weight": 0
   },
   {
-    "id": 1774796064767,
+    "id": "1774796064767",
     "title": "Mélange graines",
-    "calories": 58,
-    "proteins": 2,
-    "carbs": 2,
-    "fats": 5,
-    "unit": "2 CS"
+    "calories": 583,
+    "proteins": 23.3,
+    "carbs": 15.7,
+    "fats": 51.9,
+    "unit": "100g",
+    "weight": 0
   },
   {
     "id": "1774796156988",
