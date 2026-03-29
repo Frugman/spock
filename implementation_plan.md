@@ -30,9 +30,3 @@ V1.2 - Pro Meal Form & Local Database
 - [x] Masquage dynamique des champs techniques (Poids/unité)
 - [x] Précision des Macros : Support d'une décimale (0.1g)
 - [x] Standardisation des labels (Noms complets + Unités kcal/g) partout
-
-## 🔜 Prochaines étapes
-- [ ] **Scan Code-barres** : Intégration caméra pour scanner les produits OFF directement.
-- [ ] **Rapports avancés** : Export PDF ou vue détaillée hebdo/mensuelle.
-- [ ] **Gestion des icônes** : Icônes d'aliments personnalisées pour le panier.
-- [ ] **Importation CIQUAL++** : Ajout de filtres par catégories dans la base CIQUAL.
