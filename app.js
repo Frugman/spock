@@ -18,6 +18,51 @@ const AppState = {
     editingAlimentId: null
 };
 
+const UnitConversions = {
+    'g': 1,
+    '100g': 100,
+    'kg': 1000,
+    'ml': 1,
+    'cl': 10,
+    'l': 1000,
+    'cs': 15,
+    'cuillère à soupe': 15,
+    'cc': 5,
+    'cuillère à café': 5,
+    'tasse': 250,
+    'verre': 200,
+    'bol': 500,
+    'unité': 1,
+    'portion': 1,
+    'sachet': 1,
+    'pot': 1,
+    'tranche': 1,
+    'oeuf': 1,
+    'boule': 1
+};
+
+function getDivisor(unitStr, item = null) {
+    if (!unitStr) return 1;
+    const u = unitStr.toLowerCase().trim();
+    
+    // Priority 1: Item-specific weight
+    if (item && item.weight) return item.weight;
+    
+    // Priority 2: Standard conversions
+    if (UnitConversions[u]) return UnitConversions[u];
+    
+    // Priority 3: Extract numeric g (ex: "210g")
+    const gMatch = u.match(/^(\d+(?:\.\d+)?)\s*g$/);
+    if (gMatch) return parseFloat(gMatch[1]);
+
+    // Priority 4: Partial matches
+    if (u.includes('cs')) return 15;
+    if (u.includes('cc')) return 5;
+    if (u.includes('100g')) return 100;
+    
+    return 1;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // Load Goals from LocalStorage immediately
     const savedGoal = localStorage.getItem('target_cal');
@@ -265,7 +310,7 @@ function initMealModal() {
         let totCal = 0, totProt = 0, totCarb = 0, totFat = 0;
 
         AppState.currentBasket.forEach((item, index) => {
-            const divisor = (item.unit === '100g') ? 100 : 1;
+            const divisor = getDivisor(item.unit, item);
             const itemCal = (item.calories * item.quantity) / divisor;
             const itemProt = (item.proteins * item.quantity) / divisor;
             const itemCarb = (item.carbs * item.quantity) / divisor;
@@ -278,9 +323,9 @@ function initMealModal() {
 
             html += `
                 <div class="basket-item" style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:10px; margin-bottom:8px;">
-                    <div>
+                    <div style="flex:1;">
                         <strong style="font-size:0.9rem;">${item.title}</strong><br>
-                        <small>${Math.round(itemCal)} kcal • ${item.quantity}${item.unit === '100g' ? 'g' : ''}</small>
+                        <small style="color:var(--text-secondary);">${Math.round(itemCal)} kcal • ${item.quantity} ${item.unit || ''}</small>
                     </div>
                     <div style="display:flex; align-items:center; gap:10px;">
                         <input type="number" value="${item.quantity}" onchange="updateBasketQty(${index}, this.value)" style="width:60px; text-align:center; padding:5px; height:32px;">
@@ -392,7 +437,7 @@ function initMealModal() {
             
             let totalCal = 0, totalProt = 0, totalCarb = 0, totalFat = 0;
             AppState.currentBasket.forEach(it => {
-                const div = (it.unit === '100g') ? 100 : 1;
+                const div = getDivisor(it.unit, it);
                 totalCal += (it.calories * it.quantity) / div;
                 totalProt += (it.proteins * it.quantity) / div;
                 totalCarb += (it.carbs * it.quantity) / div;
@@ -479,16 +524,17 @@ window.addMealToJournalLibrary = async function(id) {
     const meal = AppState.meals.find(m => m.id == id);
     if (!meal) return;
     
+    const div = getDivisor(meal.unit, meal);
     const entry = {
         id: Date.now(),
         date: new Date().toISOString().split('T')[0],
         type: "Déjeuner",
         title: meal.title,
-        items: [{...meal, quantity: 1, unit: 'portion'}],
-        calories: meal.calories,
-        proteins: meal.proteins || 0,
-        carbs: meal.carbs || 0,
-        fats: meal.fats || 0
+        items: [{...meal, quantity: 1, unit: meal.unit || 'portion'}],
+        calories: meal.calories / div,
+        proteins: (meal.proteins || 0) / div,
+        carbs: (meal.carbs || 0) / div,
+        fats: (meal.fats || 0) / div
     };
     
     AppState.journal.unshift(entry);
@@ -514,7 +560,7 @@ function renderAlimentsLibrary(searchTerm = "") {
                     <button onclick="removeAliment(${a.id})" class="btn-icon">🗑️</button>
                 </div>
             </div>
-            <div style="color:var(--text-secondary);">${a.calories} kcal / ${a.unit || '100g'}</div>
+            <div style="color:var(--text-secondary);">${a.calories} kcal / ${a.unit || '100g'} ${a.weight ? '('+a.weight+'g)' : ''}</div>
             <button onclick="addAlimentToJournalLibrary(${a.id})" class="btn-primary" style="margin-top:10px; height:40px; background:var(--card-border);">Ajouter</button>
         </div>
     `).join('');
@@ -530,6 +576,7 @@ window.editAliment = function(id) {
     document.getElementById('a-carbs').value = ali.carbs || 0;
     document.getElementById('a-fats').value = ali.fats || 0;
     document.getElementById('a-unit').value = ali.unit || '100g';
+    document.getElementById('a-weight').value = ali.weight || 0;
     document.getElementById('aliment-modal').classList.add('active');
 };
 
@@ -544,17 +591,18 @@ window.addAlimentToJournalLibrary = async function(id) {
     const ali = AppState.aliments.find(a => a.id == id);
     if (!ali) return;
     
-    const qty = (ali.unit === 'portion' || ali.unit === 'unité' ? 1 : 100);
+    const div = getDivisor(ali.unit, ali);
+    const qty = (div === 100) ? 100 : 1;
     const entry = {
         id: Date.now(),
         date: new Date().toISOString().split('T')[0],
         type: "En-cas",
         title: ali.title,
         items: [{...ali, quantity: qty, unit: ali.unit || '100g'}],
-        calories: ali.calories * (qty / (ali.unit === '100g' ? 100 : 1)),
-        proteins: (ali.proteins || 0) * (qty / (ali.unit === '100g' ? 100 : 1)),
-        carbs: (ali.carbs || 0) * (qty / (ali.unit === '100g' ? 100 : 1)),
-        fats: (ali.fats || 0) * (qty / (ali.unit === '100g' ? 100 : 1))
+        calories: (ali.calories * qty) / div,
+        proteins: ((ali.proteins || 0) * qty) / div,
+        carbs: ((ali.carbs || 0) * qty) / div,
+        fats: ((ali.fats || 0) * qty) / div
     };
     
     AppState.journal.unshift(entry);
@@ -605,7 +653,8 @@ function initAlimentModal() {
             proteins: parseFloat(document.getElementById('a-proteins').value), 
             carbs: parseFloat(document.getElementById('a-carbs').value), 
             fats: parseFloat(document.getElementById('a-fats').value), 
-            unit: document.getElementById('a-unit').value 
+            unit: document.getElementById('a-unit').value,
+            weight: parseFloat(document.getElementById('a-weight').value) || 0
         };
         if (AppState.editingAlimentId) { const idx = AppState.aliments.findIndex(a => a.id === AppState.editingAlimentId); if (idx !== -1) AppState.aliments[idx] = data; }
         else AppState.aliments.push(data);

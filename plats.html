@@ -62,7 +62,10 @@
             </div>
             <form id="aliment-form">
                 <div class="form-group"><label>Nom</label><input type="text" id="a-title" required></div>
-                <div class="form-group"><label>Unité (ex: 100g, portion)</label><input type="text" id="a-unit" placeholder="100g"></div>
+                <div class="macro-grid">
+                    <div class="form-group"><label>Unité (ex: 100g, portion)</label><input type="text" id="a-unit" placeholder="100g"></div>
+                    <div class="form-group"><label>Poids/unité (g)</label><input type="number" id="a-weight" placeholder="0"></div>
+                </div>
                 <div class="macro-grid">
                     <div class="form-group"><label>Cal</label><input type="number" id="a-calories" required></div>
                     <div class="form-group"><label>Prot</label><input type="number" id="a-proteins" required></div>
