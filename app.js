@@ -67,6 +67,7 @@ async function initApp() {
         updateDashboard();
         renderJournalTimeline();
         renderWeightChart();
+        renderWeightHistory();
         renderMealsLibrary();
         renderAlimentsLibrary();
         renderReport();
@@ -155,7 +156,7 @@ function renderJournalTimeline() {
 window.deleteJournalEntry = async function(id) {
     if (!confirm("Effacer ce repas ?")) return;
     AppState.journal = AppState.journal.filter(e => e.id != id);
-    await GitHubAPI.saveFile('journal.json', AppState.journal, "Delete meal");
+    await GitHubAPI.saveFile('journal.json', AppState.journal, null, "Delete meal");
     renderJournalTimeline();
     updateDashboard();
 };
@@ -369,7 +370,7 @@ function initMealModal() {
 
             saveBtn.disabled = true;
             saveBtn.innerText = "Synchronisation...";
-            await GitHubAPI.saveFile('journal.json', AppState.journal, "Save multi-item meal");
+            await GitHubAPI.saveFile('journal.json', AppState.journal, null, "Save multi-item meal");
             modal.classList.remove('active');
             saveBtn.disabled = false;
             saveBtn.innerText = "Enregistrer le Repas";
@@ -469,7 +470,7 @@ function initFrequentMealModal() {
         const data = { id: AppState.editingMealId || Date.now(), title: document.getElementById('f-meal-title').value, calories: parseFloat(document.getElementById('f-meal-calories').value), proteins: parseFloat(document.getElementById('f-meal-proteins').value), carbs: parseFloat(document.getElementById('f-meal-carbs').value), fats: parseFloat(document.getElementById('f-meal-fats').value), unit: 'portion' };
         if (AppState.editingMealId) { const idx = AppState.meals.findIndex(m => m.id === AppState.editingMealId); if (idx !== -1) AppState.meals[idx] = data; }
         else AppState.meals.push(data);
-        await GitHubAPI.saveFile('plats_frequents.json', AppState.meals, "Update Library");
+        await GitHubAPI.saveFile('plats_frequents.json', AppState.meals, null, "Update Library");
         modal.classList.remove('active'); renderMealsLibrary();
     };
     if (document.getElementById('btn-close-meal-modal')) document.getElementById('btn-close-meal-modal').onclick = () => modal.classList.remove('active');
@@ -484,7 +485,7 @@ function initAlimentModal() {
         const data = { id: AppState.editingAlimentId || Date.now(), title: document.getElementById('a-title').value, calories: parseFloat(document.getElementById('a-calories').value), proteins: parseFloat(document.getElementById('a-proteins').value), carbs: parseFloat(document.getElementById('a-carbs').value), fats: parseFloat(document.getElementById('a-fats').value), unit: document.getElementById('a-unit').value };
         if (AppState.editingAlimentId) { const idx = AppState.aliments.findIndex(a => a.id === AppState.editingAlimentId); if (idx !== -1) AppState.aliments[idx] = data; }
         else AppState.aliments.push(data);
-        await GitHubAPI.saveFile('aliments_frequents.json', AppState.aliments, "Update Aliments");
+        await GitHubAPI.saveFile('aliments_frequents.json', AppState.aliments, null, "Update Aliments");
         modal.classList.remove('active'); renderAlimentsLibrary();
     };
     if (document.getElementById('btn-close-aliment-modal')) document.getElementById('btn-close-aliment-modal').onclick = () => modal.classList.remove('active');
@@ -495,52 +496,86 @@ function initAlimentModal() {
 /* -------------------------------------------------------------------------- */
 
 function initWeightForm() {
-    const form = document.getElementById('weight-form');
-    if (form) form.onsubmit = async (e) => {
-        e.preventDefault();
-        const w = { date: new Date().toISOString().split('T')[0], value: parseFloat(document.getElementById('weight-value').value) };
-        const idx = AppState.weightHistory.findIndex(wh => wh.date === w.date);
-        if (idx !== -1) AppState.weightHistory[idx] = w; else AppState.weightHistory.push(w);
-        await GitHubAPI.saveFile('poids.json', AppState.weightHistory, "Log Weight");
-        renderWeightChart(); updateDashboard(); form.reset();
-    };
+    const btnSave = document.getElementById('btn-save-weight');
+    const inputWeight = document.getElementById('new-weight');
+    if (btnSave && inputWeight) {
+        btnSave.onclick = async () => {
+            const val = parseFloat(inputWeight.value);
+            if (isNaN(val)) return;
+            const w = { date: new Date().toISOString().split('T')[0], value: val };
+            const idx = AppState.weightHistory.findIndex(wh => wh.date === w.date);
+            if (idx !== -1) AppState.weightHistory[idx] = w; else AppState.weightHistory.push(w);
+            await GitHubAPI.saveFile('poids.json', AppState.weightHistory, null, "Log Weight");
+            renderWeightChart(); updateDashboard(); inputWeight.value = "";
+        };
+    }
+}
+
+function renderWeightHistory() {
+    const list = document.getElementById('weight-list');
+    if (!list) return;
+    if (AppState.weightHistory.length === 0) {
+        list.innerHTML = "<div class='empty-state'>Aucun historique.</div>";
+        return;
+    }
+    list.innerHTML = AppState.weightHistory.slice().reverse().map(w => `
+        <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid rgba(255,255,255,0.05);">
+            <span>${w.date}</span>
+            <strong>${w.value} kg</strong>
+        </div>
+    `).join('');
 }
 
 function renderWeightChart() {
-    const ctx = document.getElementById('weight-chart');
+    const ctx = document.getElementById('weightChart');
     if (!ctx || AppState.weightHistory.length === 0) return;
     const labels = AppState.weightHistory.slice(-10).map(w => w.date);
     const data = AppState.weightHistory.slice(-10).map(w => w.value);
     if (window.weightChartInstance) window.weightChartInstance.destroy();
-    window.weightChartInstance = new Chart(ctx, { type: 'line', data: { labels, datasets: [{ label: 'kg', data, borderColor: '#238636', tension: 0.4, fill: true, backgroundColor: 'rgba(35, 134, 54, 0.1)' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { display: false }, y: { ticks: { color: '#848d97' } } }, plugins: { legend: { display: false } } } });
+    window.weightChartInstance = new Chart(ctx, { 
+        type: 'line', 
+        data: { 
+            labels, 
+            datasets: [{ 
+                label: 'kg', 
+                data, 
+                borderColor: '#238636', 
+                tension: 0.4, 
+                fill: true, 
+                backgroundColor: 'rgba(35, 134, 54, 0.1)' 
+            }] 
+        }, 
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            scales: { 
+                x: { display: false }, 
+                y: { ticks: { color: '#848d97' } } 
+            }, 
+            plugins: { legend: { display: false } } 
+        } 
+    });
 }
 
 function initOFFExplorer() {
-    const btn = document.getElementById('btn-search-off');
-    const input = document.getElementById('off-explorer-query');
-    if (btn && input) {
-        btn.onclick = async () => {
-            const query = input.value.trim(); if (!query) return;
-            btn.disabled = true; btn.innerText = "...";
-            const res = await searchOFF(query); AppState.lastOFFSearchResults = res;
-            renderExplorerResults(res); btn.disabled = false; btn.innerText = "Rechercher";
-        };
-        input.onkeypress = (e) => { if (e.key === 'Enter') btn.click(); };
-    }
-}
-
-function initOFFExplorer() {
-    const btn = document.getElementById('btn-search-off');
-    const input = document.getElementById('off-explorer-query');
-    if (btn && input) {
-        btn.onclick = async () => {
-            const query = input.value.trim(); if (!query) return;
-            btn.disabled = true; btn.innerText = "...";
-            const res = await searchCIQUAL(query); AppState.lastOFFSearchResults = res;
-            renderExplorerResults(res); btn.disabled = false; btn.innerText = "Rechercher";
-        };
-        input.onkeypress = (e) => { if (e.key === 'Enter') btn.click(); };
-        input.oninput = debounce(() => btn.click(), 500); // Live search
+    const input = document.getElementById('off-explorer-search');
+    const resultsGrid = document.getElementById('off-explorer-results');
+    
+    if (input && resultsGrid) {
+        input.addEventListener('input', debounce(async (e) => {
+            const query = e.target.value.trim();
+            if (query.length < 2) return;
+            const res = await searchCIQUAL(query);
+            AppState.lastOFFSearchResults = res;
+            resultsGrid.innerHTML = (res || []).map((p, i) => `
+                <div class="card product-card" onclick="showProductDetail(${i})">
+                    <div class="product-info">
+                        <strong>${p.title}</strong>
+                        <div class="macro-tag" style="margin-top:5px; color:var(--accent-color);">🔥 ${p.calories} kcal / 100g</div>
+                    </div>
+                </div>
+            `).join('');
+        }, 300));
     }
 }
 
@@ -605,7 +640,7 @@ window.showProductDetail = function(i) {
 window.addToOFFCacheFast = async function(i) {
     const p = AppState.lastOFFSearchResults[i]; if (!p) return;
     AppState.aliments.push({ ...p, id: Date.now(), unit: '100g' });
-    await GitHubAPI.saveFile('aliments_frequents.json', AppState.aliments, "Cache CIQUAL");
+    await GitHubAPI.saveFile('aliments_frequents.json', AppState.aliments, null, "Cache CIQUAL");
     alert("Ajouté à la bibliothèque !");
 };
 
@@ -630,11 +665,51 @@ function initSettings() {
 }
 
 function renderReport() {
-    const avg = document.getElementById('avg-calories'); if (!avg) return;
-    const recent = AppState.journal.filter(e => new Date(e.date) >= new Date(Date.now() - 7*24*60*60*1000));
-    if (recent.length === 0) return;
-    const days = [...new Set(recent.map(e => e.date))].length || 1;
-    avg.innerText = `${Math.round(recent.reduce((s,e) => s + (e.calories||0),0) / days)} kcal/j`;
+    const ctx = document.getElementById('caloriesChart');
+    if (!ctx) return;
+    
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    const recentEntries = AppState.journal.filter(e => e.date >= thirtyDaysAgo);
+    
+    // Group by date
+    const dailyCals = {};
+    recentEntries.forEach(e => {
+        dailyCals[e.date] = (dailyCals[e.date] || 0) + (e.calories || 0);
+    });
+    
+    const labels = Object.keys(dailyCals).sort();
+    const data = labels.map(l => dailyCals[l]);
+    
+    if (window.caloriesChartInstance) window.caloriesChartInstance.destroy();
+    window.caloriesChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [{
+                label: 'Calories',
+                data,
+                backgroundColor: 'rgba(35, 134, 54, 0.5)',
+                borderColor: '#238636',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true, ticks: { color: '#848d97' } },
+                x: { ticks: { color: '#848d97' } }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    const avg = document.getElementById('avg-calories'); 
+    if (avg) {
+        const days = labels.length || 1;
+        const total = data.reduce((s,v) => s+v, 0);
+        avg.innerText = `${Math.round(total / days)} kcal/j`;
+    }
 }
 
 function debounce(f, w) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => f(...a), w); }; }

@@ -58,7 +58,7 @@ const GitHubAPI = {
         };
         if (sha) body.sha = sha;
 
-        const response = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${path}`, {
+        let response = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${path}`, {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -66,6 +66,23 @@ const GitHubAPI = {
             },
             body: JSON.stringify(body)
         });
+
+        // 409/422: Conflict or already exists but no SHA provided
+        if ((response.status === 409 || response.status === 422) && !sha) {
+            console.log("⚠️ Synchronization Conflict - Fetching SHA for:", path);
+            const { sha: currentSha } = await this.getFile(path);
+            if (currentSha) {
+                body.sha = currentSha;
+                response = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${path}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                });
+            }
+        }
 
         if (!response.ok) {
             throw new Error(`Failed to save ${path}: ${response.statusText}`);
