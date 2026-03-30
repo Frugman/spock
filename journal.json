@@ -1,5 +1,54 @@
 [
   {
+    "id": 1774909804823,
+    "date": "2026-03-30",
+    "type": "Dîner",
+    "title": "Omelette au fromage, faite maison + 3 items",
+    "items": [
+      {
+        "title": "Omelette au fromage, faite maison",
+        "calories": 255,
+        "proteins": 17.7,
+        "carbs": 2.56,
+        "fats": 19.3,
+        "unit": "100g",
+        "quantity": 100
+      },
+      {
+        "id": 1774796769082,
+        "title": "Spaghetti rouges quinoa tomate",
+        "calories": 366,
+        "proteins": 11,
+        "carbs": 74,
+        "fats": 2,
+        "unit": "100g",
+        "quantity": 80
+      },
+      {
+        "title": "Emmental ou emmenthal",
+        "calories": 373,
+        "proteins": 27.9,
+        "carbs": 0,
+        "fats": 28.8,
+        "unit": "cs",
+        "quantity": 2
+      },
+      {
+        "title": "Chocolat au lait, tablette",
+        "calories": 550,
+        "proteins": 7.5,
+        "carbs": 58.9,
+        "fats": 30.8,
+        "unit": "100g",
+        "quantity": 50
+      }
+    ],
+    "calories": 872.5333333333333,
+    "proteins": 33.97,
+    "carbs": 91.21000000000001,
+    "fats": 40.14
+  },
+  {
     "id": 1774867224252,
     "date": "2026-03-30",
     "type": "Déjeuner",
