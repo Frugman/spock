@@ -177,5 +177,15 @@
     "fats": 1.9,
     "unit": "unité",
     "weight": 30
+  },
+  {
+    "id": 1774867109481,
+    "title": "Pâtes cèpes châtaigne",
+    "calories": 365,
+    "proteins": 11.1,
+    "carbs": 73.5,
+    "fats": 1.9,
+    "unit": "100g",
+    "weight": 0
   }
 ]
