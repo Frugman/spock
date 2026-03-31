@@ -187,5 +187,15 @@
     "fats": 1.9,
     "unit": "100g",
     "weight": 0
+  },
+  {
+    "id": 1774952532424,
+    "title": "HUEL Pasta Bolognese",
+    "calories": 386,
+    "proteins": 24,
+    "carbs": 10,
+    "fats": 8.7,
+    "unit": "unité",
+    "weight": 104
   }
 ]
