@@ -1,5 +1,39 @@
 [
   {
+    "id": 1774989381337,
+    "date": "2026-03-31",
+    "type": "Déjeuner",
+    "title": "Subway végétarien  + 1 items",
+    "items": [
+      {
+        "id": 1774989262124,
+        "title": "Subway végétarien ",
+        "calories": 462,
+        "proteins": 20,
+        "carbs": 12.6,
+        "fats": 5,
+        "unit": "unité",
+        "weight": 324,
+        "quantity": 1
+      },
+      {
+        "id": 1774989347113,
+        "title": "Cookie Subway ",
+        "calories": 221,
+        "proteins": 2.3,
+        "carbs": 26.5,
+        "fats": 11.7,
+        "unit": "unité",
+        "weight": 45,
+        "quantity": 1
+      }
+    ],
+    "calories": 6.337037037037037,
+    "proteins": 0.1128395061728395,
+    "carbs": 0.6277777777777778,
+    "fats": 0.2754320987654321
+  },
+  {
     "id": 1774989264239,
     "date": "2026-03-31",
     "type": "En-cas",
