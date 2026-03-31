@@ -1,9 +1,9 @@
 [
   {
-    "id": 1774989381337,
+    "id": "1774989381337",
     "date": "2026-03-31",
     "type": "Déjeuner",
-    "title": "Subway végétarien  + 1 items",
+    "title": "Subway végétarien  + 2 items",
     "items": [
       {
         "id": 1774989262124,
@@ -26,12 +26,23 @@
         "unit": "unité",
         "weight": 45,
         "quantity": 1
+      },
+      {
+        "id": "1774796156988",
+        "title": "Noix de cajou",
+        "calories": 615,
+        "proteins": 19,
+        "carbs": 21,
+        "fats": 49,
+        "unit": "cs",
+        "weight": 0,
+        "quantity": 4
       }
     ],
-    "calories": 6.337037037037037,
-    "proteins": 0.1128395061728395,
-    "carbs": 0.6277777777777778,
-    "fats": 0.2754320987654321
+    "calories": 170.33703703703705,
+    "proteins": 5.179506172839506,
+    "carbs": 6.227777777777778,
+    "fats": 13.342098765432098
   },
   {
     "id": 1774989264239,
