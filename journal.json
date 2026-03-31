@@ -1,5 +1,48 @@
 [
   {
+    "id": 1774952651919,
+    "date": "2026-03-31",
+    "type": "Déjeuner",
+    "title": "HUEL Pasta Bolognese + 2 items",
+    "items": [
+      {
+        "id": 1774952532424,
+        "title": "HUEL Pasta Bolognese",
+        "calories": 386,
+        "proteins": 24,
+        "carbs": 10,
+        "fats": 8.7,
+        "unit": "unité",
+        "weight": 104,
+        "quantity": 104
+      },
+      {
+        "title": "Chocolat au lait, tablette",
+        "calories": 550,
+        "proteins": 7.5,
+        "carbs": 58.9,
+        "fats": 30.8,
+        "unit": "100g",
+        "quantity": 50
+      },
+      {
+        "id": "1774796156988",
+        "title": "Noix de cajou",
+        "calories": 615,
+        "proteins": 19,
+        "carbs": 21,
+        "fats": 49,
+        "unit": "cs",
+        "weight": 0,
+        "quantity": 2
+      }
+    ],
+    "calories": 743,
+    "proteins": 30.28333333333333,
+    "carbs": 42.25,
+    "fats": 30.633333333333333
+  },
+  {
     "id": 1774909804823,
     "date": "2026-03-30",
     "type": "Dîner",
