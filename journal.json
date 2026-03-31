@@ -12,9 +12,9 @@
         "proteins": 20,
         "carbs": 12.6,
         "fats": 5,
-        "unit": "unité",
+        "unit": "g",
         "weight": 324,
-        "quantity": 1
+        "quantity": 324
       },
       {
         "id": 1774989347113,
@@ -23,9 +23,9 @@
         "proteins": 2.3,
         "carbs": 26.5,
         "fats": 11.7,
-        "unit": "unité",
+        "unit": "g",
         "weight": 45,
-        "quantity": 1
+        "quantity": 45
       },
       {
         "id": "1774796156988",
@@ -39,10 +39,10 @@
         "quantity": 4
       }
     ],
-    "calories": 170.33703703703705,
-    "proteins": 5.179506172839506,
-    "carbs": 6.227777777777778,
-    "fats": 13.342098765432098
+    "calories": 847,
+    "proteins": 27.366666666666667,
+    "carbs": 44.7,
+    "fats": 29.766666666666666
   },
   {
     "id": 1774952651919,
