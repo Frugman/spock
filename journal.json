@@ -1,5 +1,46 @@
 [
   {
+    "id": 1775049721411,
+    "date": "2026-04-01",
+    "type": "Déjeuner",
+    "title": "Pâtes fraîches farcies (ex : raviolis, tortellinis, ravioles du Dauphiné), au fromage, préemballées, cuites + 2 items",
+    "items": [
+      {
+        "title": "Pâtes fraîches farcies (ex : raviolis, tortellinis, ravioles du Dauphiné), au fromage, préemballées, cuites",
+        "calories": 226,
+        "proteins": 10,
+        "carbs": 26.8,
+        "fats": 8.3,
+        "unit": "100g",
+        "quantity": 200
+      },
+      {
+        "title": "Banane, chair sans peau, crue",
+        "calories": 87.6,
+        "proteins": 1.06,
+        "carbs": 19.7,
+        "fats": 0.5,
+        "unit": "100g",
+        "quantity": 100
+      },
+      {
+        "id": "1774795424074",
+        "title": "Crème liquide 4%",
+        "calories": 71,
+        "proteins": 2.8,
+        "carbs": 6,
+        "fats": 4,
+        "unit": "100g",
+        "weight": 0,
+        "quantity": 100
+      }
+    ],
+    "calories": 610.6,
+    "proteins": 23.86,
+    "carbs": 79.3,
+    "fats": 21.1
+  },
+  {
     "id": "1774989381337",
     "date": "2026-03-31",
     "type": "Déjeuner",
