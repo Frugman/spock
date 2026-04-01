@@ -1,6 +1,6 @@
 [
   {
-    "id": 1775084554375,
+    "id": "1775084554375",
     "date": "2026-04-01",
     "type": "Dîner",
     "title": "Lasagnes ou cannellonis aux légumes, préemballées, cuits + 2 items",
@@ -12,7 +12,7 @@
         "carbs": 10.1,
         "fats": 5.9,
         "unit": "100g",
-        "quantity": 300
+        "quantity": 400
       },
       {
         "id": "1774796156988",
@@ -35,10 +35,10 @@
         "quantity": 1
       }
     ],
-    "calories": 652.6,
-    "proteins": 20.53333333333333,
-    "carbs": 57,
-    "fats": 34.53333333333333
+    "calories": 772.6,
+    "proteins": 24.91333333333333,
+    "carbs": 67.1,
+    "fats": 40.43333333333334
   },
   {
     "id": 1775049721411,
