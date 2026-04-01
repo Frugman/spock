@@ -1,5 +1,46 @@
 [
   {
+    "id": 1775084554375,
+    "date": "2026-04-01",
+    "type": "Dîner",
+    "title": "Lasagnes ou cannellonis aux légumes, préemballées, cuits + 2 items",
+    "items": [
+      {
+        "title": "Lasagnes ou cannellonis aux légumes, préemballées, cuits",
+        "calories": 120,
+        "proteins": 4.38,
+        "carbs": 10.1,
+        "fats": 5.9,
+        "unit": "100g",
+        "quantity": 300
+      },
+      {
+        "id": "1774796156988",
+        "title": "Noix de cajou",
+        "calories": 615,
+        "proteins": 19,
+        "carbs": 21,
+        "fats": 49,
+        "unit": "cs",
+        "weight": 0,
+        "quantity": 5
+      },
+      {
+        "title": "Banane, chair sans peau, crue",
+        "calories": 87.6,
+        "proteins": 1.06,
+        "carbs": 19.7,
+        "fats": 0.5,
+        "unit": "unité",
+        "quantity": 1
+      }
+    ],
+    "calories": 652.6,
+    "proteins": 20.53333333333333,
+    "carbs": 57,
+    "fats": 34.53333333333333
+  },
+  {
     "id": 1775049721411,
     "date": "2026-04-01",
     "type": "Déjeuner",
