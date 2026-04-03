@@ -1,5 +1,73 @@
 [
   {
+    "id": 1775214362799,
+    "date": "2026-04-03",
+    "type": "Déjeuner",
+    "title": "Épeautre, cru + 5 items",
+    "items": [
+      {
+        "title": "Épeautre, cru",
+        "calories": 344,
+        "proteins": 14.6,
+        "carbs": 59.5,
+        "fats": 2.43,
+        "unit": "100g",
+        "quantity": 100
+      },
+      {
+        "title": "Courgette, chair et peau, crue",
+        "calories": 16.7,
+        "proteins": 1.21,
+        "carbs": 1.75,
+        "fats": 0.32,
+        "unit": "100g",
+        "quantity": 100
+      },
+      {
+        "title": "Fromage de chèvre lactique affiné, type palet, crottin ou bûchette",
+        "calories": 308,
+        "proteins": 20.7,
+        "carbs": 1.24,
+        "fats": 24.7,
+        "unit": "100g",
+        "quantity": 100
+      },
+      {
+        "id": "1774795424074",
+        "title": "Crème liquide 4%",
+        "calories": 71,
+        "proteins": 2.8,
+        "carbs": 6,
+        "fats": 4,
+        "unit": "100g",
+        "weight": 0,
+        "quantity": 50
+      },
+      {
+        "title": "Banane, chair sans peau, crue",
+        "calories": 87.6,
+        "proteins": 1.06,
+        "carbs": 19.7,
+        "fats": 0.5,
+        "unit": "100g",
+        "quantity": 100
+      },
+      {
+        "title": "Macédoine de légumes en salade, avec sauce, préemballée",
+        "calories": 129,
+        "proteins": 2.5,
+        "carbs": 3.47,
+        "fats": 10.7,
+        "unit": "100g",
+        "quantity": 100
+      }
+    ],
+    "calories": 920.8000000000001,
+    "proteins": 41.47,
+    "carbs": 88.66000000000001,
+    "fats": 40.65
+  },
+  {
     "id": 1775214185537,
     "date": "2026-04-02",
     "type": "Dîner",
